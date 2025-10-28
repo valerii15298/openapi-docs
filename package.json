@@ -70,6 +70,21 @@
       "prettier-plugin-tailwindcss"
     ]
   },
+  "engines": {
+    "node": "24",
+    "pnpm": "10.19.0"
+  },
+  "packageManager": "pnpm@10.19.0",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.19.0"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "24"
+    }
+  },
   "pnpm": {
     "patchedDependencies": {
       "monaco-editor": "patches/monaco-editor.patch",

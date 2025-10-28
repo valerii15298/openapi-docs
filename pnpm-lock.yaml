@@ -6,10 +6,10 @@ settings:
 
 patchedDependencies:
   '@scalar/openapi-types':
-    hash: 62iyhxwq35w32u2e2z3rm3aw5e
+    hash: d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6
     path: patches/@scalar__openapi-types.patch
   monaco-editor:
-    hash: vg6vtwlwghnrmbknmqz4x62h5a
+    hash: 1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0
     path: patches/monaco-editor.patch
 
 importers:
@@ -33,7 +33,7 @@ importers:
         version: 0.22.3
       '@scalar/openapi-types':
         specifier: ^0.5.0
-        version: 0.5.0(patch_hash=62iyhxwq35w32u2e2z3rm3aw5e)
+        version: 0.5.0(patch_hash=d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6)
       '@types/content-type':
         specifier: ^1.1.9
         version: 1.1.9
@@ -60,7 +60,7 @@ importers:
         version: 16.4.1
       monaco-yaml:
         specifier: ^5.4.0
-        version: 5.4.0(monaco-editor@0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a))
+        version: 5.4.0(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0))
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -97,7 +97,7 @@ importers:
         version: 19.1.0-rc.3
       monaco-editor:
         specifier: ^0.54.0
-        version: 0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a)
+        version: 0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)
       netlify-cli:
         specifier: ^23.9.1
         version: 23.9.5(@types/node@24.9.1)(picomatch@4.0.3)
@@ -721,6 +721,14 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@isaacs/balanced-match@4.0.1':
+    resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
+    engines: {node: 20 || >=22}
+
+  '@isaacs/brace-expansion@5.0.0':
+    resolution: {integrity: sha512-ZT55BDLV0yv0RBm2czMiZ+SqCGO7AvmOM3G/w2xhVPH+te0aKgFjmBvGlL1dH+ql2tgGO3MVrbb3jCKyvpgnxA==}
+    engines: {node: 20 || >=22}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -4999,6 +5007,10 @@ packages:
     resolution: {integrity: sha512-e5ISH9xMYU0DzrT+jl8q2ze9D6eWBto+I8CNpe+VI+K2J/F/k3PdkdTdz4wvGVH4NTpo+NRYTVIuMQEMMcsLqg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  minimatch@10.0.3:
+    resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
+    engines: {node: 20 || >=22}
+
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
 
@@ -5227,8 +5239,8 @@ packages:
     resolution: {integrity: sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==}
     engines: {node: '>= 0.4'}
 
-  ofetch@1.4.1:
-    resolution: {integrity: sha512-QZj2DfGplQAr2oj9KzceK9Hwz6Whxazmn85yYeVuS3u9XTMOGMRx0kO95MQ+vLsj/S/NwBDMMLU5hpxvI6Tklw==}
+  ofetch@1.5.0:
+    resolution: {integrity: sha512-A7llJ7eZyziA5xq9//3ZurA8OhFqtS99K5/V1sLBJ5j137CM/OAjlbA/TEJXBuOWwOfLqih+oH5U3ran4za1FQ==}
 
   omit.js@2.0.2:
     resolution: {integrity: sha512-hJmu9D+bNB40YpL9jYebQl4lsTW6yEHRTroJzNLqQJYHm7c+NQnJGfZmIWh8S3q3KoaxV1aLhV6B3+0N0/kyJg==}
@@ -6015,6 +6027,11 @@ packages:
 
   semver@7.7.2:
     resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  semver@7.7.3:
+    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -7496,6 +7513,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.9.1
 
+  '@isaacs/balanced-match@4.0.1': {}
+
+  '@isaacs/brace-expansion@5.0.0':
+    dependencies:
+      '@isaacs/balanced-match': 4.0.1
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -8946,7 +8969,7 @@ snapshots:
       '@scalar/helpers': 0.0.12
       '@scalar/json-magic': 0.6.1
       '@scalar/object-utils': 1.2.8
-      '@scalar/openapi-types': 0.5.0(patch_hash=62iyhxwq35w32u2e2z3rm3aw5e)
+      '@scalar/openapi-types': 0.5.0(patch_hash=d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6)
       '@scalar/themes': 0.13.22
       '@scalar/types': 0.3.2
       '@scalar/workspace-store': 0.17.1(typescript@5.9.3)
@@ -8973,7 +8996,7 @@ snapshots:
   '@scalar/openapi-parser@0.22.3':
     dependencies:
       '@scalar/json-magic': 0.6.1
-      '@scalar/openapi-types': 0.5.0(patch_hash=62iyhxwq35w32u2e2z3rm3aw5e)
+      '@scalar/openapi-types': 0.5.0(patch_hash=d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6)
       '@scalar/openapi-upgrader': 0.1.3
       ajv: 8.17.1
       ajv-draft-04: 1.0.0(ajv@8.17.1)
@@ -8982,13 +9005,13 @@ snapshots:
       leven: 4.1.0
       yaml: 2.8.0
 
-  '@scalar/openapi-types@0.5.0(patch_hash=62iyhxwq35w32u2e2z3rm3aw5e)':
+  '@scalar/openapi-types@0.5.0(patch_hash=d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6)':
     dependencies:
       zod: 4.1.11
 
   '@scalar/openapi-upgrader@0.1.3':
     dependencies:
-      '@scalar/openapi-types': 0.5.0(patch_hash=62iyhxwq35w32u2e2z3rm3aw5e)
+      '@scalar/openapi-types': 0.5.0(patch_hash=d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6)
 
   '@scalar/snippetz@0.5.1':
     dependencies:
@@ -9004,7 +9027,7 @@ snapshots:
 
   '@scalar/types@0.3.2':
     dependencies:
-      '@scalar/openapi-types': 0.5.0(patch_hash=62iyhxwq35w32u2e2z3rm3aw5e)
+      '@scalar/openapi-types': 0.5.0(patch_hash=d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6)
       nanoid: 5.1.5
       type-fest: 5.0.0
       zod: 4.1.11
@@ -9311,7 +9334,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.2
+      semver: 7.7.3
       ts-api-utils: 2.1.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -10579,8 +10602,8 @@ snapshots:
       eslint: 9.38.0(jiti@2.6.1)
       eslint-import-context: 0.1.9(unrs-resolver@1.11.1)
       is-glob: 4.0.3
-      minimatch: 9.0.5
-      semver: 7.7.2
+      minimatch: 10.0.3
+      semver: 7.7.3
       stable-hash-x: 0.2.0
       unrs-resolver: 1.11.1
     optionalDependencies:
@@ -11584,7 +11607,7 @@ snapshots:
       h3: 1.15.4
       image-meta: 0.2.2
       listhen: 1.9.0
-      ofetch: 1.4.1
+      ofetch: 1.5.0
       pathe: 2.0.3
       sharp: 0.34.4
       svgo: 4.0.0
@@ -11618,7 +11641,7 @@ snapshots:
 
   is-bun-module@2.0.0:
     dependencies:
-      semver: 7.7.2
+      semver: 7.7.3
 
   is-core-module@2.16.1:
     dependencies:
@@ -12397,6 +12420,10 @@ snapshots:
 
   mimic-response@4.0.0: {}
 
+  minimatch@10.0.3:
+    dependencies:
+      '@isaacs/brace-expansion': 5.0.0
+
   minimatch@3.1.2:
     dependencies:
       brace-expansion: 1.1.12
@@ -12444,7 +12471,7 @@ snapshots:
       fast-equals: 3.0.3
       micro-memoize: 4.2.0
 
-  monaco-editor@0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a):
+  monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0):
     dependencies:
       dompurify: 3.1.7
       marked: 14.0.0
@@ -12461,18 +12488,18 @@ snapshots:
 
   monaco-types@0.1.0: {}
 
-  monaco-worker-manager@2.0.1(monaco-editor@0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a)):
+  monaco-worker-manager@2.0.1(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)):
     dependencies:
-      monaco-editor: 0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a)
+      monaco-editor: 0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)
 
-  monaco-yaml@5.4.0(monaco-editor@0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a)):
+  monaco-yaml@5.4.0(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)):
     dependencies:
       jsonc-parser: 3.3.1
-      monaco-editor: 0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a)
+      monaco-editor: 0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)
       monaco-languageserver-types: 0.4.0
       monaco-marker-data-provider: 1.2.4
       monaco-types: 0.1.0
-      monaco-worker-manager: 2.0.1(monaco-editor@0.54.0(patch_hash=vg6vtwlwghnrmbknmqz4x62h5a))
+      monaco-worker-manager: 2.0.1(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0))
       path-browserify: 1.0.1
       prettier: 3.6.2
       vscode-languageserver-textdocument: 1.0.12
@@ -12732,7 +12759,7 @@ snapshots:
 
   object-inspect@1.13.4: {}
 
-  ofetch@1.4.1:
+  ofetch@1.5.0:
     dependencies:
       destr: 2.0.5
       node-fetch-native: 1.6.7
@@ -13557,6 +13584,8 @@ snapshots:
 
   semver@7.7.2: {}
 
+  semver@7.7.3: {}
+
   send@0.19.0:
     dependencies:
       debug: 2.6.9
@@ -14186,7 +14215,7 @@ snapshots:
       h3: 1.15.4
       lru-cache: 10.4.3
       node-fetch-native: 1.6.7
-      ofetch: 1.4.1
+      ofetch: 1.5.0
       ufo: 1.6.1
     optionalDependencies:
       '@netlify/blobs': 10.1.0

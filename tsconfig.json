@@ -1,0 +1,22 @@
+{
+  "extends": "@tsconfig/strictest",
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "nodenext",
+    "declaration": true,
+
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "noUncheckedSideEffectImports": true,
+    "types": [],
+
+    "outDir": "dist",
+    "rootDir": ".",
+
+    "exactOptionalPropertyTypes": false,
+
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

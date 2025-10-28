@@ -1,0 +1,19 @@
+diff --git a/esm/vs/editor/editor.main.js b/esm/vs/editor/editor.main.js
+index ba4e0c5c37e0884884114470f2a42975e7e8f021..2d59b96a348c5727fa301095d546ee7e6627feea 100644
+--- a/esm/vs/editor/editor.main.js
++++ b/esm/vs/editor/editor.main.js
+@@ -88,11 +88,10 @@ function createWebWorker(opts) {
+ }
+ 
+ // src/editor/editor.main.ts
+-import "../basic-languages/monaco.contribution.js";
+-import "../language/css/monaco.contribution.js";
+-import "../language/html/monaco.contribution.js";
++import "./editor.api.js";
++import "../basic-languages/markdown/markdown.contribution.js";
++import "../basic-languages/yaml/yaml.contribution.js";
+ import "../language/json/monaco.contribution.js";
+-import "../language/typescript/monaco.contribution.js";
+ import * as monaco from "./edcore.main.js";
+ export * from "./edcore.main.js";
+ var existingCreateWebWorker = monaco.editor.createWebWorker;

@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@import "@sane-ts/shadcn-ui/index.css";
+@import "@sane-ts/shadcn-ui/themes/zinc.css";
+@source "../node_modules/@sane-ts/shadcn-ui/src/**/*.js";
+@source "../node_modules/openapi-docs/src/**/*.js";
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

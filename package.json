@@ -1,0 +1,75 @@
+{
+  "name": "openapi-docs",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "typings": "./src/index.d.ts",
+  "imports": {
+    "#*": "./src/*.js"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./const": "./src/const.js",
+    "./types": "./src/types.js"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -rf dist && tsc && cp -r README.md package.json dist",
+    "release": "pnpm build && cd dist && pnpm publish --access public",
+    "release:surge": "rm -rf dist && vite build && surge --domain stimulating-sock-openapi-test.surge.sh ./dist && open https://stimulating-sock-openapi-test.surge.sh",
+    "release:netlify": "rm -rf dist && vite build && ntl deploy -p -d dist --no-build -s openapi-ui --open"
+  },
+  "dependencies": {
+    "@readme/openapi-parser": "^5.0.1",
+    "@scalar/json-magic": "^0.6.0",
+    "@scalar/oas-utils": "^0.5.0",
+    "@scalar/openapi-parser": "^0.22.1",
+    "@scalar/openapi-types": "^0.5.0",
+    "@types/content-type": "^1.1.9",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "allof-merge": "^0.6.7",
+    "content-type": "^1.0.5",
+    "marked": "^16.3.0",
+    "react-hook-form": "^7.64.0",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.16",
+    "@tsconfig/strictest": "^2.0.6",
+    "@types/node": "^24.7.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "@vpetryniak/eslint-config-base": "^0.0.17",
+    "babel-plugin-react-compiler": "19.1.0-rc.3",
+    "monaco-editor": "^0.54.0",
+    "netlify-cli": "^23.9.1",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "surge": "^0.24.6",
+    "typescript": "~5.9.3",
+    "vite": "npm:rolldown-vite@latest"
+  },
+  "peerDependencies": {
+    "@sane-ts/shadcn-ui": "^0.0.4",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "monaco-editor": "^0.54.0",
+    "monaco-yaml": "^5.4.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.16"
+  },
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "monaco-editor": "patches/monaco-editor.patch",
+      "@scalar/openapi-types": "patches/@scalar__openapi-types.patch"
+    }
+  }
+}

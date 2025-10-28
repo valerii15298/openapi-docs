@@ -1,0 +1,36 @@
+diff --git a/dist/openapi-types.d.ts b/dist/openapi-types.d.ts
+index e15d592a352573aabf356a4c6fb1730173809023..a4ba06c5506518e6f64e02bb83d373032f85710d 100644
+--- a/dist/openapi-types.d.ts
++++ b/dist/openapi-types.d.ts
+@@ -11,7 +11,7 @@ type AnyOtherAttribute = {
+     /** OpenAPI extension */
+     [customExtension: `x-${string}`]: any;
+     /** Unknown attribute */
+-    [key: string]: any;
++    // [key: string]: any;
+ };
+ export declare namespace OpenAPI {
+     type Document<T extends AnyOtherAttribute = {}> = OpenAPIV2.Document<T> | OpenAPIV3.Document<T> | OpenAPIV3_1.Document<T> | OpenAPIV3_2.Document<T>;
+@@ -301,10 +301,7 @@ export declare namespace OpenAPIV3_1 {
+     }>;
+     export type DiscriminatorObject = OpenAPIV3.DiscriminatorObject;
+     export type XMLObject = OpenAPIV3.XMLObject;
+-    export type ReferenceObject = Modify<OpenAPIV3.ReferenceObject, {
+-        summary?: string;
+-        description?: string;
+-    }>;
++    export type ReferenceObject = never;
+     export type ExampleObject = OpenAPIV3.ExampleObject;
+     export type MediaTypeObject = Modify<OpenAPIV3.MediaTypeObject, {
+         schema?: SchemaObject | ReferenceObject;
+@@ -519,9 +516,7 @@ export declare namespace OpenAPIV3 {
+         attribute?: boolean;
+         wrapped?: boolean;
+     };
+-    export type ReferenceObject = {
+-        $ref?: string;
+-    } & AnyOtherAttribute;
++    export type ReferenceObject = never & AnyOtherAttribute;
+     export type ExampleObject = {
+         summary?: string;
+         description?: string;

@@ -1,0 +1,41 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html.light {
+  * {
+    color-scheme: light;
+  }
+}
+
+html.dark {
+  * {
+    color-scheme: dark;
+  }
+}
+
+summary {
+  list-style: none;
+}
+
+summary::before {
+  content: "▶ ";
+}
+
+details[open] > summary::before {
+  content: "▼ ";
+}
+
+[data-slot="tabs-content"][data-state="inactive"] {
+  display: none;
+}
+
+.example .monaco-editor {
+  --vscode-editorGutter-background: var(--background) !important;
+}
+
+[data-slot="popover-content"] .example .monaco-editor {
+  --vscode-editorGutter-background: var(--popover) !important;
+}

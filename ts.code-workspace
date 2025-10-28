@@ -1,0 +1,98 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "extensions": {
+    "recommendations": [
+      "streetsidesoftware.code-spell-checker",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "yoavbls.pretty-ts-errors",
+      "visualstudioexptteam.vscodeintellicode",
+      "usernamehw.errorlens",
+      "Gruntfuggly.todo-tree",
+    ],
+  },
+  "settings": {
+    "window.zoomLevel": 0,
+    "workbench.sideBar.location": "right",
+
+    "editor.minimap.enabled": false,
+    "editor.linkedEditing": true,
+    "editor.formatOnSave": true,
+    "editor.fontFamily": "'Hack Nerd Font'",
+    "editor.fontSize": 15,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.guides.bracketPairs": true,
+    "editor.guides.bracketPairsHorizontal": true,
+    "editor.guides.highlightActiveIndentation": "always",
+    "editor.showFoldingControls": "never",
+    "editor.glyphMargin": false,
+    "editor.suggest.showWords": false,
+    "editor.snippetSuggestions": "none",
+    "editor.accessibilitySupport": "off",
+    "editor.lineNumbers": "off",
+    "editor.scrollBeyondLastLine": false,
+    "editor.scrollBeyondLastColumn": 0,
+    "editor.wordWrap": "on",
+    "editor.tabSize": 2,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.fixAll.eslint": "never",
+    },
+    "editor.stickyScroll.maxLineCount": 20,
+
+    "terminal.integrated.shellIntegration.enabled": true,
+    "terminal.integrated.shellIntegration.decorationsEnabled": "both",
+    "terminal.integrated.fontFamily": "'Hack Nerd Font'",
+    "terminal.integrated.fontSize": 14,
+    "terminal.integrated.defaultProfile.linux": "fish",
+    "terminal.integrated.defaultProfile.osx": "fish",
+
+    "files.autoSave": "onFocusChange",
+    "files.insertFinalNewline": true,
+    "files.associations": {
+      "*.tsx": "typescriptreact",
+      "*.ts": "typescript",
+    },
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/node_modules": true,
+    },
+
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "typescript.implementationsCodeLens.enabled": true,
+    "typescript.referencesCodeLens.enabled": true,
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "typescript.suggest.completeFunctionCalls": true,
+    "typescript.tsserver.maxTsServerMemory": 4000, // a bit less than 4GB
+    "typescript.tsserver.nodePath": "node",
+    "typescript.referencesCodeLens.showOnAllFunctions": true,
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+
+    "zenMode.centerLayout": false,
+    "zenMode.showTabs": "none",
+
+    "eslint.validate": ["typescript", "typescriptreact"],
+    "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
+
+    "errorLens.messageTemplate": "$source($code) $message",
+    "errorLens.scrollbarHackEnabled": true,
+
+    "npm.packageManager": "pnpm",
+    "window.autoDetectColorScheme": true,
+    "workbench.editor.showTabs": "none",
+    "breadcrumbs.enabled": false,
+    "diffEditor.renderSideBySide": false,
+    "notebook.showFoldingControls": "never",
+    "git.autofetch": "all",
+  },
+}

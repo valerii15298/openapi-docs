@@ -1,10 +1,10 @@
 import { useTheme } from "@sane-ts/shadcn-ui";
-import * as monaco from "monaco-editor";
 import { configureMonacoYaml, type SchemasSettings } from "monaco-yaml";
 import { useEffect, useRef } from "react";
 
 import { openapiSchemaUrl } from "#const";
 import { createAsyncSequential } from "#hooks/use-async-sequential";
+import { monaco } from "#json-editor/monaco";
 import { EditorFormat, formatParse, formatStringify } from "#json-editor/enums";
 import { openapiSchema } from "#openapi-schema";
 

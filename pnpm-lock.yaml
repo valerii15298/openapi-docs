@@ -8,9 +8,6 @@ patchedDependencies:
   '@scalar/openapi-types':
     hash: d3e40b9de3ab69a7281552ad566e04dce86238301d497aba5456352532f90fd6
     path: patches/@scalar__openapi-types.patch
-  monaco-editor:
-    hash: 1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0
-    path: patches/monaco-editor.patch
 
 importers:
 
@@ -60,7 +57,7 @@ importers:
         version: 16.4.1
       monaco-yaml:
         specifier: ^5.4.0
-        version: 5.4.0(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0))
+        version: 5.4.0(monaco-editor@0.54.0)
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -97,7 +94,7 @@ importers:
         version: 19.1.0-rc.3
       monaco-editor:
         specifier: ^0.54.0
-        version: 0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)
+        version: 0.54.0
       netlify-cli:
         specifier: ^23.9.1
         version: 23.9.5(@types/node@24.9.1)(picomatch@4.0.3)
@@ -12471,7 +12468,7 @@ snapshots:
       fast-equals: 3.0.3
       micro-memoize: 4.2.0
 
-  monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0):
+  monaco-editor@0.54.0:
     dependencies:
       dompurify: 3.1.7
       marked: 14.0.0
@@ -12488,18 +12485,18 @@ snapshots:
 
   monaco-types@0.1.0: {}
 
-  monaco-worker-manager@2.0.1(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)):
+  monaco-worker-manager@2.0.1(monaco-editor@0.54.0):
     dependencies:
-      monaco-editor: 0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)
+      monaco-editor: 0.54.0
 
-  monaco-yaml@5.4.0(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)):
+  monaco-yaml@5.4.0(monaco-editor@0.54.0):
     dependencies:
       jsonc-parser: 3.3.1
-      monaco-editor: 0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0)
+      monaco-editor: 0.54.0
       monaco-languageserver-types: 0.4.0
       monaco-marker-data-provider: 1.2.4
       monaco-types: 0.1.0
-      monaco-worker-manager: 2.0.1(monaco-editor@0.54.0(patch_hash=1fba7040aa4373948cfd58bd05133194c658b13efc9027b26c31571e9ace8fc0))
+      monaco-worker-manager: 2.0.1(monaco-editor@0.54.0)
       path-browserify: 1.0.1
       prettier: 3.6.2
       vscode-languageserver-textdocument: 1.0.12

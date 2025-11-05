@@ -18,7 +18,9 @@
     "./const": "./src/const.js",
     "./types": "./src/types.js"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./src/json-editor/monaco.*"
+  ],
   "scripts": {
     "build": "rm -rf dist && tsc && cp -r README.md package.json dist",
     "release": "pnpm build && cd dist && pnpm publish --access public",
@@ -87,7 +89,6 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "monaco-editor": "patches/monaco-editor.patch",
       "@scalar/openapi-types": "patches/@scalar__openapi-types.patch"
     }
   }

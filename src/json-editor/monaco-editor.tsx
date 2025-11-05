@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 
 import { openapiSchemaUrl } from "#const";
 import { createAsyncSequential } from "#hooks/use-async-sequential";
-import { monaco } from "#json-editor/monaco";
 import { EditorFormat, formatParse, formatStringify } from "#json-editor/enums";
+import { monaco } from "#json-editor/monaco";
 import { openapiSchema } from "#openapi-schema";
 
 const markerToIgnore = {

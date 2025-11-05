@@ -1,11 +1,10 @@
 import "monaco-editor/esm/vs/editor/edcore.main.js";
-
 import "monaco-editor/esm/vs/language/json/monaco.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/yaml/yaml.contribution.js";
 
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 
-const createWebWorker = monaco.editor.createWebWorker;
+const { createWebWorker } = monaco.editor;
 monaco.editor.createWebWorker = (opts) => {
   if ("label" in opts && opts.label === "yaml") {
     const worker = new Worker(
@@ -16,14 +15,13 @@ monaco.editor.createWebWorker = (opts) => {
     worker.postMessage(opts.createData);
     return monaco.editor.createWebWorker({
       worker,
-      host: opts.host,
+      host: opts.host as unknown,
       keepIdleModels: opts.keepIdleModels,
     });
   }
   if ("worker" in opts) {
     return createWebWorker(opts);
-  } else {
-    return createWebWorker(opts);
   }
+  return createWebWorker(opts);
 };
 export { monaco };

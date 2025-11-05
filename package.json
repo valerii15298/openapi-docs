@@ -49,6 +49,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "@vpetryniak/eslint-config-base": "^0.0.17",
     "babel-plugin-react-compiler": "19.1.0-rc.3",
+    "eslint": "^9.39.1",
     "monaco-editor": "^0.54.0",
     "netlify-cli": "^23.9.1",
     "prettier": "^3.6.2",

@@ -10,9 +10,14 @@ export default [
   ...eslintConfig({
     gitignorePath,
     projects: ["./tsconfig.json"],
-    webGlob: "./src/**/*.{ts,tsx}",
+    webGlob: "src/**/*.{ts,tsx}",
   }),
   {
-    ignores: ["*.config.{js,ts}", "./example", "./gen-*"],
+    ignores: [
+      "*.config.{js,ts}",
+      "./example",
+      "./gen-*",
+      "./cloudflare-http-proxy.js",
+    ],
   },
 ];

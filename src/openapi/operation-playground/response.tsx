@@ -6,6 +6,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@sane-ts/shadcn-ui";
+// eslint-disable-next-line import-x/no-deprecated
 import { getExampleFromSchema } from "@scalar/oas-utils/spec-getters";
 import { useEffect, useState } from "react";
 
@@ -86,6 +87,7 @@ export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
 
   const example: unknown =
     media?.example ??
+    // eslint-disable-next-line @typescript-eslint/no-deprecated, import-x/no-deprecated
     (media?.schema && getExampleFromSchema(media.schema, { emptyString }));
 
   return (

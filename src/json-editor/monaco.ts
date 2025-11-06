@@ -6,22 +6,25 @@ import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 
 const { createWebWorker } = monaco.editor;
 monaco.editor.createWebWorker = (opts) => {
-  if ("label" in opts && opts.label === "yaml") {
-    const worker = new Worker(
-      new URL("monaco-yaml/yaml.worker.js", import.meta.url),
-      { type: "module" },
-    );
-    worker.postMessage("ignore");
-    worker.postMessage(opts.createData);
-    return monaco.editor.createWebWorker({
-      worker,
-      host: opts.host as unknown,
-      keepIdleModels: opts.keepIdleModels,
-    });
-  }
   if ("worker" in opts) {
     return createWebWorker(opts);
   }
-  return createWebWorker(opts);
+
+  const _worker = globalThis.MonacoEnvironment?.getWorker?.(
+    opts.moduleId,
+    opts.label ?? "monaco-editor-worker",
+  );
+  if (!_worker) {
+    return createWebWorker(opts);
+  }
+
+  const worker = Promise.resolve(_worker).then((w) => {
+    w.postMessage("ignore");
+    w.postMessage(opts.createData);
+    return w;
+  });
+
+  return createWebWorker({ ...opts, worker });
 };
+
 export { monaco };

@@ -1,6 +1,6 @@
 export function setupMonacoWorkers() {
   globalThis.MonacoEnvironment = {
-    getWorker(_: unknown, label: string) {
+    getWorker(_, label) {
       if (label === "json") {
         return new Worker(
           new URL(
@@ -11,10 +11,9 @@ export function setupMonacoWorkers() {
         );
       }
       if (label === "yaml") {
-        return new Worker(
-          new URL("monaco-yaml/yaml.worker.js", import.meta.url),
-          { type: "module" },
-        );
+        return new Worker(new URL("./yaml.worker.js", import.meta.url), {
+          type: "module",
+        });
       }
       return new Worker(
         new URL(

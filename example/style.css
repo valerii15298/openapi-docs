@@ -28,10 +28,6 @@ details[open] > summary::before {
   content: "▼ ";
 }
 
-[data-slot="tabs-content"][data-state="inactive"] {
-  display: none;
-}
-
 .example .monaco-editor {
   --vscode-editorGutter-background: var(--background) !important;
 }

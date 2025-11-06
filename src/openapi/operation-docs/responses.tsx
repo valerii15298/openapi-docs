@@ -52,7 +52,7 @@ export function Responses() {
       </h2>
       <Separator className={"-mt-1"} />
       {entries.map(([status, resp]) => (
-        <TabsContent forceMount key={status} value={status}>
+        <TabsContent key={status} value={status}>
           <Content
             {...resp}
             path={[...path, status]}

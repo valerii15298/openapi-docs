@@ -20,4 +20,12 @@ export default [
       "./cloudflare-http-proxy.js",
     ],
   },
+  {
+    rules: {
+      "@typescript-eslint/no-confusing-void-expression": [
+        "error",
+        { ignoreArrowShorthand: true },
+      ],
+    },
+  },
 ];

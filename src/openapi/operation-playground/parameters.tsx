@@ -20,12 +20,10 @@ export function ParameterInput({
   ...p
 }: OpenAPIV3_1.ParameterObject & { path: string[] }) {
   const { selected, setState } = useFormContext();
-  const paramIn = p.in ?? "query";
-  const name = p.name ?? "";
-  const value = useFormContext()[paramIn][name];
-  const setValue = (v: unknown) => {
-    setState((s) => ({ ...s, [paramIn]: { ...s[paramIn], [name]: v } }));
-  };
+
+  const value = useFormContext()[p.in!][p.name!];
+  const setValue = (v: unknown) =>
+    setState((s) => ({ ...s, [p.in!]: { ...s[p.in!], [p.name!]: v } }));
 
   if (!schema) return null;
   const path = [p.in, p.name];

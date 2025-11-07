@@ -55,6 +55,9 @@ importers:
       marked:
         specifier: ^16.3.0
         version: 16.4.1
+      monaco-editor:
+        specifier: ^0.54.0
+        version: 0.54.0
       monaco-yaml:
         specifier: ^5.4.0
         version: 5.4.0(monaco-editor@0.54.0)
@@ -92,9 +95,6 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.1(jiti@2.6.1)
-      monaco-editor:
-        specifier: ^0.54.0
-        version: 0.54.0
       netlify-cli:
         specifier: ^23.9.1
         version: 23.9.5(@types/node@24.9.1)(picomatch@4.0.3)

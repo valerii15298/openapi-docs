@@ -6,17 +6,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@sane-ts/shadcn-ui";
-import { useController } from "react-hook-form";
 
 import { useOperation } from "#openapi/context";
-import { control } from "#openapi/operation-playground/create-request";
+import { useFormContext } from "#openapi/operation-playground/create-request";
 
 export function SelectServer() {
   const { servers } = useOperation();
-  const controller = useController({ control, name: "serverIdx" });
-  const { value, onChange, ...field } = controller.field;
+  const { serverIdx, setState } = useFormContext();
 
-  const server = servers.at(value);
+  const server = servers.at(serverIdx);
   if (!server)
     return (
       <Badge className="inline max-w-full truncate" variant={"destructive"}>
@@ -26,12 +24,12 @@ export function SelectServer() {
 
   return (
     <Select
-      value={value.toString()}
+      value={serverIdx.toString()}
       onValueChange={(v) => {
-        onChange(Number(v));
+        setState((s) => ({ ...s, serverIdx: Number(v) }));
       }}
     >
-      <SelectTrigger className="overflow-hidden" {...field}>
+      <SelectTrigger className="overflow-hidden">
         <SelectValue>
           <code className="truncate">{server.url}</code>
           {"name" in server && typeof server.name === "string" && (

@@ -10,7 +10,6 @@ import {
   ToggleGroupItem,
 } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import type { ControllerRenderProps } from "react-hook-form";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
 
@@ -22,26 +21,29 @@ function getValueFromISODate(dateString: string) {
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
   return date.toISOString().slice(0, 16);
 }
+interface FieldProps {
+  value: unknown;
+  setValue: (v: unknown) => void;
+}
 
 function DateTimeLocalInput({
   field,
   className,
 }: {
-  field: ControllerRenderProps;
+  field: FieldProps;
   className?: string;
 }) {
   return (
     <Input
       className={className}
       type={"datetime-local"}
-      {...field}
       value={getValueFromISODate(String(field.value))}
       onChange={(e) => {
         const date = new Date(e.target.value);
         if (isNaN(date.getTime())) {
-          field.onChange("");
+          field.setValue("");
         } else {
-          field.onChange(date.toISOString());
+          field.setValue(date.toISOString());
         }
       }}
     />
@@ -54,7 +56,7 @@ export function SchemaInput({
   className,
 }: {
   schema: OpenAPIV3_1.SchemaObject;
-  field: ControllerRenderProps;
+  field: FieldProps;
   className?: string;
 }) {
   if (typeof schema !== "object") return null;
@@ -67,12 +69,10 @@ export function SchemaInput({
         )}
       >
         <MonacoEditor
-          value={field.value as unknown}
-          onValueChange={field.onChange}
+          value={field.value}
+          onValueChange={field.setValue}
           schema={schema}
-          onBlur={field.onBlur}
-          ref={field.ref}
-          className={`h-full min-h-0 min-w-0 border`}
+          className={`h-full min-h-6`}
         />
       </div>
     );
@@ -81,10 +81,10 @@ export function SchemaInput({
     return (
       <Select
         required
-        onValueChange={field.onChange}
+        onValueChange={field.setValue}
         value={String(field.value)}
       >
-        <SelectTrigger className={cn("w-full", className)} {...field}>
+        <SelectTrigger className={cn("w-full", className)}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -104,13 +104,17 @@ export function SchemaInput({
         type="single"
         className={cn("w-full", className)}
         variant={"outline"}
-        value={field.value === undefined ? "" : String(field.value)}
+        value={field.value === undefined ? "" : JSON.stringify(field.value)}
         onValueChange={(v) => {
-          field.onChange(v && JSON.parse(v));
+          field.setValue(v && JSON.parse(v));
         }}
       >
         {options.map((option) => (
-          <ToggleGroupItem key={option.toString()} value={option.toString()}>
+          <ToggleGroupItem
+            className="flex-1"
+            key={option.toString()}
+            value={option.toString()}
+          >
             {option.toString()}
           </ToggleGroupItem>
         ))}
@@ -125,7 +129,10 @@ export function SchemaInput({
       <Input
         className={className}
         type={schema.format === "date" ? "date" : "text"}
-        {...field}
+        value={String(field.value)}
+        onChange={(e) => {
+          field.setValue(e.target.value);
+        }}
       />
     );
   }
@@ -139,7 +146,10 @@ export function SchemaInput({
         min={schema.minimum}
         max={schema.maximum}
         type="number"
-        {...field}
+        value={String(field.value)}
+        onChange={(e) => {
+          field.setValue(e.target.value);
+        }}
       />
     );
   }

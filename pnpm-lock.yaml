@@ -64,9 +64,6 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
-      react-hook-form:
-        specifier: ^7.64.0
-        version: 7.65.0(react@19.2.0)
       tailwindcss:
         specifier: ^4.1.16
         version: 4.1.16

@@ -39,7 +39,6 @@
     "allof-merge": "^0.6.7",
     "content-type": "^1.0.5",
     "marked": "^16.3.0",
-    "react-hook-form": "^7.64.0",
     "yaml": "^2.8.1"
   },
   "devDependencies": {

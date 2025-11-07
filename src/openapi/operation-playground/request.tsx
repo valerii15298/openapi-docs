@@ -6,18 +6,16 @@ import {
 } from "@sane-ts/shadcn-ui";
 import { AlignJustify, Copy, Eye, WrapText } from "@sane-ts/shadcn-ui/lucide";
 import { Fragment, useState } from "react";
-import { useWatch } from "react-hook-form";
 
 import { useOperation, useOperationState } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
-import type { defaultValues } from "#openapi/operation-playground/create-request";
 import {
-  control,
   createRequest,
+  useFormContext,
 } from "#openapi/operation-playground/create-request";
 
 export function RequestSample() {
-  const d = useWatch({ control }) as typeof defaultValues;
+  const d = useFormContext();
   const o = useOperation();
   const { requestContent } = useOperationState();
   const req = createRequest(d, o, requestContent);

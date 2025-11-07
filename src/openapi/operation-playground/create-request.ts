@@ -1,4 +1,4 @@
-import type { Control } from "react-hook-form";
+import { createContext, use } from "react";
 
 import type { useOperation } from "#openapi/context";
 
@@ -7,14 +7,25 @@ export const defaultValues = {
   proxy: false,
 
   selected: [] as string[],
-  query: {},
-  header: {},
-  path: {},
-  cookie: {},
+  // params
+  query: {} as Record<string, unknown>,
+  header: {} as Record<string, unknown>,
+  path: {} as Record<string, unknown>,
+  cookie: {} as Record<string, unknown>,
 
   body: undefined as unknown,
 };
-export const control = undefined as unknown as Control<typeof defaultValues>;
+export const FormContext = createContext({
+  ...defaultValues,
+  setState: ((v: typeof defaultValues) => void v) as React.Dispatch<
+    React.SetStateAction<typeof defaultValues>
+  >,
+});
+FormContext.displayName = "OperationPlaygroundFormContext";
+
+export function useFormContext() {
+  return use(FormContext);
+}
 
 function flattenWithBrackets(name: string, obj: unknown): [string, unknown][] {
   if (typeof obj !== "object" || obj === null) {

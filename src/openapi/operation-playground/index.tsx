@@ -1,14 +1,6 @@
-import {
-  Alert,
-  AlertTitle,
-  Button,
-  Form,
-  Label,
-  Switch,
-} from "@sane-ts/shadcn-ui";
+import { Button, Label, Switch } from "@sane-ts/shadcn-ui";
 import * as ContentType from "content-type";
-import { useState } from "react";
-import { useController, useForm } from "react-hook-form";
+import { useMemo, useState } from "react";
 
 import { KEY } from "#openapi/const";
 import {
@@ -19,6 +11,7 @@ import {
 import {
   createRequest,
   defaultValues,
+  FormContext,
 } from "#openapi/operation-playground/create-request";
 import { ParametersInput } from "#openapi/operation-playground/parameters";
 import { RequestSample } from "#openapi/operation-playground/request";
@@ -40,16 +33,17 @@ export function OperationPlayground() {
       ?.filter((p) => p.required)
       .map((p) => [p.in, p.name].join(".")) ?? [];
 
-  const form = useForm({ defaultValues: { ...defaultValues, selected } });
-  const { field: proxyField } = useController({
-    control: form.control,
-    name: "proxy",
-  });
+  const [state, setState] = useState({ ...defaultValues, selected });
+  const { proxy } = state;
+  const setProxy = (v: boolean) => {
+    setState((s) => ({ ...s, proxy: v }));
+  };
+
   const [response, setResponse] = useState<PlaygroundResponse>();
 
-  const onSubmit = form.handleSubmit((d) => {
-    const req = createRequest(d, o, requestContent);
-    if (d.proxy && httpProxy) {
+  const onSubmit = () => {
+    const req = createRequest(state, o, requestContent);
+    if (state.proxy && httpProxy) {
       req.headers = { ...req.headers, [httpProxy.urlHeader]: req.url };
       req.url = httpProxy.url;
     }
@@ -80,15 +74,18 @@ export function OperationPlayground() {
         setResponse({ error });
       },
     );
-  });
+  };
 
-  const errors = Object.keys(form.formState.errors);
+  const value = useMemo(() => ({ ...state, setState }), [state]);
   return (
-    <section className="@container flex flex-col gap-4">
-      <Form {...form}>
+    <FormContext value={value}>
+      <section className="@container flex flex-col gap-4">
         <form
           className="flex flex-col gap-2"
-          onSubmit={(e) => void onSubmit(e)}
+          onSubmit={(e) => {
+            e.preventDefault();
+            void onSubmit();
+          }}
         >
           <h2 className="flex justify-center">
             <SelectServer />
@@ -106,29 +103,18 @@ export function OperationPlayground() {
               hidden={!httpProxy}
               className="hover:bg-accent/50 h-fit cursor-pointer"
             >
-              <Switch
-                checked={proxyField.value}
-                onCheckedChange={proxyField.onChange}
-              />
+              <Switch checked={proxy} onCheckedChange={setProxy} />
               Proxy
             </Label>
 
-            <Button
-              className="flex-1"
-              disabled={form.formState.isSubmitting}
-              type="submit"
-            >
+            <Button className="flex-1" type="submit">
               Try it
             </Button>
           </div>
-
-          <Alert hidden={!errors.length} variant={"destructive"}>
-            <AlertTitle>Invalid {errors.at(0)}</AlertTitle>
-          </Alert>
         </form>
         <RequestSample />
         <ResponseSample resp={response} />
-      </Form>
-    </section>
+      </section>
+    </FormContext>
   );
 }

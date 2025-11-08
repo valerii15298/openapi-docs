@@ -1,8 +1,5 @@
-export function deepGet(obj: unknown, path: (string | number)[]) {
-  return path.reduce(
-    (current: unknown, key) => current?.[key as keyof typeof current],
-    obj,
-  );
+export function deepGet(obj: unknown, path: string[]) {
+  return path.reduce((v: unknown, key) => v?.[key as keyof typeof v], obj);
 }
 
 export function deepSet(obj: unknown, path: string[], value: unknown): unknown {

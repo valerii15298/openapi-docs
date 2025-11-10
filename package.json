@@ -28,14 +28,10 @@
     "release:netlify": "rm -rf dist && vite build && ntl deploy -p -d dist --no-build -s openapi-ui --open"
   },
   "dependencies": {
-    "@readme/openapi-parser": "^5.0.1",
-    "@scalar/json-magic": "^0.6.0",
     "@scalar/oas-utils": "^0.5.0",
     "@scalar/openapi-parser": "^0.22.1",
     "@scalar/openapi-types": "^0.5.0",
     "@types/content-type": "^1.1.9",
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
     "allof-merge": "^0.6.7",
     "content-type": "^1.0.5",
     "marked": "^16.3.0",

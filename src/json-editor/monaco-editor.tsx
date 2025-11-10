@@ -2,11 +2,9 @@ import { useTheme } from "@sane-ts/shadcn-ui";
 import { configureMonacoYaml, type SchemasSettings } from "monaco-yaml";
 import { useEffect, useRef } from "react";
 
-import { openapiSchemaUrl } from "#const";
 import { createAsyncSequential } from "#hooks/use-async-sequential";
 import { EditorFormat, formatParse, formatStringify } from "#json-editor/enums";
 import { monaco } from "#json-editor/monaco";
-import { openapiSchema } from "#openapi-schema";
 
 const markerToIgnore = {
   message:
@@ -39,7 +37,7 @@ monaco.editor.onDidChangeMarkers((e) => {
 
 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
   enableSchemaRequest: true,
-  schemas: [{ uri: openapiSchemaUrl, schema: openapiSchema }],
+  schemas: [],
 });
 
 let yamlSchemas: SchemasSettings[] = [];
@@ -98,7 +96,6 @@ function setModelSchema(
 interface MonacoEditorProps {
   value?: unknown;
   onValueChange?: (value: unknown) => void;
-  onValueChangeAsync?: (value: string) => Promise<void>;
   onError?: (error: unknown) => void;
   schema?: object;
   format?: EditorFormat;
@@ -106,7 +103,6 @@ interface MonacoEditorProps {
 }
 export function MonacoEditor({
   value,
-  onValueChangeAsync,
   onValueChange,
   onError,
   schema,
@@ -150,22 +146,19 @@ export function MonacoEditor({
       scrollBeyondLastLine: false,
     });
 
-    if (onValueChangeAsync) {
-      const trigger = createAsyncSequential(onValueChangeAsync);
-      editor.onDidChangeModelContent(() => {
-        void trigger(editor.getValue());
-      });
-    }
-
-    if (onValueChange || onError) {
-      editor.onDidChangeModelContent(() => {
+    if (onValueChange) {
+      const trigger = createAsyncSequential(async (data: string) => {
         try {
-          const newValue = formatParse[format](editor.getValue());
-          onValueChange?.(newValue);
+          const newValue = formatParse[format](data);
+          onValueChange(newValue);
+          const maxWait = 10_000;
+          const delay = Math.min(Math.max(data.length / maxWait, 1), maxWait);
+          await new Promise((resolve) => void setTimeout(resolve, delay));
         } catch (e) {
           onError?.(e);
         }
       });
+      editor.onDidChangeModelContent(() => trigger(editor.getValue()));
     }
 
     editorRef.current = editor;

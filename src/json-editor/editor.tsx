@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   cn,
   ResizableHandle,
@@ -20,11 +23,11 @@ import { deepGet } from "#json-editor/utils";
 
 function EditorContent({
   schema,
-  validate,
+  onValueChange,
   ...props
 }: Omit<React.ComponentProps<"div">, "value"> & {
   schema?: object;
-  validate?: (value: string) => Promise<void>;
+  onValueChange?: (value: unknown) => void;
 }) {
   const ctx = useEditorContext();
   if (ctx.mode === EditorMode.tree) {
@@ -48,7 +51,23 @@ function EditorContent({
       <MonacoEditor
         readOnly={ctx.readOnly}
         value={deepGet(ctx.data, ctx.path)}
-        onValueChangeAsync={validate}
+        onValueChange={onValueChange}
+        onError={(error) => {
+          const { name, message } =
+            error instanceof Error
+              ? error
+              : { name: "Error", message: String(error) };
+
+          const jsx = (
+            <Alert variant={"destructive"} className="max-h-full overflow-auto">
+              <AlertTitle>{name}</AlertTitle>
+              <AlertDescription className="font-mono whitespace-pre">
+                {message}
+              </AlertDescription>
+            </Alert>
+          );
+          ctx.setError(jsx);
+        }}
         format={ctx.format}
         className={cn(props.className)}
         schema={ctx.path.length ? undefined : schema}
@@ -60,7 +79,7 @@ function EditorContent({
 }
 
 type EditorProps<TData = unknown> = {
-  validate?: (value: string) => Promise<void>;
+  onValueChange?: (value: unknown) => void;
   schema?: object;
 } & Omit<React.ComponentProps<typeof ResizablePanelGroup>, "direction"> &
   (
@@ -71,7 +90,7 @@ type EditorProps<TData = unknown> = {
 export function Editor<TData = unknown>({
   default: defaultValues,
   ctx: context,
-  validate,
+  onValueChange,
   schema,
   children,
   ...props
@@ -89,7 +108,7 @@ export function Editor<TData = unknown>({
           <EditorContent
             className="min-h-0 flex-1"
             schema={schema}
-            validate={validate}
+            onValueChange={onValueChange}
           />
         </ResizablePanel>
         <ResizableHandle hidden={!ctx.error} className="mt-1" />

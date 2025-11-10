@@ -22,6 +22,7 @@ export default [
   },
   {
     rules: {
+      "no-promise-executor-return": ["error", { allowVoid: true }],
       "@typescript-eslint/no-confusing-void-expression": [
         "error",
         { ignoreArrowShorthand: true },

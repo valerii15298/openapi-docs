@@ -1,13 +1,7 @@
-import {
-  dialectUrl,
-  openapiSchemaUrl,
-  openapiVersion,
-} from "openapi-docs/const";
 import type { OpenAPIV3_1 } from "openapi-docs/types";
 
 export const spec: OpenAPIV3_1.Document & { $schema?: string } = {
-  $schema: openapiSchemaUrl,
-  openapi: openapiVersion,
+  openapi: "3.1.2",
   info: {
     title: "Example API",
     version: "0.0.1",

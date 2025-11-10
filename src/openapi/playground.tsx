@@ -15,8 +15,6 @@ import { Editor } from "#json-editor/editor";
 import { EditorTabs } from "#json-editor/tabs";
 import { Docs } from "#openapi/docs";
 import { ImportSpec } from "#openapi/import-spec";
-import { renderWorkerError } from "#openapi/render-worker-error";
-import { validateOpenAPI } from "#openapi/validate-openapi";
 import { openapiSchema } from "#openapi-schema";
 
 export function Playground(p: { defaultSpec: OpenAPIV3_1.Document }) {
@@ -50,22 +48,12 @@ export function Playground(p: { defaultSpec: OpenAPIV3_1.Document }) {
         <Editor
           key={uri}
           ctx={editorCtx}
-          validate={async (value) => {
-            const result = await validateOpenAPI(
-              value,
-              editorCtx.format,
-              editorCtx.data,
-              editorCtx.path,
-            );
-            if (result.error) {
-              editorCtx.setError(renderWorkerError(result.error));
-            }
-            if (result.data) {
-              editorCtx.setData(result.data);
-              editorCtx.setError(null);
-            }
-          }}
           schema={openapiSchema}
+          onValueChange={(value) => {
+            editorCtx.setData(value as OpenAPIV3_1.Document);
+            // TODO validate in web worker
+            editorCtx.setError(null);
+          }}
         >
           <div className="flex items-center gap-2 overflow-auto p-1 pb-0 text-nowrap">
             <ModeToggle className="relative size-7" />

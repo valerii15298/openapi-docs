@@ -11,11 +11,9 @@ import {
 import { FileJson, Loader } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { useState } from "react";
+import yaml from "yaml";
 
-import { useLazyAsync } from "#hooks/use-async";
 import { useHttpProxy } from "#openapi/context";
-import { renderWorkerError } from "#openapi/render-worker-error";
-import { bundleOpenAPI } from "#openapi/validate-openapi";
 
 const commonSpecs = [
   {
@@ -41,14 +39,7 @@ export function ImportSpec({
   const [useProxy, setUseProxy] = useState(false);
   const proxy = useHttpProxy();
   const [open, setOpen] = useState(false);
-  const [{ data: err, loading }, importSpec] = useLazyAsync(async () => {
-    const result = await bundleOpenAPI(inputUri, useProxy ? proxy : undefined);
-    if (result.data) {
-      setUri(inputUri, result.data);
-    }
-
-    return result.error;
-  });
+  const [loading, setLoading] = useState(false);
 
   return (
     <Popover
@@ -99,14 +90,28 @@ export function ImportSpec({
           <Button
             disabled={loading || !inputUri.trim()}
             onClick={() => {
-              importSpec();
+              const req = { url: inputUri, headers: new Headers() };
+              if (useProxy && proxy) {
+                req.url = proxy.url;
+                req.headers.set(proxy.urlHeader, inputUri);
+              }
+              setLoading(true);
+              void fetch(req.url, { headers: req.headers })
+                .then((r) => r.text())
+                .then((data) => {
+                  data = data.trimStart();
+                  const parsed: unknown = data.startsWith("{")
+                    ? JSON.parse(data)
+                    : yaml.parse(data);
+                  setUri(inputUri, parsed as OpenAPIV3_1.Document);
+                })
+                .finally(() => setLoading(false));
             }}
           >
             Import
             {loading && <Loader className="animate-spin" />}
           </Button>
         </div>
-        {err && renderWorkerError(err)}
       </PopoverContent>
     </Popover>
   );

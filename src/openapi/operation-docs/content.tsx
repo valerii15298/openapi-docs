@@ -4,10 +4,10 @@ import { merge } from "allof-merge";
 
 import { Description } from "#description";
 import { jsonSchema } from "#json-schema";
-import { KEY } from "#openapi/const";
+import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 
-const key = KEY.CONTENT;
+const key = K.content;
 export function Content(props: {
   description?: string;
   content?: Record<string, OpenAPIV3_1.MediaTypeObject>;
@@ -41,7 +41,7 @@ export function Content(props: {
           <TabsContent key={type} value={type}>
             {jsonSchema.render({
               schema: merge(media.schema) as OpenAPIV3_1.SchemaObject,
-              path: [...path, KEY.SCHEMA],
+              path: [...path, K.schema],
               name: "",
               depth: 0,
               setEditPath,

@@ -1,9 +1,9 @@
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-
 import { Description } from "#description";
+import { useOpenAPI } from "#openapi/context";
 import { ExternalDocs } from "#openapi/operation-docs/external-docs";
 
-export function Intro({ spec }: { spec: OpenAPIV3_1.Document }) {
+export function Intro() {
+  const { doc: spec } = useOpenAPI();
   return (
     <section className="m-4 flex flex-col gap-4">
       <h1 className="flex flex-wrap items-end justify-between text-6xl font-extrabold tracking-tight text-balance">

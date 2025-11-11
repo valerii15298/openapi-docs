@@ -1,5 +1,6 @@
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
+import { useOpenAPI } from "#openapi/context";
 import { ApiKeySecurityScheme } from "#openapi/security/api-key";
 import { OAuth2SecurityScheme } from "#openapi/security/oauth2";
 
@@ -17,10 +18,11 @@ function renderSecurityScheme(
   return null;
 }
 
-export function SecuritySchemes({ spec }: { spec: OpenAPIV3_1.Document }) {
-  const { securitySchemes } = spec.components ?? {};
-  if (!securitySchemes) return null;
+export function SecuritySchemes() {
+  const { doc } = useOpenAPI();
+  const { securitySchemes } = doc.components ?? {};
 
+  if (!securitySchemes) return null;
   return (
     <section className="m-4">
       <h2 className="mb-3 text-3xl">Security Schemes</h2>

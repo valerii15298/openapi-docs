@@ -20,6 +20,7 @@ import { openapiSchema } from "#openapi-schema";
 export function Playground(p: { defaultSpec: OpenAPIV3_1.Document }) {
   const [selectingEditTarget, setSelectingEditTarget] = useState(false);
   const [uri, setUri] = useState("");
+  const [path, setPath] = useState<string[]>([]);
 
   const editorCtx = useEditorState<OpenAPIV3_1.Document>({
     data: p.defaultSpec,
@@ -80,6 +81,8 @@ export function Playground(p: { defaultSpec: OpenAPIV3_1.Document }) {
         <Docs
           setEditPath={selectingEditTarget ? setEditPath : undefined}
           doc={editorCtx.data}
+          path={path}
+          setPath={setPath}
         />
       </ResizablePanel>
     </ResizablePanelGroup>

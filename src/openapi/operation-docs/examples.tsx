@@ -8,10 +8,10 @@ import {
 } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
-import { KEY } from "#openapi/const";
+import { K } from "#openapi/const";
 import { Example } from "#openapi/operation-docs/example";
 
-const key = KEY.EXAMPLES;
+const key = K.examples;
 export function Examples(
   props: OpenAPIV3_1.MediaTypeObject & { path: string[] },
 ) {

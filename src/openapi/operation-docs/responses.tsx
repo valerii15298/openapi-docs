@@ -8,11 +8,11 @@ import {
 } from "@sane-ts/shadcn-ui";
 import { startTransition } from "react";
 
-import { KEY } from "#openapi/const";
+import { K } from "#openapi/const";
 import { useOperation, useOperationState } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
 
-const key = KEY.RESPONSES;
+const key = K.responses;
 export function Responses() {
   const o = useOperation();
   const opState = useOperationState();

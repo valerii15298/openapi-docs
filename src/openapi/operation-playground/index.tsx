@@ -2,7 +2,7 @@ import { Button, Label, Switch } from "@sane-ts/shadcn-ui";
 import * as ContentType from "content-type";
 import { useMemo, useState } from "react";
 
-import { KEY } from "#openapi/const";
+import { K } from "#openapi/const";
 import {
   useHttpProxy,
   useOperation,
@@ -58,7 +58,7 @@ export function OperationPlayground() {
         if (contentType) {
           setResponseContent(ContentType.parse(contentType).type);
         }
-        const id = o.makeId([...o.path, KEY.RESPONSES]);
+        const id = o.makeId([...o.path, K.responses]);
         document.getElementById(id)?.scrollIntoView();
 
         return resp.text().then(

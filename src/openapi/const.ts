@@ -1,3 +1,5 @@
+import { Enum } from "#json-editor/utils";
+
 export const defaultValueMap = {
   string: "",
   number: 0,
@@ -8,14 +10,24 @@ export const defaultValueMap = {
   null: null,
 } as const;
 
-export const KEY = {
-  EXAMPLES: "examples",
-  EXAMPLE: "example",
-  RESPONSES: "responses",
-  PARAMETERS: "parameters",
-  REQUEST_BODY: "requestBody",
-  CONTENT: "content",
-  SCHEMA: "schema",
-  PROPERTIES: "properties",
-  ITEMS: "items",
-} as const;
+export const K = Enum(
+  "servers",
+  "paths",
+  "webhooks",
+  "components",
+  "security",
+  "tags",
+  "info",
+
+  "securitySchemes",
+
+  "examples",
+  "example",
+  "responses",
+  "parameters",
+  "requestBody",
+  "content",
+  "schema",
+  "properties",
+  "items",
+);

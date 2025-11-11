@@ -17,7 +17,8 @@ import {
 import { Mail } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
-import type { OperationContext } from "#openapi/context";
+import { K } from "#openapi/const";
+import { useOpenAPI } from "#openapi/context";
 import { renderSidebarContent } from "#openapi/sidebar-content";
 
 function renderLicense(license?: OpenAPIV3_1.LicenseObject) {
@@ -61,31 +62,15 @@ function renderContact(contact?: OpenAPIV3_1.ContactObject) {
   );
 }
 
-export function SideBar({
-  spec,
-  opId,
-  setOpId,
-}: {
-  spec: OpenAPIV3_1.Document;
-  opId: OperationContext | undefined | null;
-  setOpId: (id: OperationContext | undefined | null) => void;
-}) {
+export function SideBar() {
+  const { path, setPath, doc: spec } = useOpenAPI();
   const { info = {} } = spec;
 
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarMenuButton
-          isActive={opId === undefined}
-          className="block"
-          asChild
-        >
-          <h1
-            className="h-fit text-xl"
-            onClick={() => {
-              setOpId(undefined);
-            }}
-          >
+        <SidebarMenuButton isActive={!path.length} className="block" asChild>
+          <h1 className="h-fit text-xl" onClick={() => setPath([])}>
             {info.title}{" "}
             <Badge
               className="text-sm"
@@ -104,39 +89,35 @@ export function SideBar({
         <SidebarGroup>
           <SidebarGroupLabel>Operations</SidebarGroupLabel>
           <SidebarGroupContent>
-            {renderSidebarContent("by-tag", spec, opId, setOpId)}
+            {renderSidebarContent("by-tag", spec, path, setPath)}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          {spec.components?.securitySchemes && (
-            <SidebarMenuItem
-              onClick={() => {
-                setOpId(null);
-              }}
-            >
-              <SidebarMenuButton>Security</SidebarMenuButton>
-            </SidebarMenuItem>
-          )}
-          {info.termsOfService && (
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <a target="_blank" href={info.termsOfService}>
-                  Terms of Service
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          )}
-          {spec.jsonSchemaDialect && (
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <a target="_blank" href={spec.jsonSchemaDialect}>
-                  JSON Schema Dialect
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          )}
+          <SidebarMenuItem
+            hidden={!spec[K.components]?.[K.securitySchemes]}
+            onClick={() => setPath([K.components, K.securitySchemes])}
+          >
+            <SidebarMenuButton>Security</SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem hidden={!info.termsOfService}>
+            <SidebarMenuButton asChild>
+              <a target="_blank" href={info.termsOfService}>
+                Terms of Service
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem hidden={!spec.jsonSchemaDialect}>
+            <SidebarMenuButton asChild>
+              <a target="_blank" href={spec.jsonSchemaDialect}>
+                JSON Schema Dialect
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
           {renderContact(info.contact)}
           {renderLicense(info.license)}
         </SidebarMenu>

@@ -12,32 +12,30 @@ import {
 import { ChevronRight } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
-import type { OperationContext } from "#openapi/context";
 import { methods } from "#openapi/methods";
 
 function renderFlat(
   doc: OpenAPIV3_1.Document,
-  opId: OperationContext | undefined | null,
-  setOpId: (id: OperationContext | undefined | null) => void,
+  path: string[],
+  setPath: (path: string[]) => void,
 ) {
   const paths = Object.entries(doc.paths ?? {});
   return (
     <SidebarMenu>
-      {paths.flatMap(([path, pathItem]) =>
+      {paths.flatMap(([pathname, pathItem]) =>
         methods.map((method) => {
           const op = pathItem?.[method];
           if (!op) return null;
-          const isActive = opId?.method === method && opId.pathname === path;
+          const opPath = ["paths", pathname, method];
+          const isActive = JSON.stringify(path) === JSON.stringify(opPath);
 
           return (
             <SidebarMenuItem
-              key={`${method}-${path}`}
-              onClick={() => {
-                setOpId({ method, pathname: path });
-              }}
+              key={`${method}-${pathname}`}
+              onClick={() => setPath(opPath)}
             >
               <SidebarMenuButton isActive={isActive}>
-                {op.summary || `${method} ${path}`}
+                {op.summary || `${method} ${pathname}`}
               </SidebarMenuButton>
             </SidebarMenuItem>
           );
@@ -49,8 +47,8 @@ function renderFlat(
 
 function renderByTag(
   doc: OpenAPIV3_1.Document,
-  opId: OperationContext | undefined | null,
-  setOpId: (id: OperationContext | undefined | null) => void,
+  path: string[],
+  setPath: (path: string[]) => void,
 ) {
   const operations = Object.entries(doc.paths ?? {})
     .flatMap(
@@ -64,7 +62,11 @@ function renderByTag(
     .filter((op) => !!op);
   const byTag = Object.groupBy(operations, (o) => o.tag);
 
-  const activeOp = opId && doc.paths?.[opId.pathname]?.[opId.method];
+  const [prefix, pathname, method] = path;
+  const activeOp =
+    prefix === "paths" && pathname?.startsWith("/") && method
+      ? doc.paths?.[pathname]?.[method as OpenAPIV3_1.HttpMethods]
+      : null;
   return (
     <SidebarMenu>
       {Object.entries(byTag).map(([tag, ops]) => (
@@ -82,11 +84,11 @@ function renderByTag(
                   <SidebarMenuSubItem key={`${op.method}-${op.path}`}>
                     <SidebarMenuSubButton
                       isActive={
-                        opId?.method === op.method && opId.pathname === op.path
+                        !!activeOp &&
+                        method === op.method &&
+                        pathname === op.path
                       }
-                      onClick={() => {
-                        setOpId({ method: op.method, pathname: op.path });
-                      }}
+                      onClick={() => setPath(["paths", op.path, op.method])}
                       className="min-h-fit cursor-pointer py-1"
                     >
                       {op.summary || `${op.method} ${op.path}`}
@@ -106,15 +108,15 @@ function renderByTag(
 export function renderSidebarContent(
   type: "flat" | "by-tag",
   doc: OpenAPIV3_1.Document,
-  opId: OperationContext | undefined | null,
-  setOpId: (id: OperationContext | undefined | null) => void,
+  path: string[],
+  setPath: (path: string[]) => void,
 ) {
   if (type === "by-tag") {
-    return renderByTag(doc, opId, setOpId);
+    return renderByTag(doc, path, setPath);
   }
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (type === "flat") {
-    return renderFlat(doc, opId, setOpId);
+    return renderFlat(doc, path, setPath);
   }
 
   return null;

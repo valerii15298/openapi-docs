@@ -9,7 +9,7 @@ import { HelpCircle } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { preventDoubleClick } from "#json-editor/utils";
-import { defaultValueMap, KEY } from "#openapi/const";
+import { defaultValueMap, K } from "#openapi/const";
 import { useOperation } from "#openapi/context";
 import { Examples } from "#openapi/operation-docs/examples";
 import { useFormContext } from "#openapi/operation-playground/create-request";
@@ -104,7 +104,7 @@ export function ParametersInput() {
               <ParameterInput
                 key={[p.in, p.name].join(".")}
                 {...p}
-                path={[...o.path, KEY.PARAMETERS, idx.toString()]}
+                path={[...o.path, K.parameters, idx.toString()]}
               />
             ),
         )}

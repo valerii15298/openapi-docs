@@ -3,6 +3,8 @@ import { createContext, use, useState } from "react";
 
 export interface OpenAPIContext {
   doc: OpenAPIV3_1.Document;
+  path: string[];
+  setPath: (path: string[]) => void;
   setEditPath?: (path: string[]) => void;
 }
 export const OpenAPIContext = createContext<OpenAPIContext | null>(null);

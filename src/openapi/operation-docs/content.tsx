@@ -1,6 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import { merge } from "allof-merge";
 
 import { Description } from "#description";
 import { jsonSchema } from "#json-schema";
@@ -18,7 +17,7 @@ export function Content(props: {
 }) {
   const entries = Object.entries(props[key] ?? {});
 
-  const { setEditPath } = useOpenAPI();
+  const { setEditPath, resolveRefObj } = useOpenAPI();
   const op = useOperation();
 
   return (
@@ -40,12 +39,15 @@ export function Content(props: {
         return (
           <TabsContent key={type} value={type}>
             {jsonSchema.render({
-              schema: merge(media.schema) as OpenAPIV3_1.SchemaObject,
+              schema: media.schema,
               path: [...path, K.schema],
               name: "",
               depth: 0,
               setEditPath,
-              visited: new Map(),
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+              resolveRef<T>($ref: string) {
+                return resolveRefObj({ $ref }) as T;
+              },
             })}
           </TabsContent>
         );

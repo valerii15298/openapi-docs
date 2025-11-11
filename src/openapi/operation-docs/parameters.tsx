@@ -1,15 +1,14 @@
 import { Badge } from "@sane-ts/shadcn-ui";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import { merge } from "allof-merge";
 
 import { Description } from "#description";
 import { preventDoubleClick } from "#json-editor/utils";
 import { jsonSchema } from "#json-schema";
-import { useOperation } from "#openapi/context";
+import { useOpenAPI, useOperation } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
 
 export function ParametersDocs() {
   const o = useOperation();
+  const { resolveRefObj } = useOpenAPI();
   const key = "parameters";
   const header = (
     <span className="flex flex-wrap gap-2">
@@ -38,21 +37,20 @@ export function ParametersDocs() {
         {o[key].map((p, idx) => {
           const path = [...o.path, key, idx.toString()];
           const id = o.makeId(path);
-          const isObj = ["array", "object"].includes(p.schema?.type ?? "");
+          const parameter = resolveRefObj(p);
 
           return (
-            <li
-              key={id}
-              id={id}
-              className={`grid gap-1 ${isObj ? "ml-3.5" : ""}`}
-            >
+            <li key={id} id={id} className={`grid gap-1`}>
               {jsonSchema.render({
                 ...p,
-                schema: merge(p.schema) as OpenAPIV3_1.SchemaObject,
+                schema: parameter?.schema,
                 path: [...path, "schema"],
                 children: <Description {...p} path={path} />,
                 depth: 1,
-                visited: new Map(),
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+                resolveRef<T>($ref: string) {
+                  return resolveRefObj({ $ref }) as T;
+                },
               })}
             </li>
           );

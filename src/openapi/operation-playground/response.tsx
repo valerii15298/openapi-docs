@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { RenderError } from "#json-editor/render-error";
 import { Enum } from "#json-editor/utils";
 import { K } from "#openapi/const";
-import { useOperation, useOperationState } from "#openapi/context";
+import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
 import { Example } from "#openapi/operation-docs/example";
 import { Examples } from "#openapi/operation-docs/examples";
 
@@ -76,7 +76,9 @@ function OperationPlaygroundResponse(
 export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
   const op = useOperation();
   const { responseStatus, responseContent } = useOperationState();
-  const media = op.responses?.[responseStatus]?.content?.[responseContent];
+  const { resolveRefObj } = useOpenAPI();
+  const response = resolveRefObj(op.responses?.[responseStatus]);
+  const media = response?.content?.[responseContent];
   const path = [...op.path, K.responses, responseStatus, K.content];
 
   const defaultTab = media?.examples ? "examples" : "preview";

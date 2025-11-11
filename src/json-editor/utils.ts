@@ -2,7 +2,8 @@ export function deepGet(obj: unknown, path: string[]) {
   return path.reduce((v: unknown, key) => v?.[key as keyof typeof v], obj);
 }
 
-export function resolveRef(ref: string, obj: object) {
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+export function resolveRef<T = unknown>(ref: string, obj: object) {
   if (!ref.startsWith("#/")) {
     return undefined;
   }
@@ -12,7 +13,7 @@ export function resolveRef(ref: string, obj: object) {
     .split("/")
     .map((s) => s.replaceAll("~1", "/").replaceAll("~0", "~"));
 
-  return deepGet(obj, path);
+  return deepGet(obj, path) as T;
 }
 
 export function deepSet(obj: unknown, path: string[], value: unknown): unknown {

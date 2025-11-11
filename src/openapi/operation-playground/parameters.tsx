@@ -10,25 +10,25 @@ import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { preventDoubleClick } from "#json-editor/utils";
 import { defaultValueMap, K } from "#openapi/const";
-import { useOperation } from "#openapi/context";
+import { useOpenAPI, useOperation } from "#openapi/context";
 import { Examples } from "#openapi/operation-docs/examples";
 import { useFormContext } from "#openapi/operation-playground/create-request";
 import { SchemaInput } from "#openapi/operation-playground/schema-field";
 
-export function ParameterInput({
-  schema,
-  ...p
-}: OpenAPIV3_1.ParameterObject & { path: string[] }) {
+export function ParameterInput(
+  p: OpenAPIV3_1.ParameterObject & { path: string[] },
+) {
   const { selected, setState } = useFormContext();
+  const { resolveRefObj } = useOpenAPI();
 
   const value = useFormContext()[p.in!][p.name!];
   const setValue = (v: unknown) =>
     setState((s) => ({ ...s, [p.in!]: { ...s[p.in!], [p.name!]: v } }));
 
+  const schema = resolveRefObj(p.schema);
   if (!schema) return null;
   const path = [p.in, p.name];
 
-  // const type = Array.isArray(o.type) ? o.type[0] : o.type;
   const { type } = schema;
   const defaultValue = defaultValueMap[type ?? "null"];
   const key = path.join(".");
@@ -88,6 +88,7 @@ export function ParameterInput({
 
 export function ParametersInput() {
   const o = useOperation();
+  const { resolveRefObj } = useOpenAPI();
 
   return (
     <details open hidden={!o.parameters?.length}>
@@ -98,16 +99,18 @@ export function ParametersInput() {
         Parameters
       </summary>
       <ol className="mt-2 grid gap-4 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 @5xl:grid-cols-5 @6xl:grid-cols-6 @7xl:grid-cols-7">
-        {o.parameters?.map(
-          (p, idx) =>
-            p.schema && (
-              <ParameterInput
-                key={[p.in, p.name].join(".")}
-                {...p}
-                path={[...o.path, K.parameters, idx.toString()]}
-              />
-            ),
-        )}
+        {o.parameters
+          ?.map((p) => resolveRefObj(p))
+          .map(
+            (p, idx) =>
+              p?.schema && (
+                <ParameterInput
+                  key={[p.in, p.name].join(".")}
+                  {...p}
+                  path={[...o.path, K.parameters, idx.toString()]}
+                />
+              ),
+          )}
       </ol>
     </details>
   );

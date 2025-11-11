@@ -9,22 +9,25 @@ import {
 } from "@sane-ts/shadcn-ui";
 
 import { defaultValueMap } from "#openapi/const";
-import { useOperation, useOperationState } from "#openapi/context";
+import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
 import { Examples } from "#openapi/operation-docs/examples";
 import { useFormContext } from "#openapi/operation-playground/create-request";
 import { SchemaInput } from "#openapi/operation-playground/schema-field";
 
 export function RequestBodyInput() {
-  const { requestBody, path } = useOperation();
+  const op = useOperation();
+  const { path } = op;
   const { requestContent } = useOperationState();
   const { body, setState } = useFormContext();
   const setValue = (value: unknown) => {
     setState((s) => ({ ...s, body: value }));
   };
+  const { resolveRefObj } = useOpenAPI();
+  const requestBody = resolveRefObj(op.requestBody);
   if (!requestBody || !requestContent) return null;
 
   const media = requestBody.content?.[requestContent] ?? {};
-  const { schema } = media;
+  const schema = resolveRefObj(media.schema);
   if (typeof schema === "boolean") return null;
 
   const type =

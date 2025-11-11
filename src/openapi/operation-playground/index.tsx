@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { K } from "#openapi/const";
 import {
   useHttpProxy,
+  useOpenAPI,
   useOperation,
   useOperationState,
 } from "#openapi/context";
@@ -25,12 +26,14 @@ import { SelectServer } from "#openapi/operation-playground/select-server";
 export function OperationPlayground() {
   "use no memo";
   const httpProxy = useHttpProxy();
+  const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
   const { requestContent, setResponseStatus, setResponseContent } =
     useOperationState();
   const selected =
     o.parameters
-      ?.filter((p) => p.required)
+      ?.map((p) => resolveRefObj(p) ?? {})
+      .filter((p) => p.required)
       .map((p) => [p.in, p.name].join(".")) ?? [];
 
   const [state, setState] = useState({ ...defaultValues, selected });

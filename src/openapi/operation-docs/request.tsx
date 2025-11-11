@@ -1,17 +1,19 @@
 import { Button, Separator } from "@sane-ts/shadcn-ui";
 
 import { preventDoubleClick } from "#json-editor/utils";
-import { useOperation, useOperationState } from "#openapi/context";
+import { K } from "#openapi/const";
+import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
 import { ParametersDocs } from "#openapi/operation-docs/parameters";
 
 function RequestBodyDocs() {
-  const key = "requestBody";
+  const key = K.requestBody;
+  const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
   const { requestContent, setRequestContent } = useOperationState();
 
-  if (!o[key]) return null;
-  const requestBody = { ...o[key], path: [...o.path, key] };
+  const requestBody = resolveRefObj(o[key]);
+  if (!requestBody) return null;
 
   const required = (
     <i
@@ -38,6 +40,7 @@ function RequestBodyDocs() {
           {...requestBody}
           value={requestContent}
           onValueChange={setRequestContent}
+          path={[...o.path, key]}
         />
       </div>
     </details>

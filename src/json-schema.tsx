@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { Badge } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import type { ReactNode } from "react";
 
 import { Description } from "#description";
 import { preventDoubleClick } from "#json-editor/utils";
+import { K } from "#openapi/const";
 
 interface ISchema<Slots = object> {
   schema?: OpenAPIV3_1.SchemaObject;
@@ -15,7 +15,9 @@ interface ISchema<Slots = object> {
   name?: string;
   setEditPath?: (path: string[]) => void;
   depth?: number;
-  visited: Map<unknown, string[]>;
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  resolveRef: <T>(ref: string) => T | undefined;
 }
 
 function renderHeader(p: ISchema) {
@@ -68,120 +70,55 @@ function renderSubHeader({ schema, path = [] }: ISchema) {
   return <>{allowedValues}</>;
 }
 
-function renderChildren({
-  schema,
-  path = [],
-  setEditPath,
-  visited,
-}: ISchema): ReactNode {
+function render({ name, depth, ...p }: ISchema<{ header?: ReactNode }>) {
+  const { schema } = p;
   if (!schema) return null;
   if (typeof schema === "boolean") return null;
 
-  if (schema.type === "object") {
-    const key = "properties";
-    const properties = schema[key] ?? {};
-    const circular = visited.get(properties);
-    if (circular) {
-      const name = key;
-      const loc =
-        [...path, key].slice(circular.length).reverse().join(" -> ") || "root";
-      return (
-        <i>
-          <Badge variant={"secondary"} className="mr-1 text-sm">
-            {name}
-          </Badge>
-          Circular reference to {loc}
-        </i>
-      );
-    }
-    visited.set(properties, [...path, key]);
-
-    return (
-      <ul className={`mt-2 grid gap-5 ${path.length ? "ml-4" : ""}`}>
-        {Object.entries(properties).map(([prop, value]) => (
-          <li key={prop}>
-            {render({
-              setEditPath,
-              schema: value,
-              path: [...path, key, prop],
-              required: schema.required?.includes(prop),
-              visited,
-            })}
-          </li>
-        ))}
-      </ul>
-    );
-  }
-
-  if (schema.type === "array") {
-    const key = "items";
-    const el = render({
-      setEditPath,
-      schema: schema[key],
-      path: [...path, key],
-      required: schema.required?.includes(key),
-      visited,
-    });
-    return el;
-  }
-  return null;
-}
-
-const headersMap: Record<string, "h3" | "h4" | "h5" | "h6"> = {
-  0: "h3", // should be bold for type field when no name in root schema
-  1: "h4",
-  2: "h5",
-  3: "h6",
-};
-
-function render(p: ISchema<{ header?: ReactNode }>) {
-  if (!p.schema) return null;
-  if (typeof p.schema === "boolean") return null;
-
-  const { visited } = p;
-
-  const circular = visited.get(p.schema);
-  if (circular) {
-    const name = p.path.at(-1);
-    const loc = p.path.slice(circular.length).reverse().join(" -> ") || "root";
-    return (
-      <i className="ml-4">
-        <Badge className="mr-1 text-sm font-bold">{name}</Badge>
-        Circular reference to {loc}
-      </i>
-    );
-  }
-  visited.set(p.schema, p.path);
-
   const subHeader = renderSubHeader(p);
-  const nested = renderChildren({ ...p, visited });
-  const depth = p.depth ?? p.path.length;
+  depth ??= p.path.length;
 
-  const isObject = p.schema.type === "object";
-  const arrayType =
-    p.schema.type === "array" &&
-    typeof p.schema.items === "object" &&
-    p.schema.items.type;
-
-  // const isArrayCollapsible = ["object", "array"].includes(arrayType as string);
-  // const collapsible = depth && (isObject || isArrayCollapsible);
-  const collapsible = depth && (isObject || arrayType);
-
-  const Comp = headersMap[depth] || "h6";
   const header = (
-    <Comp className={`inline-flex flex-wrap gap-2 ${depth ? "my-1" : ""}`}>
-      {renderHeader({ ...p, children: p.slots?.header })}
-    </Comp>
+    <div className={`inline-flex flex-wrap gap-2 ${depth ? "my-1" : ""}`}>
+      {renderHeader({ ...p, children: p.slots?.header, name })}
+    </div>
   );
+
+  const properties = K.properties in schema && (
+    <ul className={`mt-2 grid gap-5 ${p.path.length ? "ml-4" : ""}`}>
+      {Object.entries(schema[K.properties] ?? {}).map(([prop, value]) => (
+        <li key={prop}>
+          {render({
+            ...p,
+            schema: value,
+            path: [...p.path, K.properties, prop],
+            required: schema.required?.includes(prop),
+          })}
+        </li>
+      ))}
+    </ul>
+  );
+
+  const items =
+    K.items in schema &&
+    render({ ...p, schema: schema[K.items], path: [...p.path, K.items] });
+
+  const collapsible = depth && !!(properties || items);
+  const nested = (
+    <>
+      {properties}
+      {items}
+    </>
+  );
+
   const body = (
     <>
       {subHeader}
       {p.children}
-      <Description {...p.schema} path={p.path} />
+      <Description {...schema} path={p.path} />
       {nested}
     </>
   );
-
   if (!collapsible) {
     return (
       <div className={depth ? "ml-3.5" : ""}>
@@ -207,6 +144,5 @@ function render(p: ISchema<{ header?: ReactNode }>) {
 export const jsonSchema = {
   renderHeader,
   renderSubHeader,
-  renderChildren,
   render,
 };

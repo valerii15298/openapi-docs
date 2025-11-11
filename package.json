@@ -71,10 +71,5 @@
     "node": "24",
     "pnpm": "10.19.0"
   },
-  "packageManager": "pnpm@10.19.0",
-  "pnpm": {
-    "patchedDependencies": {
-      "@scalar/openapi-types": "patches/@scalar__openapi-types.patch"
-    }
-  }
+  "packageManager": "pnpm@10.19.0"
 }

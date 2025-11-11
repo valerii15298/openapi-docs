@@ -1,5 +1,7 @@
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
+import type { OpenAPIV3, OpenAPIV3_1 } from "@scalar/openapi-types";
 import { createContext, use, useState } from "react";
+
+import { resolveRef } from "#json-editor/utils";
 
 export interface OpenAPIContext {
   doc: OpenAPIV3_1.Document;
@@ -12,7 +14,16 @@ OpenAPIContext.displayName = "OpenAPIContext";
 export function useOpenAPI() {
   const ctx = use(OpenAPIContext);
   if (!ctx) throw new Error("useOpenAPI must be used within OpenAPIContext");
-  return ctx;
+  const { doc } = ctx;
+  function resolveRefObj<T extends object | undefined>(
+    obj: T | OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject,
+  ) {
+    if (obj && "$ref" in obj && obj.$ref) {
+      return resolveRef<T>(obj.$ref, doc);
+    }
+    return obj as T;
+  }
+  return { ...ctx, resolveRefObj };
 }
 
 export interface OperationContext {
@@ -41,15 +52,18 @@ export function useOperation() {
 }
 
 export function useProviderOperationState() {
-  const { responses = {}, requestBody = {} } = useOperation();
+  const { resolveRefObj } = useOpenAPI();
+  const op = useOperation();
 
-  const _requestContent = Object.keys(requestBody.content ?? {}).at(0);
+  const requestBody = resolveRefObj(op.requestBody);
+  const _requestContent = Object.keys(requestBody?.content ?? {}).at(0);
   const [requestContent, setRequestContent] = useState(_requestContent || "");
 
-  const response = Object.entries(responses)[0] || ["", { content: {} }];
-  const [responseStatus, setResponseStatus] = useState(response[0]);
+  const [response] = Object.entries(op.responses ?? {});
+  const [responseStatus, setResponseStatus] = useState(response?.[0] ?? "");
 
-  const _responseContent = Object.keys(response[1].content ?? {}).at(0) || "";
+  const _response = resolveRefObj(response?.[1]);
+  const _responseContent = Object.keys(_response?.content ?? {}).at(0) || "";
   const [responseContent, setResponseContent] = useState(_responseContent);
 
   return {

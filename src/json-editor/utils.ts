@@ -2,6 +2,19 @@ export function deepGet(obj: unknown, path: string[]) {
   return path.reduce((v: unknown, key) => v?.[key as keyof typeof v], obj);
 }
 
+export function resolveRef(ref: string, obj: object) {
+  if (!ref.startsWith("#/")) {
+    return undefined;
+  }
+
+  const path = ref
+    .slice(2)
+    .split("/")
+    .map((s) => s.replaceAll("~1", "/").replaceAll("~0", "~"));
+
+  return deepGet(obj, path);
+}
+
 export function deepSet(obj: unknown, path: string[], value: unknown): unknown {
   if (path.length === 0) return value;
 

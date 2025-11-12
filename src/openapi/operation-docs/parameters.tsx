@@ -8,7 +8,7 @@ import { methodClassNamesMap } from "#openapi/methods";
 
 export function ParametersDocs() {
   const o = useOperation();
-  const { resolveRefObj } = useOpenAPI();
+  const { resolveRefObj, doc } = useOpenAPI();
   const key = "parameters";
   const header = (
     <span className="flex flex-wrap gap-2">
@@ -44,6 +44,7 @@ export function ParametersDocs() {
                 <RenderJSONSchema
                   {...{
                     ...p,
+                    source: doc,
                     schema: p?.schema,
                     path: [...path, "schema"],
                     children: <Description {...p} path={path} />,

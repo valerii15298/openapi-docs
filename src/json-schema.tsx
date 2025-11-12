@@ -16,6 +16,7 @@ interface ISchema<Slots = object> {
   name?: string;
   setEditPath?: (path: string[]) => void;
   depth?: number;
+  source: unknown;
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   resolveRef: <T>(ref: string) => T | undefined;
@@ -75,7 +76,7 @@ export function RenderJSONSchema({
     if (refSchema) {
       allOf.push(refSchema as OpenAPIV3_1.SchemaObject);
       const { $ref: _, ...rest } = schema;
-      schema = merge({ ...rest, allOf }) as typeof schema;
+      schema = merge({ ...rest, allOf }, { source: p.source }) as typeof schema;
     }
   }
 

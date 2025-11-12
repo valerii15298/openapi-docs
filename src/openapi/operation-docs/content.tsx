@@ -17,7 +17,7 @@ export function Content(props: {
 }) {
   const entries = Object.entries(props[key] ?? {});
 
-  const { setEditPath, resolveRefObj } = useOpenAPI();
+  const { setEditPath, resolveRefObj, doc } = useOpenAPI();
   const op = useOperation();
 
   return (
@@ -44,6 +44,7 @@ export function Content(props: {
                 path: [...path, K.schema],
                 name: "",
                 depth: 0,
+                source: doc,
                 setEditPath,
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
                 resolveRef<T>($ref: string) {

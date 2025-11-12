@@ -22,6 +22,7 @@ export const K = Enum(
   "securitySchemes",
 
   "required",
+  "enum",
 
   "examples",
   "example",

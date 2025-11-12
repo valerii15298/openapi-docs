@@ -51,47 +51,55 @@ function renderHeader(p: ISchema) {
   );
 }
 
-function renderSubHeader({ schema, path = [] }: ISchema) {
-  if (!schema) return null;
-  if (typeof schema === "boolean") return null;
+function render({
+  children,
+  depth,
 
-  const key = "enum";
-  const allowedValues = schema[key] && (
+  name,
+  slots,
+  required,
+  schema,
+  path,
+
+  ...p
+}: ISchema<{ header?: ReactNode }>) {
+  if (typeof schema === "boolean") return null;
+  if (!schema) return null;
+
+  depth ??= path.length;
+
+  const header = (
+    <div className={`inline-flex flex-wrap gap-2 ${depth ? "my-1" : ""}`}>
+      {renderHeader({
+        ...p,
+        name,
+        children: slots?.header,
+        required,
+        schema,
+        path,
+      })}
+    </div>
+  );
+
+  const allowedValues = K.enum in schema && (
     <p className="flex flex-wrap items-center gap-1">
       Allowed values:{" "}
-      {schema[key].map((v) => (
-        <Badge variant="secondary" key={[...path, key, v].join("-")} asChild>
+      {schema[K.enum]?.map((v) => (
+        <Badge variant="secondary" key={[...path, K.enum, v].join("-")} asChild>
           <code>{JSON.stringify(v)}</code>
         </Badge>
       ))}
     </p>
   );
 
-  return <>{allowedValues}</>;
-}
-
-function render({ name, depth, ...p }: ISchema<{ header?: ReactNode }>) {
-  const { schema } = p;
-  if (!schema) return null;
-  if (typeof schema === "boolean") return null;
-
-  const subHeader = renderSubHeader(p);
-  depth ??= p.path.length;
-
-  const header = (
-    <div className={`inline-flex flex-wrap gap-2 ${depth ? "my-1" : ""}`}>
-      {renderHeader({ ...p, children: p.slots?.header, name })}
-    </div>
-  );
-
   const properties = K.properties in schema && (
-    <ul className={`mt-2 grid gap-5 ${p.path.length ? "ml-4" : ""}`}>
+    <ul className={`mt-2 grid gap-5 ${path.length ? "ml-4" : ""}`}>
       {Object.entries(schema[K.properties] ?? {}).map(([prop, value]) => (
         <li key={prop}>
           {render({
             ...p,
             schema: value,
-            path: [...p.path, K.properties, prop],
+            path: [...path, K.properties, prop],
             required: schema.required?.includes(prop),
           })}
         </li>
@@ -101,11 +109,12 @@ function render({ name, depth, ...p }: ISchema<{ header?: ReactNode }>) {
 
   const items =
     K.items in schema &&
-    render({ ...p, schema: schema[K.items], path: [...p.path, K.items] });
+    render({ ...p, schema: schema[K.items], path: [...path, K.items] });
 
-  const collapsible = depth && !!(properties || items);
+  const collapsible = depth && !!(properties || items || allowedValues);
   const nested = (
     <>
+      {allowedValues}
       {properties}
       {items}
     </>
@@ -113,9 +122,8 @@ function render({ name, depth, ...p }: ISchema<{ header?: ReactNode }>) {
 
   const body = (
     <>
-      {subHeader}
-      {p.children}
-      <Description {...schema} path={p.path} />
+      {children}
+      <Description {...schema} path={path} />
       {nested}
     </>
   );
@@ -141,8 +149,4 @@ function render({ name, depth, ...p }: ISchema<{ header?: ReactNode }>) {
   );
 }
 
-export const jsonSchema = {
-  renderHeader,
-  renderSubHeader,
-  render,
-};
+export const jsonSchema = { renderHeader, render };

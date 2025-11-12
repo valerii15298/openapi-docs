@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "@scalar/oas-utils": "^0.5.0",
-    "@scalar/openapi-parser": "^0.22.1",
     "@scalar/openapi-types": "^0.5.0",
     "@types/content-type": "^1.1.9",
     "allof-merge": "^0.6.7",

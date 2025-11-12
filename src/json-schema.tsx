@@ -76,7 +76,16 @@ export function RenderJSONSchema({
     if (refSchema) {
       allOf.push(refSchema as OpenAPIV3_1.SchemaObject);
       const { $ref: _, ...rest } = schema;
-      schema = merge({ ...rest, allOf }, { source: p.source }) as typeof schema;
+      schema = merge(
+        { ...rest, allOf },
+        {
+          source: p.source,
+          // eslint-disable-next-line no-console
+          onMergeError: (...args) => console.error(...args),
+          // eslint-disable-next-line no-console
+          onRefResolveError: (...args) => console.error(...args),
+        },
+      ) as typeof schema;
     }
   }
 

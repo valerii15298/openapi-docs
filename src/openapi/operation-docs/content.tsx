@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { Description } from "#description";
-import { jsonSchema } from "#json-schema";
+import { RenderJSONSchema } from "#json-schema";
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 
@@ -38,17 +38,19 @@ export function Content(props: {
         const path = [...props.path, key, type];
         return (
           <TabsContent key={type} value={type}>
-            {jsonSchema.render({
-              schema: media.schema,
-              path: [...path, K.schema],
-              name: "",
-              depth: 0,
-              setEditPath,
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-              resolveRef<T>($ref: string) {
-                return resolveRefObj({ $ref }) as T;
-              },
-            })}
+            <RenderJSONSchema
+              {...{
+                schema: media.schema,
+                path: [...path, K.schema],
+                name: "",
+                depth: 0,
+                setEditPath,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+                resolveRef<T>($ref: string) {
+                  return resolveRefObj({ $ref }) as T;
+                },
+              }}
+            />
           </TabsContent>
         );
       })}

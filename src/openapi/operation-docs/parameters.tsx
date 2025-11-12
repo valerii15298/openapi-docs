@@ -2,7 +2,7 @@ import { Badge } from "@sane-ts/shadcn-ui";
 
 import { Description } from "#description";
 import { preventDoubleClick } from "#json-editor/utils";
-import { jsonSchema } from "#json-schema";
+import { RenderJSONSchema } from "#json-schema";
 import { useOpenAPI, useOperation } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
 
@@ -41,17 +41,19 @@ export function ParametersDocs() {
 
           return (
             <li key={id} id={id} className={`grid gap-1`}>
-              {jsonSchema.render({
-                ...p,
-                schema: parameter?.schema,
-                path: [...path, "schema"],
-                children: <Description {...p} path={path} />,
-                depth: 1,
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-                resolveRef<T>($ref: string) {
-                  return resolveRefObj({ $ref }) as T;
-                },
-              })}
+              <RenderJSONSchema
+                {...{
+                  ...p,
+                  schema: parameter?.schema,
+                  path: [...path, "schema"],
+                  children: <Description {...p} path={path} />,
+                  depth: 1,
+                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+                  resolveRef<T>($ref: string) {
+                    return resolveRefObj({ $ref }) as T;
+                  },
+                }}
+              />
             </li>
           );
         })}

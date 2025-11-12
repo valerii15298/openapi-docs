@@ -1,6 +1,7 @@
 import { Badge } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import type { ReactNode } from "react";
+import { merge } from "allof-merge";
+import { type ReactNode, useState } from "react";
 
 import { Description } from "#description";
 import { preventDoubleClick } from "#json-editor/utils";
@@ -51,7 +52,8 @@ function renderHeader(p: ISchema) {
   );
 }
 
-function render({
+// eslint-disable-next-line complexity
+export function RenderJSONSchema({
   children,
   depth,
 
@@ -63,8 +65,19 @@ function render({
 
   ...p
 }: ISchema<{ header?: ReactNode }>) {
+  const [open, setOpen] = useState(false);
   if (typeof schema === "boolean") return null;
   if (!schema) return null;
+
+  const allOf = schema.allOf ?? [];
+  if (K.$ref in schema && typeof schema.$ref === "string") {
+    const refSchema = p.resolveRef(schema.$ref);
+    if (refSchema) {
+      allOf.push(refSchema as OpenAPIV3_1.SchemaObject);
+      const { $ref: _, ...rest } = schema;
+      schema = merge({ ...rest, allOf }) as typeof schema;
+    }
+  }
 
   depth ??= path.length;
 
@@ -96,20 +109,24 @@ function render({
     <ul className={`mt-2 grid gap-5 ${path.length ? "ml-4" : ""}`}>
       {Object.entries(schema[K.properties] ?? {}).map(([prop, value]) => (
         <li key={prop}>
-          {render({
-            ...p,
-            schema: value,
-            path: [...path, K.properties, prop],
-            required: schema.required?.includes(prop),
-          })}
+          <RenderJSONSchema
+            {...p}
+            schema={value}
+            path={[...path, K.properties, prop]}
+            required={schema.required?.includes(prop)}
+          />
         </li>
       ))}
     </ul>
   );
 
-  const items =
-    K.items in schema &&
-    render({ ...p, schema: schema[K.items], path: [...path, K.items] });
+  const items = K.items in schema && (
+    <RenderJSONSchema
+      {...p}
+      schema={schema[K.items]}
+      path={[...path, K.items]}
+    />
+  );
 
   const collapsible = depth && !!(properties || items || allowedValues);
   const nested = (
@@ -137,16 +154,14 @@ function render({
   }
 
   return (
-    <details>
+    <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary
         onMouseDown={preventDoubleClick}
         className="w-fit cursor-pointer items-center"
       >
         {header}
       </summary>
-      <div className="border-accent ml-1 border-l pl-3">{body}</div>
+      {open && <div className="border-accent ml-1 border-l pl-3">{body}</div>}
     </details>
   );
 }
-
-export const jsonSchema = { renderHeader, render };

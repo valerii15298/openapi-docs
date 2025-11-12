@@ -23,6 +23,7 @@ export const K = Enum(
 
   "required",
   "enum",
+  "$ref",
 
   "examples",
   "example",

@@ -9,11 +9,12 @@ import {
 import { startTransition } from "react";
 
 import { K } from "#openapi/const";
-import { useOperation, useOperationState } from "#openapi/context";
+import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
 
 const key = K.responses;
 export function Responses() {
+  const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
   const opState = useOperationState();
   const path = [...o.path, key];
@@ -51,16 +52,18 @@ export function Responses() {
         </TabsList>
       </h2>
       <Separator className={"-mt-1"} />
-      {entries.map(([status, resp]) => (
-        <TabsContent key={status} value={status}>
-          <Content
-            {...resp}
-            path={[...path, status]}
-            value={opState.responseContent}
-            onValueChange={opState.setResponseContent}
-          />
-        </TabsContent>
-      ))}
+      {entries
+        .map(([s, r]) => [s, resolveRefObj(r)] as const)
+        .map(([status, resp]) => (
+          <TabsContent key={status} value={status}>
+            <Content
+              {...resp}
+              path={[...path, status]}
+              value={opState.responseContent}
+              onValueChange={opState.setResponseContent}
+            />
+          </TabsContent>
+        ))}
     </Tabs>
   );
 }

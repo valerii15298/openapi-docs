@@ -34,29 +34,29 @@ export function ParametersDocs() {
         {header}
       </summary>
       <ul className="border-accent ml-1 grid gap-4 border-l pt-3">
-        {o[key].map((p, idx) => {
-          const path = [...o.path, key, idx.toString()];
-          const id = o.makeId(path);
-          const parameter = resolveRefObj(p);
-
-          return (
-            <li key={id} id={id} className={`grid gap-1`}>
-              <RenderJSONSchema
-                {...{
-                  ...p,
-                  schema: parameter?.schema,
-                  path: [...path, "schema"],
-                  children: <Description {...p} path={path} />,
-                  depth: 1,
-                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-                  resolveRef<T>($ref: string) {
-                    return resolveRefObj({ $ref }) as T;
-                  },
-                }}
-              />
-            </li>
-          );
-        })}
+        {o[key]
+          .map((p) => resolveRefObj(p))
+          .map((p, idx) => {
+            const path = [...o.path, key, idx.toString()];
+            const id = o.makeId(path);
+            return (
+              <li key={id} id={id} className={`grid gap-1`}>
+                <RenderJSONSchema
+                  {...{
+                    ...p,
+                    schema: p?.schema,
+                    path: [...path, "schema"],
+                    children: <Description {...p} path={path} />,
+                    depth: 1,
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+                    resolveRef<T>($ref: string) {
+                      return resolveRefObj({ $ref }) as T;
+                    },
+                  }}
+                />
+              </li>
+            );
+          })}
       </ul>
     </details>
   );

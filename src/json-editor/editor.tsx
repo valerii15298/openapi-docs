@@ -23,10 +23,12 @@ import { deepGet } from "#json-editor/utils";
 
 function EditorContent({
   schema,
+  schemaURI,
   onValueChange,
   ...props
 }: Omit<React.ComponentProps<"div">, "value"> & {
   schema?: object;
+  schemaURI?: string;
   onValueChange?: (value: unknown) => void;
 }) {
   const ctx = useEditorContext();
@@ -71,6 +73,7 @@ function EditorContent({
         format={ctx.format}
         className={cn(props.className)}
         schema={ctx.path.length ? undefined : schema}
+        schemaURI={ctx.path.length ? undefined : schemaURI}
       />
     );
   }
@@ -81,6 +84,7 @@ function EditorContent({
 type EditorProps<TData = unknown> = {
   onValueChange?: (value: unknown) => void;
   schema?: object;
+  schemaURI?: string;
 } & Omit<React.ComponentProps<typeof ResizablePanelGroup>, "direction"> &
   (
     | { default?: EditorDefaultOpts<TData>; ctx?: undefined }
@@ -92,6 +96,7 @@ export function Editor<TData = unknown>({
   ctx: context,
   onValueChange,
   schema,
+  schemaURI,
   children,
   ...props
 }: EditorProps<TData>) {
@@ -108,6 +113,7 @@ export function Editor<TData = unknown>({
           <EditorContent
             className="min-h-0 flex-1"
             schema={schema}
+            schemaURI={schemaURI}
             onValueChange={onValueChange}
           />
         </ResizablePanel>

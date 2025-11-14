@@ -76,21 +76,31 @@ function setJsonSchema(schema: SchemasSettings) {
 
 function setModelSchema(
   model: monaco.editor.ITextModel,
-  schema: unknown,
   format: EditorFormat,
+  opts: { schema?: unknown; uri?: string },
 ) {
-  if (!schema) return () => null;
-  const uri = `file:///${Math.random()}.${format}`;
+  let cleanup = (): void => void 0;
+
+  if (!opts.schema && !opts.uri) return cleanup;
+  if (!opts.uri) {
+    const blob = new Blob([JSON.stringify(opts.schema)]);
+    opts.uri = URL.createObjectURL(blob);
+  }
   const fileMatch = [model.uri.toString()];
-  const newSchema = { uri, schema, fileMatch } as SchemasSettings;
+  const newSchema = { ...opts, fileMatch } as SchemasSettings;
 
   if (format === EditorFormat.json) {
-    return setJsonSchema(newSchema);
+    cleanup = setJsonSchema(newSchema);
   }
   if (format === EditorFormat.yaml) {
-    return setYamlSchema(newSchema);
+    cleanup = setYamlSchema(newSchema);
   }
-  return () => null;
+  return () => {
+    cleanup();
+    if (opts.uri?.startsWith("blob:")) {
+      URL.revokeObjectURL(opts.uri);
+    }
+  };
 }
 
 interface MonacoEditorProps {
@@ -98,6 +108,7 @@ interface MonacoEditorProps {
   onValueChange?: (value: unknown) => void;
   onError?: (error: unknown) => void;
   schema?: object;
+  schemaURI?: string;
   format?: EditorFormat;
   readOnly?: boolean;
 }
@@ -106,6 +117,7 @@ export function MonacoEditor({
   onValueChange,
   onError,
   schema,
+  schemaURI,
   format = EditorFormat.json,
   readOnly,
   ...props
@@ -163,7 +175,10 @@ export function MonacoEditor({
 
     editorRef.current = editor;
 
-    const removeModelSchema = setModelSchema(model, schema, format);
+    const removeModelSchema = setModelSchema(model, format, {
+      schema,
+      uri: schemaURI,
+    });
     return () => {
       removeModelSchema();
       editor.dispose();

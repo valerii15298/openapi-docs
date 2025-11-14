@@ -15,7 +15,11 @@ import { Editor } from "#json-editor/editor";
 import { EditorTabs } from "#json-editor/tabs";
 import { Docs } from "#openapi/docs";
 import { ImportSpec } from "#openapi/import-spec";
-import { openapiSchema } from "#openapi-schema";
+
+// TODO import schema from openapi-validator package when it will be ready
+// This is a temporary workaround to have the schema available
+const OPENAPI_SCHEMA_URL =
+  "https://gist.githubusercontent.com/valerii15298/b3793b3d47ebeaa5dd2baa96aa6d7c8e/raw/fa8084ef0f4d2a9387f6d0f834e7d022e408f3fa/json-schema-openapi-3-1.json";
 
 export function Playground(p: { defaultSpec: OpenAPIV3_1.Document }) {
   const [selectingEditTarget, setSelectingEditTarget] = useState(false);
@@ -49,7 +53,7 @@ export function Playground(p: { defaultSpec: OpenAPIV3_1.Document }) {
         <Editor
           key={uri}
           ctx={editorCtx}
-          schema={openapiSchema}
+          schemaURI={OPENAPI_SCHEMA_URL}
           onValueChange={(value) => {
             editorCtx.setData(value as OpenAPIV3_1.Document);
             // TODO validate in web worker

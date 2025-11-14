@@ -61,14 +61,13 @@ export function useOperation() {
 
   const op: OpenAPIV3_1.OperationObject | undefined =
     doc.paths?.[ctx.pathname]?.[ctx.method];
-  if (!op) throw new Error("Operation not found in the OpenAPI document");
 
   function makeId(path: string[]) {
     return path.join("-");
   }
 
   const path = ["paths", ctx.pathname, ctx.method];
-  const servers = [...(op.servers ?? []), ...(doc.servers ?? [])];
+  const servers = [...(op?.servers ?? []), ...(doc.servers ?? [])];
   return { ...op, ...ctx, makeId, path, servers };
 }
 

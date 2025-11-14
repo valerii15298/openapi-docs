@@ -30,14 +30,18 @@ export function useOpenAPI() {
     if (!schema || typeof schema !== "object") {
       return {};
     }
-    const docKeys = new Set(Object.keys(doc));
+    const { components, paths, webhooks } = doc;
+    const reusable = { components, paths, webhooks };
+
+    const rootKeys = new Set(Object.keys(reusable));
     const schemaKeys = new Set(Object.keys(schema));
-    const commonKeys = docKeys.intersection(schemaKeys);
+    const commonKeys = rootKeys.intersection(schemaKeys);
     if (commonKeys.size) {
       // eslint-disable-next-line no-console
-      console.error("Common keys", commonKeys);
+      console.error("Common keys: ", commonKeys);
     }
-    return { ...doc, ...schema };
+
+    return { ...reusable, ...schema };
   }
 
   return { ...ctx, resolveRefObj, extractSchema };

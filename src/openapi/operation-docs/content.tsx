@@ -17,7 +17,7 @@ export function Content(props: {
 }) {
   const entries = Object.entries(props[key] ?? {});
 
-  const { setEditPath, resolveRefObj, doc } = useOpenAPI();
+  const { setEditPath, doc } = useOpenAPI();
   const op = useOperation();
 
   return (
@@ -46,10 +46,6 @@ export function Content(props: {
                 depth: 0,
                 source: doc,
                 setEditPath,
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-                resolveRef<T>($ref: string) {
-                  return resolveRefObj({ $ref }) as T;
-                },
               }}
             />
           </TabsContent>

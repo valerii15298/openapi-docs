@@ -49,10 +49,6 @@ export function ParametersDocs() {
                     path: [...path, "schema"],
                     children: <Description {...p} path={path} />,
                     depth: 1,
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-                    resolveRef<T>($ref: string) {
-                      return resolveRefObj({ $ref }) as T;
-                    },
                   }}
                 />
               </li>

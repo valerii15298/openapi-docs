@@ -17,9 +17,6 @@ interface ISchema<Slots = object> {
   setEditPath?: (path: string[]) => void;
   depth?: number;
   source: unknown;
-
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-  resolveRef: <T>(ref: string) => T | undefined;
 }
 
 function renderHeader(p: ISchema) {
@@ -53,7 +50,32 @@ function renderHeader(p: ISchema) {
   );
 }
 
-// eslint-disable-next-line complexity
+function simplifySchema(
+  schema: OpenAPIV3_1.SchemaObject,
+  source: unknown,
+): OpenAPIV3_1.SchemaObject {
+  if (!schema || typeof schema !== "object") return schema;
+  if (!(K.$ref in schema)) return schema;
+
+  const { $ref, ...rest } = schema;
+  if (typeof $ref !== "string") return schema;
+
+  const allOf = schema.allOf ?? [];
+  allOf.push({ $ref });
+
+  return merge(
+    { ...rest, allOf },
+    {
+      source,
+      // TODO add callback onError function to propagate errors back
+      // eslint-disable-next-line no-console
+      onMergeError: (...args) => console.log(...args),
+      // eslint-disable-next-line no-console
+      onRefResolveError: (...args) => console.log(...args),
+    },
+  ) as typeof schema;
+}
+
 export function RenderJSONSchema({
   children,
   depth,
@@ -67,26 +89,10 @@ export function RenderJSONSchema({
   ...p
 }: ISchema<{ header?: ReactNode }>) {
   const [open, setOpen] = useState(false);
-  if (typeof schema === "boolean") return null;
-  if (!schema) return null;
 
-  const allOf = schema.allOf ?? [];
-  if (K.$ref in schema && typeof schema.$ref === "string") {
-    const refSchema = p.resolveRef(schema.$ref);
-    if (refSchema) {
-      allOf.push(refSchema as OpenAPIV3_1.SchemaObject);
-      const { $ref: _, ...rest } = schema;
-      schema = merge(
-        { ...rest, allOf },
-        {
-          source: p.source,
-          // eslint-disable-next-line no-console
-          onMergeError: (...args) => console.error(...args),
-          // eslint-disable-next-line no-console
-          onRefResolveError: (...args) => console.error(...args),
-        },
-      ) as typeof schema;
-    }
+  schema = simplifySchema(schema ?? {}, p.source);
+  if (!schema || typeof schema !== "object") {
+    schema = {};
   }
 
   depth ??= path.length;

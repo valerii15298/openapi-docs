@@ -73,7 +73,7 @@ function OperationPlaygroundResponse(
 export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
   const op = useOperation();
   const { responseStatus, responseContent } = useOperationState();
-  const { resolveRefObj, doc } = useOpenAPI();
+  const { resolveRefObj, doc, extractSchema } = useOpenAPI();
   const response = resolveRefObj(op.responses?.[responseStatus]);
   const media = response?.content?.[responseContent];
   const path = [...op.path, K.responses, responseStatus, K.content];
@@ -117,7 +117,12 @@ export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
           {resp ? (
             <OperationPlaygroundResponse {...resp} example={example} />
           ) : (
-            <Example summary="Example" value={example} path={[]} />
+            <Example
+              summary="Example"
+              schema={extractSchema(schema)}
+              value={example}
+              path={[]}
+            />
           )}
         </TabsContent>
       </section>

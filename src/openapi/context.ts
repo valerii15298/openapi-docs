@@ -23,7 +23,24 @@ export function useOpenAPI() {
     }
     return obj as T;
   }
-  return { ...ctx, resolveRefObj };
+
+  function extractSchema(
+    schema: OpenAPIV3_1.SchemaObject,
+  ): OpenAPIV3_1.SchemaObject {
+    if (!schema || typeof schema !== "object") {
+      return {};
+    }
+    const docKeys = new Set(Object.keys(doc));
+    const schemaKeys = new Set(Object.keys(schema));
+    const commonKeys = docKeys.intersection(schemaKeys);
+    if (commonKeys.size) {
+      // eslint-disable-next-line no-console
+      console.error("Common keys", commonKeys);
+    }
+    return { ...doc, ...schema };
+  }
+
+  return { ...ctx, resolveRefObj, extractSchema };
 }
 
 export interface OperationContext {

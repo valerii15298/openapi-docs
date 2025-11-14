@@ -6,8 +6,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@sane-ts/shadcn-ui";
-// eslint-disable-next-line import-x/no-deprecated
-import { getExampleFromSchema } from "@scalar/oas-utils/spec-getters";
+import { sample } from "openapi-sampler";
 import { useEffect, useState } from "react";
 
 import { RenderError } from "#json-editor/render-error";
@@ -27,8 +26,6 @@ export type PlaygroundResponse =
 
 const ResponseTab = Enum("preview", "examples");
 type ResponseTab = keyof typeof ResponseTab;
-
-const emptyString = "string";
 
 function jsonParse(str: string) {
   try {
@@ -76,7 +73,7 @@ function OperationPlaygroundResponse(
 export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
   const op = useOperation();
   const { responseStatus, responseContent } = useOperationState();
-  const { resolveRefObj } = useOpenAPI();
+  const { resolveRefObj, doc } = useOpenAPI();
   const response = resolveRefObj(op.responses?.[responseStatus]);
   const media = response?.content?.[responseContent];
   const path = [...op.path, K.responses, responseStatus, K.content];
@@ -87,10 +84,8 @@ export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
     if (resp) setTab(ResponseTab.preview);
   }, [resp]);
 
-  const example: unknown =
-    media?.example ??
-    // eslint-disable-next-line @typescript-eslint/no-deprecated, import-x/no-deprecated
-    (media?.schema && getExampleFromSchema(media.schema, { emptyString }));
+  const schema = typeof media?.schema === "object" ? media.schema : {};
+  const example: unknown = media?.example ?? sample(schema as object, {}, doc);
 
   return (
     <Tabs

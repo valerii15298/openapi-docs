@@ -1,15 +1,16 @@
 import { Badge } from "@sane-ts/shadcn-ui";
 
 import { Description } from "#description";
-import { preventDoubleClick } from "#json-editor/utils";
 import { RenderJSONSchema } from "#json-schema";
+import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
+import { Collapse } from "#util";
 
 export function ParametersDocs() {
   const o = useOperation();
   const { resolveRefObj, doc } = useOpenAPI();
-  const key = "parameters";
+  const key = K.parameters;
   const header = (
     <span className="flex flex-wrap gap-2">
       <Badge
@@ -25,36 +26,26 @@ export function ParametersDocs() {
   if (!o[key]?.length) {
     return <div>{header}</div>;
   }
-  return (
-    <details open>
-      <summary
-        onMouseDown={preventDoubleClick}
-        className="flex cursor-pointer items-center gap-2"
-      >
-        {header}
-      </summary>
-      <ul className="border-accent ml-1 grid gap-4 border-l pt-3">
-        {o[key]
-          .map((p) => resolveRefObj(p))
-          .map((p, idx) => {
-            const path = [...o.path, key, idx.toString()];
-            const id = o.makeId(path);
-            return (
-              <li key={id} id={id} className={`grid gap-1`}>
-                <RenderJSONSchema
-                  {...{
-                    ...p,
-                    source: doc,
-                    schema: p?.schema,
-                    path: [...path, "schema"],
-                    children: <Description {...p} path={path} />,
-                    depth: 1,
-                  }}
-                />
-              </li>
-            );
-          })}
-      </ul>
-    </details>
-  );
+  const parameters = o[key]
+    .map((p) => resolveRefObj(p))
+    .map((p, idx) => {
+      const path = [...o.path, key, idx.toString()];
+      const id = o.makeId(path);
+      return (
+        <li key={id} id={id} className={`grid gap-1`}>
+          <RenderJSONSchema
+            {...{
+              ...p,
+              source: doc,
+              schema: p?.schema,
+              path: [...path, "schema"],
+              children: <Description {...p} path={path} />,
+              depth: 1,
+            }}
+          />
+        </li>
+      );
+    });
+  const body = <ul className="mt-4 grid gap-4">{parameters}</ul>;
+  return <Collapse header={header} children={body} />;
 }

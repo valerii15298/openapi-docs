@@ -1,6 +1,5 @@
 /// <reference types="vite/client" />
 import "./index.css";
-import "./style.css";
 import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { Playground, HttpProxyContext, getWorker } from "openapi-docs";

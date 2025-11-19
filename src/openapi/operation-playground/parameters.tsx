@@ -8,12 +8,12 @@ import {
 import { HelpCircle } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
-import { preventDoubleClick } from "#json-editor/utils";
 import { defaultValueMap, K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 import { Examples } from "#openapi/operation-docs/examples";
 import { useFormContext } from "#openapi/operation-playground/create-request";
 import { SchemaInput } from "#openapi/operation-playground/schema-field";
+import { Collapse } from "#util";
 
 export function ParameterInput(
   p: OpenAPIV3_1.ParameterObject & { path: string[] },
@@ -90,28 +90,23 @@ export function ParametersInput() {
   const o = useOperation();
   const { resolveRefObj } = useOpenAPI();
 
-  return (
-    <details open hidden={!o.parameters?.length}>
-      <summary
-        onMouseDown={preventDoubleClick}
-        className="cursor-pointer text-lg font-medium"
-      >
-        Parameters
-      </summary>
-      <ol className="mt-2 grid gap-4 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 @5xl:grid-cols-5 @6xl:grid-cols-6 @7xl:grid-cols-7">
-        {o.parameters
-          ?.map((p) => resolveRefObj(p))
-          .map(
-            (p, idx) =>
-              p?.schema && (
-                <ParameterInput
-                  key={[p.in, p.name].join(".")}
-                  {...p}
-                  path={[...o.path, K.parameters, idx.toString()]}
-                />
-              ),
-          )}
-      </ol>
-    </details>
+  const body = (
+    <ol className="mt-2 grid gap-4 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 @5xl:grid-cols-5 @6xl:grid-cols-6 @7xl:grid-cols-7">
+      {o.parameters
+        ?.map((p) => resolveRefObj(p))
+        .map(
+          (p, idx) =>
+            p?.schema && (
+              <ParameterInput
+                key={[p.in, p.name].join(".")}
+                {...p}
+                path={[...o.path, K.parameters, idx.toString()]}
+              />
+            ),
+        )}
+    </ol>
   );
+  const header = <h4 className="text-lg font-medium">Parameters</h4>;
+  const hidden = !o.parameters?.length;
+  return <Collapse hidden={hidden} header={header} children={body} />;
 }

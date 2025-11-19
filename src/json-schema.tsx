@@ -1,11 +1,11 @@
-import { Badge } from "@sane-ts/shadcn-ui";
+import { Badge, cn } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { merge } from "allof-merge";
-import { type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 
 import { Description } from "#description";
-import { preventDoubleClick } from "#json-editor/utils";
 import { K } from "#openapi/const";
+import { Collapse } from "#util";
 
 interface ISchema<Slots = object> {
   schema?: OpenAPIV3_1.SchemaObject;
@@ -88,8 +88,6 @@ export function RenderJSONSchema({
 
   ...p
 }: ISchema<{ header?: ReactNode }>) {
-  const [open, setOpen] = useState(false);
-
   schema = simplifySchema(schema ?? {}, p.source);
   if (!schema || typeof schema !== "object") {
     schema = {};
@@ -162,22 +160,12 @@ export function RenderJSONSchema({
   );
   if (!collapsible) {
     return (
-      <div className={depth ? "ml-3.5" : ""}>
+      <div className={cn(depth && "ml-4")}>
         {header}
         {body}
       </div>
     );
   }
 
-  return (
-    <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
-      <summary
-        onMouseDown={preventDoubleClick}
-        className="w-fit cursor-pointer items-center"
-      >
-        {header}
-      </summary>
-      {open && <div className="border-accent ml-1 border-l pl-3">{body}</div>}
-    </details>
-  );
+  return <Collapse header={header} children={body} />;
 }

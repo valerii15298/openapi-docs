@@ -3,11 +3,11 @@ import "./index.css";
 import "./style.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { setupMonacoWorkers, Playground, HttpProxyContext } from "openapi-docs";
+import { Playground, HttpProxyContext, getWorker } from "openapi-docs";
 import { spec } from "./spec.js";
 import { ThemeProvider } from "@sane-ts/shadcn-ui";
 
-setupMonacoWorkers();
+globalThis.MonacoEnvironment = { getWorker };
 
 const app = (
   <ThemeProvider>

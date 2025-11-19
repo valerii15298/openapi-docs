@@ -18,12 +18,12 @@ function EditorFormatDropdown() {
   const ctx = useEditorContext();
   return (
     <DropdownMenu>
-      <ToggleGroupItem asChild value="code" className="p-0">
+      <ToggleGroupItem asChild value="code" className="cursor-pointer p-0">
         <DropdownMenuTrigger>
           <ChevronDown />
         </DropdownMenuTrigger>
       </ToggleGroupItem>
-      <DropdownMenuContent>
+      <DropdownMenuContent align="end">
         <DropdownMenuLabel>Format</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup

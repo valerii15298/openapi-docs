@@ -36,7 +36,7 @@ function jsonParse(str: string) {
 }
 
 function OperationPlaygroundResponse(
-  resp: PlaygroundResponse & { example?: unknown },
+  resp: PlaygroundResponse & { example?: unknown; path: string[] },
 ) {
   type Option = "body" | "headers" | "example";
   const [tab, setTab] = useState<Option>("body");
@@ -65,18 +65,19 @@ function OperationPlaygroundResponse(
     </ToggleGroup>
   );
 
-  return (
-    <Example key={tab} summaryElement={mode} value={response[tab]} path={[]} />
-  );
+  const path = [...resp.path, K.example];
+  const value = response[tab];
+  return <Example key={tab} summaryElement={mode} value={value} path={path} />;
 }
 
 export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
   const op = useOperation();
-  const { responseStatus, responseContent } = useOperationState();
+  const { responseStatus: status, responseContent: content } =
+    useOperationState();
   const { resolveRefObj, doc, extractSchema } = useOpenAPI();
-  const response = resolveRefObj(op.responses?.[responseStatus]);
-  const media = response?.content?.[responseContent];
-  const path = [...op.path, K.responses, responseStatus, K.content];
+  const response = resolveRefObj(op.responses?.[status]);
+  const media = response?.content?.[content];
+  const path = [...op.path, K.responses, status, K.content, content];
 
   const defaultTab = media?.examples ? "examples" : "preview";
   const [tab, setTab] = useState<ResponseTab>(defaultTab);
@@ -106,7 +107,7 @@ export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
           </TabsList>
         </h3>
         <TabsContent value={ResponseTab.examples}>
-          <Examples {...media} path={[...path, responseContent]} />
+          <Examples {...media} path={path} />
         </TabsContent>
         <TabsContent value={ResponseTab.preview}>
           {
@@ -115,13 +116,17 @@ export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
             // for Example component make summary a jsx element and pass to it tabs(toggle group) of example|body|headers
           }
           {resp ? (
-            <OperationPlaygroundResponse {...resp} example={example} />
+            <OperationPlaygroundResponse
+              {...resp}
+              path={[...path, K.example]}
+              example={example}
+            />
           ) : (
             <Example
-              summary="Example"
+              summaryElement="Example"
               schema={extractSchema(schema)}
               value={example}
-              path={[]}
+              path={[...path, K.example]}
             />
           )}
         </TabsContent>

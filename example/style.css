@@ -27,11 +27,3 @@ summary::before {
 details[open] > summary::before {
   content: "▼ ";
 }
-
-.example .monaco-editor {
-  --vscode-editorGutter-background: var(--background) !important;
-}
-
-[data-slot="popover-content"] .example .monaco-editor {
-  --vscode-editorGutter-background: var(--popover) !important;
-}

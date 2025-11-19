@@ -6,7 +6,20 @@ import type { ReactNode } from "react";
 import { Description } from "#description";
 import { Editor } from "#json-editor/editor";
 import { EditorTabs } from "#json-editor/tabs";
+import { useOperation } from "#openapi/context";
 import { CodeSample } from "#openapi/operation-docs/code-sample";
+
+function getStyle(id: string) {
+  return `
+    #${CSS.escape(id)} .monaco-editor {
+      --vscode-editorGutter-background: var(--background);
+    }
+
+    [data-slot="popover-content"] #${CSS.escape(id)} .monaco-editor {
+      --vscode-editorGutter-background: var(--popover);
+    }
+`;
+}
 
 export function Example(
   e: OpenAPIV3_1.ExampleObject & {
@@ -15,6 +28,9 @@ export function Example(
     summaryElement?: ReactNode;
   },
 ) {
+  const op = useOperation();
+  const id = op.makeId(e.path);
+
   const summary = e.summaryElement || (
     <h4
       hidden={!e.externalValue && !e.summary}
@@ -55,7 +71,8 @@ export function Example(
   }
 
   return (
-    <section className="example">
+    <section id={id}>
+      <style>{getStyle(id)}</style>
       <div
         style={{ height: `${initialHeight}px` }}
         className="-ml-5 resize-y overflow-hidden pb-4"

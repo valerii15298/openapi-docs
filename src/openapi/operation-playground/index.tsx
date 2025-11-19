@@ -62,7 +62,11 @@ export function OperationPlayground() {
           setResponseContent(ContentType.parse(contentType).type);
         }
         const id = o.makeId([...o.path, K.responses]);
-        document.getElementById(id)?.scrollIntoView();
+        document.getElementById(id)?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "nearest",
+        });
 
         return resp.text().then(
           (body) => {

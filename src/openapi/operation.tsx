@@ -28,7 +28,7 @@ export function Operation(ctx: OperationContext) {
       <OperationStateProvider>
         <ResizablePanelGroup key={id} id={id} direction="horizontal">
           <ResizablePanel
-            className="max-h-full p-4 pb-[50vh]"
+            className="max-h-full p-4"
             style={{ overflow: "auto" }}
             minSize={2}
           >
@@ -36,7 +36,7 @@ export function Operation(ctx: OperationContext) {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel
-            className="max-h-full p-4 pb-[50vh]"
+            className="max-h-full p-4"
             style={{ overflow: "auto" }}
             defaultSize={40}
             minSize={2}

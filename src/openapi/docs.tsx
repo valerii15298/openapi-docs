@@ -8,7 +8,7 @@ export function Docs(ctx: OpenAPIContext) {
   const renderRoute = matchRoute(ctx.path);
   return (
     <OpenAPIContext value={ctx}>
-      <SidebarProvider className="h-full">
+      <SidebarProvider className="h-full min-h-full">
         <SideBar />
         <main className="flex-1 overflow-auto">{renderRoute?.(ctx.path)}</main>
       </SidebarProvider>

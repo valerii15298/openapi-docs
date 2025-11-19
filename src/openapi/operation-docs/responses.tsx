@@ -6,7 +6,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@sane-ts/shadcn-ui";
-import { startTransition } from "react";
 
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
@@ -25,9 +24,7 @@ export function Responses() {
     <Tabs
       value={opState.responseStatus}
       onValueChange={(v) => {
-        startTransition(() => {
-          opState.setResponseStatus(v);
-        });
+        opState.setResponseStatus(v);
       }}
       id={id}
     >

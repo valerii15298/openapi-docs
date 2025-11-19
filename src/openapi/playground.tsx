@@ -7,7 +7,7 @@ import {
 } from "@sane-ts/shadcn-ui";
 import { MousePointerSquareDashed } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import { useState } from "react";
+import { use, useState } from "react";
 
 import { EditorBreadcrumbs } from "#json-editor/breadcrumbs";
 import { useEditorState } from "#json-editor/context";
@@ -21,14 +21,15 @@ import { ImportSpec } from "#openapi/import-spec";
 const OPENAPI_SCHEMA_URL =
   "https://gist.githubusercontent.com/valerii15298/b3793b3d47ebeaa5dd2baa96aa6d7c8e/raw/fa8084ef0f4d2a9387f6d0f834e7d022e408f3fa/json-schema-openapi-3-1.json";
 
-export function Playground(p: { defaultSpec: OpenAPIV3_1.Document }) {
+export function Playground(p: {
+  defaultDoc: OpenAPIV3_1.Document | Promise<OpenAPIV3_1.Document>;
+}) {
   const [selectingEditTarget, setSelectingEditTarget] = useState(false);
   const [uri, setUri] = useState("");
   const [path, setPath] = useState<string[]>([]);
+  const data = use(Promise.resolve(p.defaultDoc));
 
-  const editorCtx = useEditorState<OpenAPIV3_1.Document>({
-    data: p.defaultSpec,
-  });
+  const editorCtx = useEditorState<OpenAPIV3_1.Document>({ data });
 
   const setEditPath = (path: string[]) => {
     editorCtx.setPath(path);

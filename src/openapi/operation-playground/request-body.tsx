@@ -67,15 +67,15 @@ export function RequestBodyInput() {
 
   const media = requestBody?.content?.[content];
 
-  const [firstExample = ""] = Object.keys(media?.examples ?? {});
-  const [exampleKey, setExampleKey] = useState(firstExample);
+  const exampleKeys = Object.keys(media?.examples ?? {});
+  const [exampleKey, setExampleKey] = useState(exampleKeys[0] ?? "");
 
   if (!media) return null;
 
   const schema = resolveRefObj(media.schema);
   if (typeof schema === "boolean") return null;
 
-  const tabs = (
+  const tabs = !!exampleKeys.length && (
     <ToggleGroup
       type="single"
       value={mode}

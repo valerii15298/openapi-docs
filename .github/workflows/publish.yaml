@@ -26,8 +26,5 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Generate OpenAPI Schema
-        run: node gen-schema.ts
-
       - name: Build and Publish
         run: pnpm release

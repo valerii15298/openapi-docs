@@ -65,7 +65,7 @@ function substitutePathParams(path: string, params: Record<string, unknown>) {
 
 export function createRequest(
   d: typeof defaultValues,
-  { method, ...o }: ReturnType<typeof useOperation>,
+  o: ReturnType<typeof useOperation>,
   contentType: string | undefined,
 ) {
   let base = o.servers.at(d.serverIdx)?.url ?? window.origin;
@@ -92,5 +92,5 @@ export function createRequest(
   }
 
   const body = d.body === undefined ? undefined : JSON.stringify(d.body);
-  return { url, method, body, headers };
+  return { url, method: o.method.toUpperCase(), body, headers };
 }

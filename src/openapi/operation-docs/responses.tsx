@@ -15,19 +15,14 @@ const key = K.responses;
 export function Responses() {
   const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
-  const opState = useOperationState();
+  const { status, setStatus, contentType, setContentType } =
+    useOperationState().response;
   const path = [...o.path, key];
   const id = o.makeId(path);
   const entries = Object.entries(o[key] || {});
 
   return (
-    <Tabs
-      value={opState.responseStatus}
-      onValueChange={(v) => {
-        opState.setResponseStatus(v);
-      }}
-      id={id}
-    >
+    <Tabs value={status} onValueChange={setStatus} id={id}>
       <h2 className="flex flex-wrap items-end gap-x-3">
         <Button
           variant={"link"}
@@ -56,8 +51,8 @@ export function Responses() {
             <Content
               {...resp}
               path={[...path, status]}
-              value={opState.responseContent}
-              onValueChange={opState.setResponseContent}
+              value={contentType}
+              onValueChange={setContentType}
             />
           </TabsContent>
         ))}

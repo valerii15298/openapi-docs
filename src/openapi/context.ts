@@ -1,5 +1,5 @@
 import type { OpenAPIV3, OpenAPIV3_1 } from "@scalar/openapi-types";
-import { createContext, use, useState } from "react";
+import { createContext, use, useEffect, useState } from "react";
 
 import { resolveRef } from "#json-editor/utils";
 
@@ -73,28 +73,47 @@ export function useOperation() {
 
 export function useProviderOperationState() {
   const { resolveRefObj } = useOpenAPI();
-  const op = useOperation();
+  const { requestBody, responses = {} } = useOperation();
 
-  const requestBody = resolveRefObj(op.requestBody);
-  const _requestContent = Object.keys(requestBody?.content ?? {}).at(0);
-  const [requestContent, setRequestContent] = useState(_requestContent || "");
+  const request = resolveRefObj(requestBody);
+  const [_requestType = ""] = Object.keys(request?.content ?? {});
+  const [requestType, setRequestType] = useState(_requestType);
+  const requestMedia = request?.content?.[requestType];
 
-  const [response] = Object.entries(op.responses ?? {});
-  const [responseStatus, setResponseStatus] = useState(response?.[0] ?? "");
+  const [_responseStatus = ""] = Object.keys(responses);
+  const [responseStatus, setResponseStatus] = useState(_responseStatus);
+  const response = resolveRefObj(responses[responseStatus]);
 
-  const _response = resolveRefObj(response?.[1]);
-  const _responseContent = Object.keys(_response?.content ?? {}).at(0) || "";
-  const [responseContent, setResponseContent] = useState(_responseContent);
+  const [_responseType = ""] = Object.keys(response?.content ?? {});
+  const [responseType, setResponseType] = useState(_responseType);
+  const responseMedia = response?.content?.[responseType];
+
+  useEffect(() => {
+    !requestMedia && setRequestType(_requestType);
+    !response && setResponseStatus(_responseStatus);
+  }, [requestMedia, _requestType, response, _responseStatus]);
+
+  useEffect(() => {
+    !responseMedia && setResponseType(_responseType);
+  }, [_responseType, responseMedia, responseStatus]);
 
   return {
-    requestContent,
-    setRequestContent,
+    request: {
+      ...request,
+      contentType: requestType,
+      setContentType: setRequestType,
+      media: requestMedia,
+    },
 
-    responseStatus,
-    setResponseStatus,
+    response: {
+      ...response,
+      status: responseStatus,
+      setStatus: setResponseStatus,
 
-    responseContent,
-    setResponseContent,
+      contentType: responseType,
+      setContentType: setResponseType,
+      media: responseMedia,
+    },
   };
 }
 

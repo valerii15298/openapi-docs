@@ -55,17 +55,14 @@ type EditorMode = keyof typeof EditorMode;
 
 export function RequestBodyInput() {
   const op = useOperation();
-  const { requestContent: content } = useOperationState();
+  const { media, contentType } = useOperationState().request;
 
   const { body, setState } = useFormContext();
   const setValue = (value: unknown) => {
     setState((s) => ({ ...s, body: value }));
   };
   const { resolveRefObj, doc } = useOpenAPI();
-  const requestBody = resolveRefObj(op.requestBody);
   const [mode, setMode] = useState<EditorMode>(EditorMode.Edit);
-
-  const media = requestBody?.content?.[content];
 
   const exampleKeys = Object.keys(media?.examples ?? {});
   const [exampleKey, setExampleKey] = useState(exampleKeys[0] ?? "");
@@ -138,7 +135,7 @@ export function RequestBodyInput() {
       </code>
     );
 
-  const path = [...op.path, K.requestBody, K.content, content];
+  const path = [...op.path, K.requestBody, K.content, contentType];
   const exampleElement = (
     <Example
       schema={schema}

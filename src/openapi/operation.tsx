@@ -22,11 +22,10 @@ function OperationStateProvider(props: { children: React.ReactNode }) {
 }
 
 export function Operation(ctx: OperationContext) {
-  const id = `${ctx.method}-${ctx.pathname}`;
   return (
     <OperationContext value={ctx}>
       <OperationStateProvider>
-        <ResizablePanelGroup key={id} id={id} direction="horizontal">
+        <ResizablePanelGroup direction="horizontal">
           <ResizablePanel
             className="max-h-full p-4"
             style={{ overflow: "auto" }}

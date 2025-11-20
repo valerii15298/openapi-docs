@@ -28,8 +28,7 @@ export function OperationPlayground() {
   const httpProxy = useHttpProxy();
   const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
-  const { requestContent, setResponseStatus, setResponseContent } =
-    useOperationState();
+  const { request, response } = useOperationState();
   const selected =
     o.parameters
       ?.map((p) => resolveRefObj(p) ?? {})
@@ -42,10 +41,10 @@ export function OperationPlayground() {
     setState((s) => ({ ...s, proxy: v }));
   };
 
-  const [response, setResponse] = useState<PlaygroundResponse>();
+  const [resp, setResp] = useState<PlaygroundResponse>();
 
   const onSubmit = () => {
-    const req = createRequest(state, o, requestContent);
+    const req = createRequest(state, o, request.contentType);
     if (state.proxy && httpProxy) {
       req.headers = { ...req.headers, [httpProxy.urlHeader]: req.url };
       req.url = httpProxy.url;
@@ -54,12 +53,12 @@ export function OperationPlayground() {
     return fetch(req.url, req).then(
       async (resp) => {
         const headers = Object.fromEntries(resp.headers.entries());
-        setResponse({ status: resp.status, headers });
+        setResp({ status: resp.status, headers });
 
-        setResponseStatus(resp.status.toString());
+        response.setStatus(resp.status.toString());
         const contentType = resp.headers.get("content-type") || "";
         if (contentType) {
-          setResponseContent(ContentType.parse(contentType).type);
+          response.setContentType(ContentType.parse(contentType).type);
         }
         const id = o.makeId([...o.path, K.responses]);
         document.getElementById(id)?.scrollIntoView({
@@ -70,15 +69,15 @@ export function OperationPlayground() {
 
         return resp.text().then(
           (body) => {
-            setResponse((prev) => prev && { ...prev, body });
+            setResp((prev) => prev && { ...prev, body });
           },
           (error: unknown) => {
-            setResponse({ error });
+            setResp({ error });
           },
         );
       },
       (error: unknown) => {
-        setResponse({ error });
+        setResp({ error });
       },
     );
   };
@@ -120,7 +119,7 @@ export function OperationPlayground() {
           </div>
         </form>
         <RequestSample />
-        <ResponseSample resp={response} />
+        <ResponseSample resp={resp} />
       </section>
     </FormContext>
   );

@@ -17,8 +17,8 @@ import {
 export function RequestSample() {
   const d = useFormContext();
   const o = useOperation();
-  const { requestContent } = useOperationState();
-  const req = createRequest(d, o, requestContent);
+  const { contentType } = useOperationState().request;
+  const req = createRequest(d, o, contentType);
 
   const [preview, setPreview] = useState(false);
   type Wrap = "wrap" | "line-breaks" | undefined;

@@ -10,7 +10,7 @@ function RequestBodyDocs() {
   const key = K.requestBody;
   const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
-  const { requestContent, setRequestContent } = useOperationState();
+  const { contentType, setContentType } = useOperationState().request;
 
   const requestBody = resolveRefObj(o[key]);
   if (!requestBody) return null;
@@ -32,8 +32,8 @@ function RequestBodyDocs() {
   const body = (
     <Content
       {...requestBody}
-      value={requestContent}
-      onValueChange={setRequestContent}
+      value={contentType}
+      onValueChange={setContentType}
       path={[...o.path, key]}
     />
   );

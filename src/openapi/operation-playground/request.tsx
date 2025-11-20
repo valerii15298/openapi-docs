@@ -31,7 +31,7 @@ export function RequestSample() {
     className += " inline-block min-w-full";
   }
 
-  const methodColor = methodClassNamesMap[req.method].text;
+  const methodColor = methodClassNamesMap[o.method].text;
 
   const url = new URL(req.url);
   const en = preview ? (s: string) => s : encodeURIComponent;

@@ -62,9 +62,7 @@ export function RequestSample() {
     </Fragment>
   ));
   const bodyEl = req.body && (
-    <>
-      <span className={"text-nowrap"}>-d</span> '{req.body}'
-    </>
+    <span className={"text-nowrap"}>-d '{req.body}'</span>
   );
   const x = <span className={methodColor}>-X</span>;
   const curlEl = (

@@ -83,7 +83,7 @@ export function RequestSample() {
         <ToggleGroup
           value={wrap}
           onValueChange={(v) => {
-            setWrap(v as Wrap | undefined);
+            setWrap(v as Wrap);
           }}
           type="single"
           size={"sm"}

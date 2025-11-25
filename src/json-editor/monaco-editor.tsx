@@ -1,4 +1,4 @@
-import { useTheme } from "@sane-ts/shadcn-ui";
+import { cn, useTheme } from "@sane-ts/shadcn-ui";
 import { configureMonacoYaml, type SchemasSettings } from "monaco-yaml";
 import { useEffect, useRef } from "react";
 
@@ -111,6 +111,7 @@ interface MonacoEditorProps {
   schemaURI?: string;
   format?: EditorFormat;
   readOnly?: boolean;
+  resizable?: boolean | "label";
 }
 export function MonacoEditor({
   value,
@@ -120,6 +121,8 @@ export function MonacoEditor({
   schemaURI,
   format = EditorFormat.json,
   readOnly,
+  resizable,
+  className,
   ...props
 }: Omit<React.ComponentProps<"div">, "ref"> & MonacoEditorProps) {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
@@ -129,6 +132,7 @@ export function MonacoEditor({
 
   useEffect(() => {
     if (!elementRef.current) return;
+    const controller = new AbortController();
 
     const formattedValue = formatStringify[format](value);
 
@@ -149,6 +153,12 @@ export function MonacoEditor({
       },
       scrollBeyondLastLine: false,
     });
+
+    elementRef.current.addEventListener(
+      "wheel",
+      (e) => editor.hasTextFocus() && e.preventDefault(),
+      { signal: controller.signal },
+    );
 
     if (onValueChange) {
       const trigger = createAsyncSequential(async (data: string) => {
@@ -172,6 +182,7 @@ export function MonacoEditor({
       uri: schemaURI,
     });
     return () => {
+      controller.abort();
       removeModelSchema();
       editor.dispose();
     };
@@ -182,5 +193,29 @@ export function MonacoEditor({
     editorRef.current?.updateOptions({ theme: `vs-${resolvedTheme}` });
   }, [resolvedTheme]);
 
-  return <div {...props} ref={elementRef} />;
+  if (!resizable) {
+    return <div {...props} className={className} ref={elementRef} />;
+  }
+
+  const resizeLabel = resizable === "label" && "drag to resize ->";
+  return (
+    <div
+      {...props}
+      className={cn(`min-h-10 resize-y overflow-hidden pb-4`, className)}
+    >
+      <div
+        className="h-full min-h-6"
+        style={{
+          overscrollBehavior: "contain",
+        }}
+        ref={elementRef}
+      />
+      <div
+        hidden={!resizeLabel}
+        className="text-muted-foreground mr-4 h-4 text-end text-xs/4"
+      >
+        {resizeLabel}
+      </div>
+    </div>
+  );
 }

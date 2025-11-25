@@ -62,19 +62,13 @@ export function SchemaInput({
   if (typeof schema !== "object") return null;
   if (schema.type === "object" || schema.type === "array") {
     return (
-      <div
-        className={cn(
-          `-mb-4 min-h-10 resize-y overflow-hidden pb-4`,
-          className,
-        )}
-      >
-        <MonacoEditor
-          value={field.value}
-          onValueChange={field.setValue}
-          schema={schema}
-          className={`h-full min-h-6`}
-        />
-      </div>
+      <MonacoEditor
+        value={field.value}
+        onValueChange={field.setValue}
+        schema={schema}
+        resizable
+        className="-mb-4"
+      />
     );
   }
   if (schema.enum?.length) {

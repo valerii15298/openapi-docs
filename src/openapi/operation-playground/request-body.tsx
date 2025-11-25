@@ -7,7 +7,6 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Textarea,
   ToggleGroup,
   ToggleGroupItem,
 } from "@sane-ts/shadcn-ui";
@@ -15,6 +14,7 @@ import { ChevronDown, SquarePen } from "@sane-ts/shadcn-ui/lucide";
 import { sample } from "openapi-sampler";
 import { useState } from "react";
 
+import { MonacoEditor } from "#json-editor/monaco-editor";
 import { Enum } from "#json-editor/utils";
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
@@ -125,14 +125,12 @@ export function RequestBodyInput() {
         )}
       />
     ) : (
-      <code>
-        <Textarea
-          value={String(value)}
-          onChange={(e) => {
-            setValue(e.target.value);
-          }}
-        />
-      </code>
+      <MonacoEditor
+        value={value}
+        onValueChange={setValue}
+        schema={schema}
+        resizable
+      />
     );
 
   const path = [...op.path, K.requestBody, K.content, contentType];

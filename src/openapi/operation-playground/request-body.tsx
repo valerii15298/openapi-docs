@@ -114,6 +114,7 @@ export function RequestBodyInput() {
   const example: unknown = media.example ?? sample(schema as object, {}, doc);
   const value = body === undefined ? example : body;
 
+  // TODO: fix text serialization to be without extra quotes for strings
   const editElement =
     schema?.type && schema.type !== "string" ? (
       <SchemaInput
@@ -129,6 +130,7 @@ export function RequestBodyInput() {
         value={value}
         onValueChange={setValue}
         schema={schema}
+        format="text"
         resizable
       />
     );

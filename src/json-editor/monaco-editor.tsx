@@ -121,19 +121,11 @@ export function MonacoEditor({
   format = EditorFormat.json,
   readOnly,
   ...props
-}: React.ComponentProps<"div"> & MonacoEditorProps) {
+}: Omit<React.ComponentProps<"div">, "ref"> & MonacoEditorProps) {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const siteTheme = useTheme();
-  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-  const theme = siteTheme.theme === "system" ? systemTheme : siteTheme.theme;
-  useEffect(() => {
-    if (!editorRef.current) return;
-    editorRef.current.updateOptions({ theme: `vs-${theme}` });
-  }, [theme]);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     if (!elementRef.current) return;
@@ -145,7 +137,7 @@ export function MonacoEditor({
 
     const editor = monaco.editor.create(elementRef.current, {
       model,
-      theme: `vs-${theme}`,
+      theme: `vs-${resolvedTheme}`,
       automaticLayout: true,
       fixedOverflowWidgets: true,
       // allowOverflow: false,
@@ -185,6 +177,10 @@ export function MonacoEditor({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [format]);
+
+  useEffect(() => {
+    editorRef.current?.updateOptions({ theme: `vs-${resolvedTheme}` });
+  }, [resolvedTheme]);
 
   return <div {...props} ref={elementRef} />;
 }

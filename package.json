@@ -55,7 +55,7 @@
     "vite": "npm:rolldown-vite@latest"
   },
   "peerDependencies": {
-    "@sane-ts/shadcn-ui": "^0.0.4",
+    "@sane-ts/shadcn-ui": "^0.0.5",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "monaco-editor": "^0.54.0",

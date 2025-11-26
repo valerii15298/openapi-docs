@@ -24,7 +24,6 @@ import {
 import { SelectServer } from "#openapi/operation-playground/select-server";
 
 export function OperationPlayground() {
-  "use no memo";
   const httpProxy = useHttpProxy();
   const { resolveRefObj } = useOpenAPI();
   const o = useOperation();

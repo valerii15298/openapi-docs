@@ -52,11 +52,9 @@ export function Example(
     <section id={id}>
       <MonacoEditor
         hidden={!("value" in e)}
-        // TODO implement defaultValue in monaco editor so that value will be reactive
-        key={stringified}
         style={{ height: `${initialHeight}px` }}
         schema={e.schema}
-        defaultValue={value}
+        value={value}
         readOnly
         resizable="label"
       />

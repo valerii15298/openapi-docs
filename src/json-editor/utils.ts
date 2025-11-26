@@ -49,26 +49,3 @@ export function Enum<Key extends string>(...keys: Key[]) {
     {} as { [K in Key]: K },
   );
 }
-
-export function preventDoubleClick(event: React.MouseEvent<HTMLElement>) {
-  if (!event.defaultPrevented && event.detail > 1) {
-    event.preventDefault();
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-export function tryCatch<T, Err>(fn: () => T) {
-  try {
-    return [fn(), undefined] as const;
-  } catch (error) {
-    return [undefined, error as Err] as const;
-  }
-}
-
-export async function tryCatchAsync<T, Err>(fn: () => PromiseLike<T>) {
-  try {
-    return [await fn(), undefined] as const;
-  } catch (error) {
-    return [undefined, error as Err] as const;
-  }
-}

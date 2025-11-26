@@ -52,7 +52,7 @@ function EditorContent({
     return (
       <MonacoEditor
         readOnly={ctx.readOnly}
-        value={deepGet(ctx.data, ctx.path)}
+        defaultValue={deepGet(ctx.data, ctx.path)}
         onValueChange={onValueChange}
         onError={(error) => {
           const { name, message } =

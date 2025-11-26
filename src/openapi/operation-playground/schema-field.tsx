@@ -162,7 +162,7 @@ export function SchemaInput({
 
   return (
     <MonacoEditor
-      value={field.value}
+      defaultValue={field.value}
       onValueChange={field.setValue}
       schema={schema}
       resizable

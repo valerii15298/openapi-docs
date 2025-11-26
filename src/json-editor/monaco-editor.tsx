@@ -104,7 +104,7 @@ function setModelSchema(
 }
 
 interface MonacoEditorProps {
-  value?: unknown;
+  defaultValue?: unknown;
   onValueChange?: (value: unknown) => void;
   onError?: (error: unknown) => void;
   schema?: object;
@@ -112,9 +112,10 @@ interface MonacoEditorProps {
   format?: EditorFormat;
   readOnly?: boolean;
   resizable?: boolean | "label";
+  ref?: unknown;
 }
 export function MonacoEditor({
-  value,
+  defaultValue,
   onValueChange,
   onError,
   schema,
@@ -123,8 +124,10 @@ export function MonacoEditor({
   readOnly,
   resizable,
   className,
+  ref: _, // TODO handle ref
   ...props
-}: Omit<React.ComponentProps<"div">, "ref"> & MonacoEditorProps) {
+}: Omit<React.ComponentProps<"div">, keyof MonacoEditorProps> &
+  MonacoEditorProps) {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -134,7 +137,7 @@ export function MonacoEditor({
     if (!elementRef.current) return;
     const controller = new AbortController();
 
-    const formattedValue = formatStringify[format](value);
+    const formattedValue = formatStringify[format](defaultValue);
 
     const modelUri = monaco.Uri.parse(`file:///${Math.random()}.${format}`);
     const model = monaco.editor.createModel(formattedValue, format, modelUri);
@@ -190,8 +193,11 @@ export function MonacoEditor({
   }, [format]);
 
   useEffect(() => {
-    editorRef.current?.updateOptions({ theme: `vs-${resolvedTheme}` });
-  }, [resolvedTheme]);
+    editorRef.current?.updateOptions({
+      theme: `vs-${resolvedTheme}`,
+      readOnly,
+    });
+  }, [readOnly, resolvedTheme]);
 
   if (!resizable) {
     return <div {...props} className={className} ref={elementRef} />;

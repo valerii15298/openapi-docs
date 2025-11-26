@@ -56,7 +56,7 @@ export function Example(
         key={stringified}
         style={{ height: `${initialHeight}px` }}
         schema={e.schema}
-        value={value}
+        defaultValue={value}
         readOnly
         resizable="label"
       />

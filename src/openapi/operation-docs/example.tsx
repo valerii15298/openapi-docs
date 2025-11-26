@@ -4,22 +4,8 @@ import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import type { ReactNode } from "react";
 
 import { Description } from "#description";
-import { Editor } from "#json-editor/editor";
-import { EditorTabs } from "#json-editor/tabs";
+import { MonacoEditor } from "#json-editor/monaco-editor";
 import { useOperation } from "#openapi/context";
-import { CodeSample } from "#openapi/operation-docs/code-sample";
-
-function getStyle(id: string) {
-  return `
-    #${CSS.escape(id)} .monaco-editor {
-      --vscode-editorGutter-background: var(--background);
-    }
-
-    [data-slot="popover-content"] #${CSS.escape(id)} .monaco-editor {
-      --vscode-editorGutter-background: var(--popover);
-    }
-`;
-}
 
 export function Example(
   e: OpenAPIV3_1.ExampleObject & {
@@ -34,7 +20,7 @@ export function Example(
   const summary = e.summaryElement || (
     <h4
       hidden={!e.externalValue && !e.summary}
-      className="flex max-w-full min-w-20 flex-1 items-center justify-center overflow-hidden text-xl font-semibold"
+      className="flex items-center text-xl font-semibold"
     >
       <Button
         asChild
@@ -53,40 +39,28 @@ export function Example(
     </h4>
   );
 
-  const linesLength = JSON.stringify(e.value ?? {}, null, 2).split("\n").length;
+  const stringified = JSON.stringify(e.value ?? {}, null, 2);
+  const linesLength = stringified.split("\n").length;
   const linesHeight = linesLength * 23;
-  const minHeight = 200;
+  const minHeight = 100;
   const maxHeight = 600;
   const initialHeight = Math.min(Math.max(linesHeight, minHeight), maxHeight);
 
   const value = e.value as unknown;
-  if (typeof value !== "object" || value === null) {
-    return (
-      <section className="example">
-        {summary}
-        <CodeSample className="my-1" code={value} />
-        <Description {...e} />
-      </section>
-    );
-  }
 
   return (
     <section id={id}>
-      <style>{getStyle(id)}</style>
-      <div
+      <MonacoEditor
+        hidden={!("value" in e)}
+        // TODO implement defaultValue in monaco editor so that value will be reactive
+        key={stringified}
         style={{ height: `${initialHeight}px` }}
-        className="-ml-5 resize-y overflow-hidden pb-4"
-      >
-        <Editor schema={e.schema} default={{ data: value, readOnly: true }}>
-          <div className="mb-1 ml-5 flex items-center gap-2 overflow-auto">
-            {summary}
-            <EditorTabs className="ml-auto" />
-          </div>
-        </Editor>
-        <div className="text-muted-foreground mr-4 h-4 text-end text-xs/4">
-          click to resize {"->"}
-        </div>
-      </div>
+        schema={e.schema}
+        value={value}
+        readOnly
+        resizable="label"
+      />
+      {summary}
       <Description {...e} />
     </section>
   );

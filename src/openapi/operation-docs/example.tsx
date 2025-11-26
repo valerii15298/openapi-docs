@@ -1,7 +1,7 @@
 import { Button } from "@sane-ts/shadcn-ui";
 import { ExternalLink } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import type { ReactNode } from "react";
+import { type ReactNode, useMemo } from "react";
 
 import { Description } from "#description";
 import { MonacoEditor } from "#json-editor/monaco-editor";
@@ -39,14 +39,14 @@ export function Example(
     </h4>
   );
 
-  const stringified = JSON.stringify(e.value ?? {}, null, 2);
-  const linesLength = stringified.split("\n").length;
-  const linesHeight = linesLength * 23;
-  const minHeight = 100;
-  const maxHeight = 600;
-  const initialHeight = Math.min(Math.max(linesHeight, minHeight), maxHeight);
-
-  const value = e.value as unknown;
+  const initialHeight = useMemo(() => {
+    const stringified = JSON.stringify(e.value ?? {}, null, 2);
+    const linesLength = stringified.split("\n").length;
+    const linesHeight = linesLength * 23;
+    const minHeight = 100;
+    const maxHeight = 600;
+    return Math.min(Math.max(linesHeight, minHeight), maxHeight);
+  }, [e.value]);
 
   return (
     <section id={id}>
@@ -54,7 +54,7 @@ export function Example(
         hidden={!("value" in e)}
         style={{ height: `${initialHeight}px` }}
         schema={e.schema}
-        value={value}
+        value={e.value as unknown}
         readOnly
         resizable="label"
       />

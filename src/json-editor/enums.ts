@@ -2,9 +2,6 @@ import yaml from "yaml";
 
 import { Enum } from "#json-editor/utils";
 
-export const EditorMode = Enum("tree", "code");
-export type EditorMode = keyof typeof EditorMode;
-
 export const EditorFormat = Enum("text", "json", "yaml");
 export type EditorFormat = keyof typeof EditorFormat;
 

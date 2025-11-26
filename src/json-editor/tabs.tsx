@@ -1,77 +1,35 @@
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  ToggleGroup,
-  ToggleGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@sane-ts/shadcn-ui";
-import { ChevronDown } from "@sane-ts/shadcn-ui/lucide";
 
 import { useEditorContext } from "#json-editor/context";
-import { EditorFormat, EditorMode } from "#json-editor/enums";
+import { EditorFormat } from "#json-editor/enums";
 
-function EditorFormatDropdown() {
-  const ctx = useEditorContext();
-  return (
-    <DropdownMenu>
-      <ToggleGroupItem asChild value="code" className="cursor-pointer p-0">
-        <DropdownMenuTrigger>
-          <ChevronDown />
-        </DropdownMenuTrigger>
-      </ToggleGroupItem>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Format</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup
-          value={ctx.format}
-          onValueChange={(v) => {
-            if (!(v in EditorFormat)) return;
-            ctx.setFormat(v as EditorFormat);
-            ctx.setMode(EditorMode.code);
-          }}
-        >
-          {Object.values(EditorFormat).map((f) => (
-            <DropdownMenuRadioItem key={f} value={f}>
-              {f}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-export function EditorTabs(
-  props: Omit<
-    React.ComponentProps<typeof ToggleGroup> & { type?: "single" },
-    "type"
-  >,
-) {
+export function EditorTabs(props: React.ComponentProps<typeof SelectTrigger>) {
   const ctx = useEditorContext();
 
   return (
-    <ToggleGroup
-      {...props}
+    <Select
       disabled={!!ctx.error}
-      type="single"
-      value={ctx.mode}
+      value={ctx.format}
       onValueChange={(v) => {
-        if (v in EditorMode) ctx.setMode(v as EditorMode);
+        if (v in EditorFormat) ctx.setFormat(v as EditorFormat);
       }}
-      size={"sm"}
-      variant={"outline"}
     >
-      <ToggleGroupItem value={EditorMode.tree}>
-        {EditorMode.tree}
-      </ToggleGroupItem>
-      <ToggleGroupItem value={EditorMode.code} className="border-r-0">
-        {ctx.format}
-      </ToggleGroupItem>
-      <EditorFormatDropdown />
-    </ToggleGroup>
+      <SelectTrigger {...props} className="h-full! w-20 py-0">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {Object.values(EditorFormat).map((f) => (
+          <SelectItem key={f} value={f}>
+            {f}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

@@ -1,6 +1,6 @@
 import { createContext, type ReactNode, use, useState } from "react";
 
-import { type EditorFormat, EditorMode } from "#json-editor/enums";
+import type { EditorFormat } from "#json-editor/enums";
 
 export const EditorContext = createContext<EditorCtx | undefined>(undefined);
 EditorContext.displayName = "EditorContext";
@@ -23,7 +23,6 @@ export interface EditorDefaultOpts<TData = unknown> {
   path?: string[];
   data?: TData;
   format?: EditorFormat;
-  mode?: EditorMode;
   readOnly?: boolean;
 }
 export function useEditorState<TData = unknown>(
@@ -33,7 +32,6 @@ export function useEditorState<TData = unknown>(
   const [data, setData] = useState<TData>(opts.data ?? ({} as TData));
   const [error, setError] = useState<ReactNode>(null);
   const [readOnly, setReadOnly] = useState(!!opts.readOnly);
-  const [mode, setMode] = useState<EditorMode>(opts.mode ?? EditorMode.code);
   const [format, setFormat] = useState<EditorFormat>(opts.format ?? "json");
 
   return {
@@ -45,9 +43,6 @@ export function useEditorState<TData = unknown>(
 
     error,
     setError,
-
-    mode,
-    setMode,
 
     format,
     setFormat,

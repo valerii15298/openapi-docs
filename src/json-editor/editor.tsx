@@ -16,9 +16,7 @@ import {
   useEditorContext,
   useEditorState,
 } from "#json-editor/context";
-import { EditorMode } from "#json-editor/enums";
 import { MonacoEditor } from "#json-editor/monaco-editor";
-import { TreeEditor } from "#json-editor/tree-editor";
 import { deepGet } from "#json-editor/utils";
 
 function EditorContent({
@@ -32,53 +30,34 @@ function EditorContent({
   onValueChange?: (value: unknown) => void;
 }) {
   const ctx = useEditorContext();
-  if (ctx.mode === EditorMode.tree) {
-    return (
-      <div
-        className={cn("overflow-auto", ctx.readOnly && "pl-1", props.className)}
-      >
-        <TreeEditor
-          flat
-          className="w-max min-w-full font-mono text-sm"
-          path={ctx.path}
-          data={deepGet(ctx.data, ctx.path)}
-        />
-      </div>
-    );
-  }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (ctx.mode === EditorMode.code) {
-    return (
-      <MonacoEditor
-        readOnly={ctx.readOnly}
-        defaultValue={deepGet(ctx.data, ctx.path)}
-        onValueChange={onValueChange}
-        onError={(error) => {
-          const { name, message } =
-            error instanceof Error
-              ? error
-              : { name: "Error", message: String(error) };
+  return (
+    <MonacoEditor
+      readOnly={ctx.readOnly}
+      defaultValue={deepGet(ctx.data, ctx.path)}
+      onValueChange={onValueChange}
+      onError={(error) => {
+        const { name, message } =
+          error instanceof Error
+            ? error
+            : { name: "Error", message: String(error) };
 
-          const jsx = (
-            <Alert variant={"destructive"} className="max-h-full overflow-auto">
-              <AlertTitle>{name}</AlertTitle>
-              <AlertDescription className="font-mono whitespace-pre">
-                {message}
-              </AlertDescription>
-            </Alert>
-          );
-          ctx.setError(jsx);
-        }}
-        format={ctx.format}
-        className={cn(props.className)}
-        schema={ctx.path.length ? undefined : schema}
-        schemaURI={ctx.path.length ? undefined : schemaURI}
-      />
-    );
-  }
-
-  return null;
+        const jsx = (
+          <Alert variant={"destructive"} className="max-h-full overflow-auto">
+            <AlertTitle>{name}</AlertTitle>
+            <AlertDescription className="font-mono whitespace-pre">
+              {message}
+            </AlertDescription>
+          </Alert>
+        );
+        ctx.setError(jsx);
+      }}
+      format={ctx.format}
+      className={cn(props.className)}
+      schema={ctx.path.length ? undefined : schema}
+      schemaURI={ctx.path.length ? undefined : schemaURI}
+    />
+  );
 }
 
 type EditorProps<TData = unknown> = {
@@ -128,11 +107,7 @@ export function Editor<TData = unknown>({
             size={"sm"}
             className="mb-1 w-full cursor-pointer"
             onClick={() => {
-              const { mode } = ctx;
-              ctx.setMode(EditorMode.tree);
-              setTimeout(() => {
-                ctx.setMode(mode);
-              });
+              // TODO: update monaco editor content
               ctx.setError(null);
             }}
           >

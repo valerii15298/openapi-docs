@@ -14,7 +14,6 @@ import { ChevronDown, SquarePen } from "@sane-ts/shadcn-ui/lucide";
 import { sample } from "openapi-sampler";
 import { useState } from "react";
 
-import { MonacoEditor } from "#json-editor/monaco-editor";
 import { Enum } from "#json-editor/utils";
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
@@ -114,26 +113,15 @@ export function RequestBodyInput() {
   const example: unknown = media.example ?? sample(schema as object, {}, doc);
   const value = body === undefined ? example : body;
 
-  // TODO: fix text serialization to be without extra quotes for strings
-  const editElement =
-    schema?.type && schema.type !== "string" ? (
-      <SchemaInput
-        schema={schema}
-        field={{ value, setValue }}
-        className={cn(
-          "mb-0",
-          (schema.type === "object" || schema.type === "array") && "h-32",
-        )}
-      />
-    ) : (
-      <MonacoEditor
-        value={value}
-        onValueChange={setValue}
-        schema={schema}
-        format="text"
-        resizable
-      />
-    );
+  const editElement = (
+    <SchemaInput
+      richText
+      schema={schema ?? {}}
+      field={{ value, setValue }}
+      className="mb-2"
+      monacoClassName={cn("h-32")}
+    />
+  );
 
   const path = [...op.path, K.requestBody, K.content, contentType];
   const exampleElement = (

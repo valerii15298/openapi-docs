@@ -54,23 +54,22 @@ export function SchemaInput({
   field,
   schema,
   className,
+  monacoClassName,
+  richText,
 }: {
   schema: OpenAPIV3_1.SchemaObject;
   field: FieldProps;
   className?: string;
+  monacoClassName?: string;
+  richText?: boolean;
 }) {
-  if (typeof schema !== "object") return null;
-  if (schema.type === "object" || schema.type === "array") {
-    return (
-      <MonacoEditor
-        value={field.value}
-        onValueChange={field.setValue}
-        schema={schema}
-        resizable
-        className="-mb-4"
-      />
-    );
+  if (typeof schema !== "object") {
+    schema = {};
   }
+  if (schema.type === "null") {
+    return null;
+  }
+
   if (schema.enum?.length) {
     return (
       <Select
@@ -91,6 +90,7 @@ export function SchemaInput({
       </Select>
     );
   }
+
   if (schema.type === "boolean") {
     const options = [true, false];
     return (
@@ -115,23 +115,35 @@ export function SchemaInput({
       </ToggleGroup>
     );
   }
+
   if (schema.type === "string") {
-    if (schema.format === "date-time") {
+    if (schema.format === "date-time")
       return <DateTimeLocalInput field={field} className={className} />;
+
+    if (schema.format === "date")
+      return (
+        <Input
+          className={className}
+          type={"date"}
+          value={String(field.value)}
+          onChange={(e) => {
+            field.setValue(e.target.value);
+          }}
+        />
+      );
+
+    if (!richText) {
+      return (
+        <Input
+          className={className}
+          type={"text"}
+          value={String(field.value)}
+          onChange={(e) => {
+            field.setValue(e.target.value);
+          }}
+        />
+      );
     }
-    return (
-      <Input
-        className={className}
-        type={schema.format === "date" ? "date" : "text"}
-        value={String(field.value)}
-        onChange={(e) => {
-          field.setValue(e.target.value);
-        }}
-      />
-    );
-  }
-  if (schema.type === "null") {
-    return null;
   }
   if (schema.type === "number" || schema.type === "integer") {
     return (
@@ -147,5 +159,15 @@ export function SchemaInput({
       />
     );
   }
-  return null;
+
+  return (
+    <MonacoEditor
+      value={field.value}
+      onValueChange={field.setValue}
+      schema={schema}
+      resizable
+      format={schema.type === "string" ? "text" : "json"}
+      className={cn(className, monacoClassName)}
+    />
+  );
 }

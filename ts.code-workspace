@@ -94,5 +94,6 @@
     "diffEditor.renderSideBySide": false,
     "notebook.showFoldingControls": "never",
     "git.autofetch": "all",
+    "tailwindCSS.classFunctions": ["cn", "cva"],
   },
 }

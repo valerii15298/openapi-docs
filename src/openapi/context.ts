@@ -20,6 +20,7 @@ export function useOpenAPI() {
   ): undefined | (T & { $ref?: string }) {
     if (obj && "$ref" in obj && obj.$ref) {
       const resolved = resolveRef<T>(obj.$ref, doc);
+      // TODO return partial original obj when ref cannot be resolved
       if (resolved === undefined) return undefined;
       return { ...resolved, ...obj };
     }
@@ -69,6 +70,7 @@ export function useOperation() {
   }
 
   const path = ["paths", ctx.pathname, ctx.method];
+
   const servers = doc.servers || pathItem?.servers || op?.servers || [];
 
   const parameters = [
@@ -83,7 +85,15 @@ export function useOperation() {
     );
 
   const requestBody = resolveRefObj(op?.requestBody);
-  return { ...op, ...ctx, makeId, path, servers, parameters, requestBody };
+
+  const responses = Object.fromEntries(
+    Object.entries(op?.responses ?? {}).map(
+      ([status, resp]) => [status, resolveRefObj(resp)] as const,
+    ),
+  );
+
+  const resolved = { servers, parameters, requestBody, responses };
+  return { ...op, ...ctx, makeId, path, ...resolved };
 }
 
 export function useProviderOperationState() {

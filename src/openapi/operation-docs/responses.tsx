@@ -8,18 +8,16 @@ import {
 } from "@sane-ts/shadcn-ui";
 
 import { K } from "#openapi/const";
-import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
+import { useOperation, useOperationState } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
 
-const key = K.responses;
 export function Responses() {
-  const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
   const { status, setStatus, contentType, setContentType } =
     useOperationState().response;
-  const path = [...o.path, key];
+  const path = [...o.path, K.responses];
+  const entries = Object.entries(o.responses);
   const id = o.makeId(path);
-  const entries = Object.entries(o[key] || {});
 
   return (
     <Tabs value={status} onValueChange={setStatus} id={id}>
@@ -44,18 +42,16 @@ export function Responses() {
         </TabsList>
       </h2>
       <Separator className={"-mt-1"} />
-      {entries
-        .map(([s, r]) => [s, resolveRefObj(r)] as const)
-        .map(([status, resp]) => (
-          <TabsContent key={status} value={status}>
-            <Content
-              {...resp}
-              path={[...path, status]}
-              value={contentType}
-              onValueChange={setContentType}
-            />
-          </TabsContent>
-        ))}
+      {entries.map(([status, resp]) => (
+        <TabsContent key={status} value={status}>
+          <Content
+            {...resp}
+            path={[...path, status]}
+            value={contentType}
+            onValueChange={setContentType}
+          />
+        </TabsContent>
+      ))}
     </Tabs>
   );
 }

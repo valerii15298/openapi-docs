@@ -17,7 +17,7 @@ export function useOpenAPI() {
   const { doc } = ctx;
   function resolveRefObj<T extends object | undefined>(
     obj: T | OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject,
-  ) {
+  ): undefined | (T & { $ref?: string }) {
     if (obj && "$ref" in obj && obj.$ref) {
       const resolved = resolveRef<T>(obj.$ref, doc);
       if (resolved === undefined) return undefined;
@@ -81,7 +81,9 @@ export function useOperation() {
       (p, idx, arr) =>
         !arr.slice(idx + 1).some((pp) => pp.name === p.name && pp.in === p.in),
     );
-  return { ...op, ...ctx, makeId, path, servers, parameters };
+
+  const requestBody = resolveRefObj(op?.requestBody);
+  return { ...op, ...ctx, makeId, path, servers, parameters, requestBody };
 }
 
 export function useProviderOperationState() {

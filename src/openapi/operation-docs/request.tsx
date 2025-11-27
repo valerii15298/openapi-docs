@@ -1,23 +1,20 @@
 import { Button, Separator } from "@sane-ts/shadcn-ui";
 
 import { K } from "#openapi/const";
-import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
+import { useOperation, useOperationState } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
 import { ParametersDocs } from "#openapi/operation-docs/parameters";
 import { Collapse } from "#util";
 
 function RequestBodyDocs() {
-  const key = K.requestBody;
-  const { resolveRefObj } = useOpenAPI();
   const o = useOperation();
   const { contentType, setContentType } = useOperationState().request;
 
-  const requestBody = resolveRefObj(o[key]);
-  if (!requestBody) return null;
+  if (!o.requestBody) return null;
 
   const required = (
     <i
-      hidden={!requestBody.required}
+      hidden={!o.requestBody.required}
       title="required"
       className="text-destructive"
     >
@@ -31,10 +28,10 @@ function RequestBodyDocs() {
 
   const body = (
     <Content
-      {...requestBody}
+      {...o.requestBody}
       value={contentType}
       onValueChange={setContentType}
-      path={[...o.path, key]}
+      path={[...o.path, K.requestBody]}
     />
   );
 

@@ -2,6 +2,7 @@ import type { OpenAPIV3, OpenAPIV3_1 } from "@scalar/openapi-types";
 import { createContext, use, useEffect, useState } from "react";
 
 import { resolveRef } from "#json-editor/utils";
+import { K } from "#openapi/const";
 
 export interface OpenAPIContext {
   doc: OpenAPIV3_1.Document;
@@ -69,19 +70,30 @@ export function useOperation() {
     return path.join("-");
   }
 
-  const path = ["paths", ctx.pathname, ctx.method];
+  const path = [K.paths, ctx.pathname, ctx.method];
 
   const servers = doc.servers || pathItem?.servers || op?.servers || [];
 
-  const parameters = [
-    ...(pathItem?.parameters || []),
-    ...(op?.parameters || []),
-  ]
+  type Params = (OpenAPIV3_1.ParameterObject & {
+    $ref?: string;
+    path: string[];
+  })[];
+  const pathItemParameters: Params = (pathItem?.parameters || [])
     .map(resolveRefObj)
-    .filter(
-      (p, idx, arr) =>
-        !arr.slice(idx + 1).some((pp) => pp.name === p.name && pp.in === p.in),
-    );
+    .map((p, idx) => ({
+      ...p,
+      path: [K.paths, ctx.pathname, K.parameters, idx.toString()],
+    }));
+  const operationParameters: Params = (op?.parameters || [])
+    .map(resolveRefObj)
+    .map((p, idx) => ({
+      ...p,
+      path: [K.paths, ctx.pathname, ctx.method, K.parameters, idx.toString()],
+    }));
+  const parameters = [...pathItemParameters, ...operationParameters].filter(
+    (p, idx, arr) =>
+      !arr.slice(idx + 1).some((pp) => pp.name === p.name && pp.in === p.in),
+  );
 
   const requestBody = resolveRefObj(op?.requestBody);
 

@@ -19,7 +19,9 @@ export function useOpenAPI() {
     obj: T | OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject,
   ) {
     if (obj && "$ref" in obj && obj.$ref) {
-      return resolveRef<T>(obj.$ref, doc);
+      const resolved = resolveRef<T>(obj.$ref, doc);
+      if (resolved === undefined) return undefined;
+      return { ...resolved, ...obj };
     }
     return obj as T;
   }

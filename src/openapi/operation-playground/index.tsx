@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { K } from "#openapi/const";
 import {
   useHttpProxy,
-  useOpenAPI,
   useOperation,
   useOperationState,
 } from "#openapi/context";

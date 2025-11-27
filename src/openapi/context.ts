@@ -70,13 +70,17 @@ export function useOperation() {
 
   const path = ["paths", ctx.pathname, ctx.method];
   const servers = doc.servers || pathItem?.servers || op?.servers || [];
-  // TODO use reduced parameters Record<"path" | "query" | "header" | "cookie", Record<name string, ParameterObject>>
+
   const parameters = [
     ...(pathItem?.parameters || []),
     ...(op?.parameters || []),
   ]
     .map(resolveRefObj)
-    .filter((p) => !!p);
+    .filter((p) => !!p)
+    .filter(
+      (p, idx, arr) =>
+        !arr.slice(idx + 1).some((pp) => pp.name === p.name && pp.in === p.in),
+    );
   return { ...op, ...ctx, makeId, path, servers, parameters };
 }
 

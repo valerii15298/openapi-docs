@@ -23,7 +23,7 @@ export function ParametersDocs() {
       </Badge>
     </span>
   );
-  if (!o[key]?.length) {
+  if (!o[key].length) {
     return <div>{header}</div>;
   }
   const parameters = o[key]

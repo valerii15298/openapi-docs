@@ -25,14 +25,12 @@ import { SelectServer } from "#openapi/operation-playground/select-server";
 
 export function OperationPlayground() {
   const httpProxy = useHttpProxy();
-  const { resolveRefObj } = useOpenAPI();
+
   const o = useOperation();
   const { request, response } = useOperationState();
-  const selected =
-    o.parameters
-      ?.map((p) => resolveRefObj(p) ?? {})
-      .filter((p) => p.required)
-      .map((p) => [p.in, p.name].join(".")) ?? [];
+  const selected = o.parameters
+    .filter((p) => p.required)
+    .map((p) => [p.in, p.name].join("."));
 
   const [state, setState] = useState({ ...defaultValues, selected });
   const { proxy } = state;

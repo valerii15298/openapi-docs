@@ -88,25 +88,22 @@ export function ParameterInput(
 
 export function ParametersInput() {
   const o = useOperation();
-  const { resolveRefObj } = useOpenAPI();
 
   const body = (
     <ol className="mt-2 grid gap-4 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 @5xl:grid-cols-5 @6xl:grid-cols-6 @7xl:grid-cols-7">
-      {o.parameters
-        ?.map((p) => resolveRefObj(p))
-        .map(
-          (p, idx) =>
-            p?.schema && (
-              <ParameterInput
-                key={[p.in, p.name].join(".")}
-                {...p}
-                path={[...o.path, K.parameters, idx.toString()]}
-              />
-            ),
-        )}
+      {o.parameters.map(
+        (p, idx) =>
+          p.schema && (
+            <ParameterInput
+              key={[p.in, p.name].join(".")}
+              {...p}
+              path={[...o.path, K.parameters, idx.toString()]}
+            />
+          ),
+      )}
     </ol>
   );
   const header = <h4 className="text-lg font-medium">Parameters</h4>;
-  const hidden = !o.parameters?.length;
+  const hidden = !o.parameters.length;
   return <Collapse hidden={hidden} header={header} children={body} />;
 }

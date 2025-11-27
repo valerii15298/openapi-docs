@@ -56,21 +56,28 @@ export interface OperationContext {
 export const OperationContext = createContext<OperationContext | null>(null);
 OperationContext.displayName = "OperationContext";
 export function useOperation() {
-  const { doc } = useOpenAPI();
+  const { doc, resolveRefObj } = useOpenAPI();
   const ctx = use(OperationContext);
   if (!ctx)
     throw new Error("useOperation must be used within OperationContext");
 
-  const op: OpenAPIV3_1.OperationObject | undefined =
-    doc.paths?.[ctx.pathname]?.[ctx.method];
+  const pathItem = doc.paths?.[ctx.pathname];
+  const op: OpenAPIV3_1.OperationObject | undefined = pathItem?.[ctx.method];
 
   function makeId(path: string[]) {
     return path.join("-");
   }
 
   const path = ["paths", ctx.pathname, ctx.method];
-  const servers = [...(op?.servers ?? []), ...(doc.servers ?? [])];
-  return { ...op, ...ctx, makeId, path, servers };
+  const servers = doc.servers || pathItem?.servers || op?.servers || [];
+  // TODO use reduced parameters Record<"path" | "query" | "header" | "cookie", Record<name string, ParameterObject>>
+  const parameters = [
+    ...(pathItem?.parameters || []),
+    ...(op?.parameters || []),
+  ]
+    .map(resolveRefObj)
+    .filter((p) => !!p);
+  return { ...op, ...ctx, makeId, path, servers, parameters };
 }
 
 export function useProviderOperationState() {

@@ -17,14 +17,14 @@ export function useOpenAPI() {
   const { doc } = ctx;
   function resolveRefObj<T extends object | undefined>(
     obj: T | OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject,
-  ): undefined | (T & { $ref?: string }) {
+  ): T & (undefined extends T ? T : { $ref?: string }) {
     if (obj && "$ref" in obj && obj.$ref) {
       const resolved = resolveRef<T>(obj.$ref, doc);
-      // TODO return partial original obj when ref cannot be resolved
-      if (resolved === undefined) return undefined;
-      return { ...resolved, ...obj };
+      return { ...resolved!, ...obj, $ref: obj.$ref };
     }
-    return obj as T;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return obj;
   }
 
   function extractSchema(
@@ -78,7 +78,6 @@ export function useOperation() {
     ...(op?.parameters || []),
   ]
     .map(resolveRefObj)
-    .filter((p) => !!p)
     .filter(
       (p, idx, arr) =>
         !arr.slice(idx + 1).some((pp) => pp.name === p.name && pp.in === p.in),

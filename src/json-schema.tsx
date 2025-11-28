@@ -1,10 +1,10 @@
 import { Badge, cn } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import { merge } from "allof-merge";
 import type { ReactNode } from "react";
 
 import { Description } from "#description";
 import { K } from "#openapi/const";
+import { resolveSchema } from "#schema";
 import { Collapse } from "#util";
 
 interface ISchema<Slots = object> {
@@ -16,7 +16,7 @@ interface ISchema<Slots = object> {
   name?: string;
   setEditPath?: (path: string[]) => void;
   depth?: number;
-  source: unknown;
+  source: object;
 }
 
 function renderHeader(p: ISchema) {
@@ -50,32 +50,6 @@ function renderHeader(p: ISchema) {
   );
 }
 
-function simplifySchema(
-  schema: OpenAPIV3_1.SchemaObject,
-  source: unknown,
-): OpenAPIV3_1.SchemaObject {
-  if (!schema || typeof schema !== "object") return schema;
-  if (!(K.$ref in schema)) return schema;
-
-  const { $ref, ...rest } = schema;
-  if (typeof $ref !== "string") return schema;
-
-  const allOf = schema.allOf ?? [];
-  allOf.push({ $ref });
-
-  return merge(
-    { ...rest, allOf },
-    {
-      source,
-      // TODO add callback onError function to propagate errors back
-      // eslint-disable-next-line no-console
-      onMergeError: (...args) => console.log(...args),
-      // eslint-disable-next-line no-console
-      onRefResolveError: (...args) => console.log(...args),
-    },
-  ) as typeof schema;
-}
-
 export function RenderJSONSchema({
   children,
   depth,
@@ -88,7 +62,7 @@ export function RenderJSONSchema({
 
   ...p
 }: ISchema<{ header?: ReactNode }>) {
-  schema = simplifySchema(schema ?? {}, p.source);
+  schema = resolveSchema(schema ?? {}, p.source);
   if (!schema || typeof schema !== "object") {
     schema = {};
   }

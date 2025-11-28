@@ -48,13 +48,15 @@ export function Example(
     return Math.min(Math.max(linesHeight, minHeight), maxHeight);
   }, [e.value]);
 
+  const value = useMemo(() => JSON.stringify(e.value, null, 2), [e.value]);
+
   return (
     <section id={id}>
       <MonacoEditor
         hidden={!("value" in e)}
         style={{ height: `${initialHeight}px` }}
         schema={e.schema}
-        value={e.value as unknown}
+        value={value}
         readOnly
         resizable="label"
       />

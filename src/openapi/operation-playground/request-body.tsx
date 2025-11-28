@@ -11,7 +11,6 @@ import {
   ToggleGroupItem,
 } from "@sane-ts/shadcn-ui";
 import { ChevronDown, SquarePen } from "@sane-ts/shadcn-ui/lucide";
-import { sample } from "openapi-sampler";
 import { useState } from "react";
 
 import { Enum } from "#json-editor/utils";
@@ -57,10 +56,10 @@ export function RequestBodyInput() {
   const { media, contentType } = useOperationState().request;
 
   const { body, setState } = useFormContext();
-  const setValue = (value: unknown) => {
+  const setValue = (value: string) => {
     setState((s) => ({ ...s, body: value }));
   };
-  const { resolveRefObj, doc } = useOpenAPI();
+  const { resolveRefObj } = useOpenAPI();
   const [mode, setMode] = useState<EditorMode>(EditorMode.Edit);
 
   const exampleKeys = Object.keys(media?.examples ?? {});
@@ -110,8 +109,8 @@ export function RequestBodyInput() {
     </ToggleGroup>
   );
 
-  const example: unknown = media.example ?? sample(schema as object, {}, doc);
-  const value = body === undefined ? example : body;
+  // TODO should already be a string
+  const value = body ?? "";
 
   const editElement = (
     <SchemaInput

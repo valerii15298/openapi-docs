@@ -8,7 +8,7 @@ import {
 import { HelpCircle } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
-import { defaultValueMap, K } from "#openapi/const";
+import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 import { Examples } from "#openapi/operation-docs/examples";
 import { useFormContext } from "#openapi/operation-playground/create-request";
@@ -25,12 +25,11 @@ export function ParameterInput(
   const setValue = (v: unknown) =>
     setState((s) => ({ ...s, [p.in!]: { ...s[p.in!], [p.name!]: v } }));
 
+  // TODO use merge-allof strategy to get schema and account for array type
+  // Apply this to SchemaField and other places where needed
   const schema = resolveRefObj(p.schema);
-  if (!schema) return null;
   const path = [p.in, p.name];
 
-  const { type } = schema;
-  const defaultValue = defaultValueMap[type ?? "null"];
   const key = path.join(".");
   function toggleSelected(v: boolean) {
     const newSelected = new Set(selected);
@@ -39,10 +38,9 @@ export function ParameterInput(
     setState((s) => ({ ...s, selected: Array.from(newSelected) }));
   }
 
-  const example: unknown = p.example ?? schema.example ?? defaultValue;
   return (
     <div
-      className={`group/form-item h-fit min-w-0 gap-1 ${["object", "array"].includes(schema.type ?? "") ? "col-span-full" : ""}`}
+      className={`group/form-item h-fit min-w-0 gap-1 ${["object", "array"].includes(schema?.type ?? "") ? "col-span-full" : ""}`}
     >
       <Label className="text-wrap break-all">
         <Checkbox
@@ -72,13 +70,13 @@ export function ParameterInput(
       </Label>
 
       <SchemaInput
-        schema={schema}
+        schema={schema ?? {}}
         field={{
-          value: value === undefined ? example : value,
+          // TODO value should already be a string
+          value: value ?? "",
           setValue(value) {
             setValue(value);
-            const isEmpty = [null, undefined, "" as unknown].includes(value);
-            toggleSelected(!isEmpty);
+            toggleSelected(value !== "");
           },
         }}
       />

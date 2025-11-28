@@ -1,15 +1,5 @@
 import { Enum } from "#json-editor/utils";
 
-export const defaultValueMap = {
-  string: "",
-  number: 0,
-  integer: 0,
-  boolean: "",
-  object: {},
-  array: [],
-  null: null,
-} as const;
-
 export const K = Enum(
   "servers",
   "paths",

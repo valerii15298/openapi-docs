@@ -8,12 +8,12 @@ export const defaultValues = {
 
   selected: [] as string[],
   // params
-  query: {} as Record<string, unknown>,
-  header: {} as Record<string, unknown>,
-  path: {} as Record<string, unknown>,
-  cookie: {} as Record<string, unknown>,
+  query: {} as Record<string, string>,
+  header: {} as Record<string, string>,
+  path: {} as Record<string, string>,
+  cookie: {} as Record<string, string>,
 
-  body: undefined as unknown,
+  body: undefined as string | undefined,
 };
 export const FormContext = createContext({
   ...defaultValues,

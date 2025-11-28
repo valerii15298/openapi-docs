@@ -16,6 +16,7 @@ import {
   useEditorContext,
   useEditorState,
 } from "#json-editor/context";
+import { formatParse, formatStringify } from "#json-editor/enums";
 import { MonacoEditor } from "#json-editor/monaco-editor";
 import { deepGet } from "#json-editor/utils";
 
@@ -34,8 +35,13 @@ function EditorContent({
   return (
     <MonacoEditor
       readOnly={ctx.readOnly}
-      defaultValue={deepGet(ctx.data, ctx.path)}
-      onValueChange={onValueChange}
+      defaultValue={() =>
+        formatStringify[ctx.format](deepGet(ctx.data, ctx.path))
+      }
+      onValueChange={(newValue) => {
+        const parsed = formatParse[ctx.format](newValue);
+        onValueChange?.(parsed);
+      }}
       onError={(error) => {
         const { name, message } =
           error instanceof Error
@@ -52,7 +58,7 @@ function EditorContent({
         );
         ctx.setError(jsx);
       }}
-      format={ctx.format}
+      language={ctx.format}
       className={cn(props.className)}
       schema={ctx.path.length ? undefined : schema}
       schemaURI={ctx.path.length ? undefined : schemaURI}

@@ -13,41 +13,9 @@ import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
 
-function getValueFromISODate(dateString: string) {
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) {
-    return "";
-  }
-  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-  return date.toISOString().slice(0, 16);
-}
 interface FieldProps {
-  value: unknown;
-  setValue: (v: unknown) => void;
-}
-
-function DateTimeLocalInput({
-  field,
-  className,
-}: {
-  field: FieldProps;
-  className?: string;
-}) {
-  return (
-    <Input
-      className={className}
-      type={"datetime-local"}
-      value={getValueFromISODate(String(field.value))}
-      onChange={(e) => {
-        const date = new Date(e.target.value);
-        if (isNaN(date.getTime())) {
-          field.setValue("");
-        } else {
-          field.setValue(date.toISOString());
-        }
-      }}
-    />
-  );
+  value: string;
+  setValue: (v: string) => void;
 }
 
 export function SchemaInput({
@@ -72,11 +40,7 @@ export function SchemaInput({
 
   if (schema.enum?.length) {
     return (
-      <Select
-        required
-        onValueChange={field.setValue}
-        value={String(field.value)}
-      >
+      <Select required onValueChange={field.setValue} value={field.value}>
         <SelectTrigger className={cn("w-full", className)}>
           <SelectValue />
         </SelectTrigger>
@@ -98,10 +62,8 @@ export function SchemaInput({
         type="single"
         className={cn("w-full", className)}
         variant={"outline"}
-        value={field.value === undefined ? "" : JSON.stringify(field.value)}
-        onValueChange={(v) => {
-          field.setValue(v && JSON.parse(v));
-        }}
+        value={field.value}
+        onValueChange={field.setValue}
       >
         {options.map((option) => (
           <ToggleGroupItem
@@ -117,27 +79,16 @@ export function SchemaInput({
   }
 
   if (schema.type === "string") {
-    if (schema.format === "date-time")
-      return <DateTimeLocalInput field={field} className={className} />;
-
-    if (schema.format === "date")
+    const formatMap: Record<string, React.HTMLInputTypeAttribute> = {
+      "date-time": "datetime-local",
+      date: "date",
+    };
+    if (schema.format || !richText) {
       return (
         <Input
           className={className}
-          type={"date"}
-          value={String(field.value)}
-          onChange={(e) => {
-            field.setValue(e.target.value);
-          }}
-        />
-      );
-
-    if (!richText) {
-      return (
-        <Input
-          className={className}
-          type={"text"}
-          value={String(field.value)}
+          type={formatMap[schema.format ?? ""] || "text"}
+          value={field.value}
           onChange={(e) => {
             field.setValue(e.target.value);
           }}
@@ -152,7 +103,7 @@ export function SchemaInput({
         min={schema.minimum}
         max={schema.maximum}
         type="number"
-        value={String(field.value)}
+        value={field.value}
         onChange={(e) => {
           field.setValue(e.target.value);
         }}
@@ -166,7 +117,7 @@ export function SchemaInput({
       onValueChange={field.setValue}
       schema={schema}
       resizable
-      format={schema.type === "string" ? "text" : "json"}
+      language={schema.type === "string" ? "text" : "json"}
       className={cn(className, monacoClassName)}
     />
   );

@@ -3,7 +3,7 @@ import { configureMonacoYaml, type SchemasSettings } from "monaco-yaml";
 import { useEffect, useRef } from "react";
 
 import { createAsyncSequential } from "#hooks/use-async-sequential";
-import { EditorFormat, formatParse, formatStringify } from "#json-editor/enums";
+import { EditorFormat } from "#json-editor/enums";
 import { monaco } from "#json-editor/monaco";
 
 const markerToIgnore = {
@@ -104,13 +104,13 @@ function setModelSchema(
 }
 
 interface MonacoEditorProps {
-  value?: unknown;
-  defaultValue?: unknown;
-  onValueChange?: (value: unknown) => void;
+  value?: string;
+  defaultValue?: string | (() => string);
+  onValueChange?: (value: string) => void;
   onError?: (error: unknown) => void;
   schema?: object;
   schemaURI?: string;
-  format?: EditorFormat;
+  language?: EditorFormat;
   readOnly?: boolean;
   resizable?: boolean | "label";
 }
@@ -122,7 +122,7 @@ export function MonacoEditor({
   onError,
   schema,
   schemaURI,
-  format = EditorFormat.json,
+  language = EditorFormat.json,
   readOnly,
   resizable,
   className,
@@ -135,16 +135,17 @@ export function MonacoEditor({
 
   const { resolvedTheme } = useTheme();
 
-  const targetValue = value === undefined ? defaultValue : value;
+  const getDefaultValue =
+    typeof defaultValue === "function" ? defaultValue : () => defaultValue;
+
+  const getValue = () => value ?? getDefaultValue() ?? "";
 
   useEffect(() => {
     if (!elementRef.current) return;
     const controller = new AbortController();
 
-    const formattedValue = formatStringify[format](targetValue);
-
-    const modelUri = monaco.Uri.parse(`file:///${Math.random()}.${format}`);
-    const model = monaco.editor.createModel(formattedValue, format, modelUri);
+    const modelUri = monaco.Uri.parse(`file:///${Math.random()}.${language}`);
+    const model = monaco.editor.createModel(getValue(), language, modelUri);
 
     const editor = monaco.editor.create(elementRef.current, {
       model,
@@ -170,8 +171,7 @@ export function MonacoEditor({
     if (onValueChange) {
       const trigger = createAsyncSequential(async (data: string) => {
         try {
-          const newValue = formatParse[format](data);
-          onValueChange(newValue);
+          onValueChange(data);
           const maxWait = 10_000;
           const delay = Math.min(Math.max(data.length / maxWait, 1), maxWait);
           await new Promise((resolve) => void setTimeout(resolve, delay));
@@ -184,7 +184,7 @@ export function MonacoEditor({
 
     editorRef.current = editor;
 
-    const removeModelSchema = setModelSchema(model, format, {
+    const removeModelSchema = setModelSchema(model, language, {
       schema,
       uri: schemaURI,
     });
@@ -194,7 +194,7 @@ export function MonacoEditor({
       editor.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [format]);
+  }, [language]);
 
   useEffect(() => {
     editorRef.current?.updateOptions({
@@ -204,12 +204,9 @@ export function MonacoEditor({
   }, [readOnly, resolvedTheme]);
 
   useEffect(() => {
-    if (value === undefined) return;
-    const newValue = formatStringify[format](value);
-    const currentValue = editorRef.current?.getValue();
-    if (newValue === currentValue) return;
-    editorRef.current?.setValue(newValue);
-  }, [format, value]);
+    if (value === undefined || editorRef.current?.getValue() === value) return;
+    editorRef.current?.setValue(value);
+  }, [value]);
 
   if (!resizable) {
     return <div {...props} className={className} ref={elementRef} />;

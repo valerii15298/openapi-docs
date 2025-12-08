@@ -5,6 +5,8 @@ export function deepGet(obj: unknown, path: string[]) {
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function resolveRef<T = unknown>(ref: string, obj: object) {
   if (!ref.startsWith("#/")) {
+    // eslint-disable-next-line no-console
+    console.error("Only local references are supported");
     return undefined;
   }
 

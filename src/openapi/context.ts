@@ -21,6 +21,10 @@ export function useOpenAPI() {
   ): T & (undefined extends T ? T : { $ref?: string }) {
     if (obj && "$ref" in obj && obj.$ref) {
       const resolved = resolveRef<T>(obj.$ref, doc);
+      if (!resolved) {
+        // eslint-disable-next-line no-console
+        console.error(`${obj.$ref} cannot be resolved`);
+      }
       return { ...resolved!, ...obj, $ref: obj.$ref };
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

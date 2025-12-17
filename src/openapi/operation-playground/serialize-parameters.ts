@@ -1,6 +1,6 @@
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
-function toString(value: unknown) {
+function stringify(value: unknown) {
   if (value && typeof value === "object") return JSON.stringify(value);
   return String(value);
 }
@@ -36,28 +36,28 @@ export function queryParam(
 
   if (style === "deepObject") {
     return flattenWithBrackets(p.name, value)
-      .map(([k, v]) => `${encode(k)}=${encode(toString(v))}`)
+      .map(([k, v]) => `${encode(k)}=${encode(stringify(v))}`)
       .join("&");
   }
 
   const delimiter = delimiterMap[style];
 
   if (Array.isArray(value) && explode) {
-    return value.map((v) => `${name}=${encode(toString(v))}`).join("&");
+    return value.map((v) => `${name}=${encode(stringify(v))}`).join("&");
   }
   if (Array.isArray(value) && !explode) {
-    const values = value.map((v) => encode(toString(v)));
+    const values = value.map((v) => encode(stringify(v)));
     return `${name}=${values.join(delimiter)}`;
   }
 
   if (typeof value === "object" && explode) {
     return Object.entries(value)
-      .map(([k, v]) => `${encode(k)}=${encode(toString(v))}`)
+      .map(([k, v]) => `${encode(k)}=${encode(stringify(v))}`)
       .join("&");
   }
   if (typeof value === "object" && !explode) {
     const values = Object.entries(value)
-      .flatMap(([k, v]) => [encode(k), encode(toString(v))])
+      .flatMap(([k, v]) => [encode(k), encode(stringify(v))])
       .join(delimiter);
     return `${name}=${values}`;
   }

@@ -8,13 +8,11 @@ import { useStorage } from "#storage";
 export const RequestBodyTab = Enum("edit", "examples");
 export type RequestBodyTab = keyof typeof RequestBodyTab;
 
-type RequestBody =
-  | {
-      body: string;
-      tab: RequestBodyTab;
-      include: boolean;
-    }
-  | undefined;
+type RequestBody = {
+  body: string;
+  tab: RequestBodyTab;
+  include: boolean;
+};
 
 export function useRequestBody() {
   const o = useOperation();

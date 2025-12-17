@@ -14,11 +14,11 @@ import { Err, Ok } from "#result";
 import { StorageContext } from "#storage";
 
 function parseContentType(type?: string) {
-  if (!type) return type || "";
+  if (!type) return "";
   try {
     return ContentType.parse(type).type;
   } catch {
-    return type || "";
+    return "";
   }
 }
 

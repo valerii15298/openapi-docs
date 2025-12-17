@@ -55,10 +55,10 @@ export function useServer() {
 }
 
 function substitutePathParams(path: string, params: Record<string, Param>) {
-  Object.entries(params).forEach(([k, v]) => {
-    path = path.replaceAll(`{${k}}`, encodeURIComponent(v.value)); // TODO path parameters serialization
-  });
-  return path;
+  return Object.entries(params).reduce(
+    (p, [k, v]) => p.replaceAll(`{${k}}`, encodeURIComponent(v.value)),
+    path,
+  );
 }
 
 export function useRequestForm() {

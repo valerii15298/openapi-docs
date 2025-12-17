@@ -19,6 +19,14 @@ import { queryParam } from "#openapi/operation-playground/serialize-parameters";
 import { Result } from "#result";
 import { getSample, resolveSchema } from "#schema";
 
+/**
+ * Render an input control for a single OpenAPI parameter, including inclusion toggle, value editor, and examples.
+ *
+ * Renders a labeled control that initializes a default value from the parameter's example or a generated sample, lets the user toggle inclusion and edit the parameter value (using a primitive control when possible or a Monaco editor for complex values), and exposes examples in a popover. For query parameters the component also maintains a serialized representation suitable for query strings.
+ *
+ * @param p - The OpenAPI parameter object augmented with `path` (path segments), `name` (parameter name), and `in` (location, e.g., "query", "path", "header", "cookie")
+ * @returns The parameter input element, or `null` when the parameter state is not available
+ */
 export function ParameterInput(
   p: OpenAPIV3_1.ParameterObject & { path: string[]; name: string; in: string },
 ) {
@@ -99,6 +107,13 @@ export function ParameterInput(
   );
 }
 
+/**
+ * Renders a collapsible "Parameters" section containing input controls for each operation parameter.
+ *
+ * The section is hidden when there are no parameters. If present, it shows a details/summary that will open automatically when form validation fails and lists a ParameterInput for each parameter that has a schema and string `name` and `in` fields.
+ *
+ * @returns The rendered parameters section as a JSX element.
+ */
 export function ParametersInput() {
   const o = useOperation();
 

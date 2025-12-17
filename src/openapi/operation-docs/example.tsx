@@ -7,6 +7,12 @@ import { Description } from "#description";
 import { MonacoEditor } from "#json-editor/monaco-editor";
 import { useOperation } from "#openapi/context";
 
+/**
+ * Renders an example section containing an optional JSON editor, a summary with an external link, and the example description.
+ *
+ * @param e - OpenAPI ExampleObject extended with `path` (used to build the section id) and optional `schema` (passed to the editor)
+ * @returns A React element that displays the example editor (when `value` is present), the summary/external link (when present), and the example description
+ */
 export function Example(
   e: OpenAPIV3_1.ExampleObject & {
     path: string[];

@@ -13,6 +13,14 @@ import { SelectServer } from "#openapi/operation-playground/select-server";
 import { Err, Ok } from "#result";
 import { StorageContext } from "#storage";
 
+/**
+ * Normalize a Content-Type header value to its MIME type.
+ *
+ * Parses the provided header and returns the media type (for example, `application/json`); if the input is falsy or cannot be parsed, returns an empty string.
+ *
+ * @param type - The Content-Type header value to normalize.
+ * @returns The MIME type string when available, otherwise an empty string.
+ */
 function parseContentType(type?: string) {
   if (!type) return type || "";
   try {
@@ -22,6 +30,14 @@ function parseContentType(type?: string) {
   }
 }
 
+/**
+ * Render the interactive playground for an OpenAPI operation, allowing users to configure and send requests and view responses.
+ *
+ * The UI includes server selection, parameter and request body inputs, an optional HTTP proxy toggle, controls to submit the request, and response previewing (status, headers, and body). Successful responses update the response view and scroll it into view; fetch failures display an alert with the error details.
+ *
+ * @throws Error if the StorageContext is not available
+ * @returns The component's JSX element that renders the operation playground UI
+ */
 export function OperationPlayground() {
   const httpProxy = useHttpProxy();
 

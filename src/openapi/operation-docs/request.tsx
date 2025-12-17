@@ -6,6 +6,14 @@ import { Content } from "#openapi/operation-docs/content";
 import { ParametersDocs } from "#openapi/operation-docs/parameters";
 import { Collapse } from "#util";
 
+/**
+ * Render a collapsible "Body" section documenting the current operation's request body.
+ *
+ * When the operation has a request body, displays a "Body" header (with a red asterisk if the body is required)
+ * and the request body content. Returns `null` when the operation has no request body.
+ *
+ * @returns A React element containing the request body documentation, or `null` if no request body exists.
+ */
 function RequestBodyDocs() {
   const o = useOperation();
   if (!o.requestBody) return null;

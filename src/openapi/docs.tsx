@@ -6,6 +6,12 @@ import { matchRoute } from "#openapi/router";
 import { SideBar } from "#openapi/sidebar";
 import { createStorage, StorageContext } from "#storage";
 
+/**
+ * Renders the OpenAPI documentation layout with storage and OpenAPI contexts, a sidebar, and the active route content.
+ *
+ * @param ctx - OpenAPI context containing the current path and related data used to determine which route to render.
+ * @returns The documentation UI: StorageContext and OpenAPIContext providers wrapping a SidebarProvider, the SideBar, and the main content for the matched route.
+ */
 export function Docs(ctx: OpenAPIContext) {
   const renderRoute = matchRoute(ctx.path);
   const [storage] = useState(createStorage);

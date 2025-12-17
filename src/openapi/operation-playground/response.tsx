@@ -23,6 +23,12 @@ export type ResponseResult = {
   tab: ResponseTab;
 };
 
+/**
+ * Parse a string as JSON when possible.
+ *
+ * @param input - The string to parse.
+ * @returns The parsed value if `input` is valid JSON; otherwise returns the original `input` string.
+ */
 function parseJSON(input: string) {
   try {
     return JSON.parse(input) as unknown;
@@ -31,6 +37,18 @@ function parseJSON(input: string) {
   }
 }
 
+/**
+ * Exposes the current response state and utilities for the active OpenAPI response media.
+ *
+ * @returns An object containing:
+ * - `status` — numeric HTTP status for the response.
+ * - `headers` — record of header name to value.
+ * - `body` — `Result<string, Error>` holding the response body (sample or error).
+ * - `tab` — currently selected response tab (`ResponseTab`).
+ * - `setTab` — function to change the active `tab`.
+ * - `media` — the active media object from responses context (may be undefined).
+ * - `example` — example payloads and metadata for the media (`useExample` result).
+ */
 function useResponse() {
   const { doc } = useOpenAPI();
   const { media, mediaPath } = useResponses();
@@ -57,6 +75,16 @@ function useResponse() {
   };
 }
 
+/**
+ * Render the response UI with tabbed sections for headers, body, and examples.
+ *
+ * The component reads response state (tab, status, headers, body, media, and examples)
+ * from the internal hook and renders a Tabs UI that lets the user switch between
+ * Headers, Body, and Examples views. When a numeric `status` is present a status
+ * badge is shown; the Examples tab is hidden when no example tabs are available.
+ *
+ * @returns The React element for the response tabbed interface.
+ */
 export function Response() {
   const { tab, setTab, status, media, body, headers, example } = useResponse();
 

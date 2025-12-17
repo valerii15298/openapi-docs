@@ -8,6 +8,17 @@ import { useOpenAPI, useOperation } from "#openapi/context";
 import { useStorage } from "#storage";
 
 const key = K.content;
+/**
+ * Render a tabbed view of the given content media types with a description and a JSON schema viewer for each media type.
+ *
+ * The selected media-type tab is persisted in storage using an identifier derived from the current operation and `path`.
+ *
+ * @param props - Component props
+ * @param props.description - Optional description text shown above the tabs
+ * @param props.content - Map from media type string (e.g., "application/json") to OpenAPI MediaTypeObject; each entry becomes a tab and its schema is rendered
+ * @param props.path - Path within the OpenAPI document used to build storage keys and editor/schema paths
+ * @returns A React element containing the description, a tab for each media type, and a JSON schema renderer inside each tab
+ */
 export function Content(props: {
   description?: string;
   content?: Record<string, OpenAPIV3_1.MediaTypeObject>;

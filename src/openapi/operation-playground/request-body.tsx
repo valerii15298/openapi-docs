@@ -8,6 +8,13 @@ import {
   useRequestBody,
 } from "#openapi/operation-playground/use-request-body";
 
+/**
+ * Renders a tabbed "Body" input that switches between an inline editor and examples for the selected media type.
+ *
+ * The Edit tab shows a Monaco editor initialized with the current request body value and updates the body as the user types. The Examples tab displays example content derived from the media schema and shows any example tabs when present.
+ *
+ * @returns The RequestBody input UI as a JSX element containing the tabbed editor and examples view.
+ */
 export function RequestBodyInput() {
   const { media, setTab, tab, body, setBody, example } = useRequestBody();
 

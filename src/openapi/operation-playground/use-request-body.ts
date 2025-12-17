@@ -16,6 +16,20 @@ type RequestBody =
     }
   | undefined;
 
+/**
+ * Manage and persist the request body state for the current operation media type.
+ *
+ * Exposes the stored request body (initialised from a generated sample or prior storage), the active tab selection, and whether the request body is included, along with setters and contextual media/example data.
+ *
+ * @returns An object containing:
+ * - `body` — the stored request body string (or `undefined` if not set),
+ * - `tab` — the active `RequestBodyTab` ("edit" or "examples"),
+ * - `include` — `true` if the operation defines a requestBody, `false` otherwise,
+ * - `setTab(tab)` — function to set the active tab,
+ * - `setBody(body)` — function to set the body string,
+ * - `media` — the current request media information,
+ * - `example` — the resolved example for the current media (if any)
+ */
 export function useRequestBody() {
   const o = useOperation();
   const { doc } = useOpenAPI();
@@ -43,6 +57,13 @@ export function useRequestBody() {
   };
 }
 
+/**
+ * Determine the active request body content for the current operation based on the selected tab and available example.
+ *
+ * If the operation has no requestBody, or no example is available when the Examples tab is selected, no content is returned.
+ *
+ * @returns The request body as a JSON string when an example is selected or the raw editable body when the Edit tab is selected, or `undefined` if no content is available.
+ */
 export function useActiveRequestBody() {
   const o = useOperation();
   const { tab, body, example } = useRequestBody();

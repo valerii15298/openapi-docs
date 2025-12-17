@@ -6,6 +6,15 @@ import { useOpenAPI } from "#openapi/context";
 import { useStorage } from "#storage";
 
 const key = K.examples;
+/**
+ * Provide an example-selection control and the resolved example for a given media type.
+ *
+ * @param props - The media type object to inspect; must include a `path` array used to build the storage key and to locate the media type's `examples` property.
+ * @returns An object containing:
+ * - `tabs` — a ToggleGroup element for choosing among available examples, or a falsy value if no examples exist.
+ * - `example` — the resolved example object for the currently selected key, or `undefined` when none is selected.
+ * - `path` — the original `path` extended with the examples key and the currently selected example key.
+ */
 export function useExample(
   props: OpenAPIV3_1.MediaTypeObject & { path: string[] },
 ) {

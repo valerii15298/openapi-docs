@@ -10,6 +10,13 @@ import {
 import { useOperation } from "#openapi/context";
 import { useServer } from "#openapi/operation-playground/create-request";
 
+/**
+ * Render a server selection control that displays the current server and lets the user pick another.
+ *
+ * If there is no current server, renders a destructive badge indicating no available servers.
+ *
+ * @returns A JSX element containing the server select UI or a fallback badge when no server is available.
+ */
 export function SelectServer() {
   const { servers } = useOperation();
   const { server, idx, setIdx } = useServer();

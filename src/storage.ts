@@ -4,6 +4,18 @@ export type StorageContext = ReturnType<typeof createStorage>;
 export const StorageContext = createContext<StorageContext | null>(null);
 StorageContext.displayName = "StorageContext";
 
+/**
+ * Creates a simple in-memory key-value store with subscription support.
+ *
+ * The returned store lets callers read and write values by string key,
+ * react to changes for a specific key or all keys, and query key presence.
+ *
+ * @returns An object with the following methods:
+ * - `getValue<T>(key)` — returns the stored value for `key` typed as `T` or `undefined`.
+ * - `hasValue(key)` — returns `true` if `key` exists in the store.
+ * - `setValue(key, value)` — updates the value for `key`. `value` may be a function that receives the current value and returns the new value; setting `undefined` removes the key. Notifies subscribers for the key and all global subscribers with `(value, key)`.
+ * - `subscribe(callback, key?)` — subscribes `callback` to changes. If `key` is omitted the callback is invoked for all key changes; if `key` is provided the callback is invoked only for that key. Returns an unsubscribe function.
+ */
 export function createStorage() {
   type Subscribers = Set<(value: unknown, key: string) => void>;
 
@@ -42,6 +54,15 @@ export function createStorage() {
   };
 }
 
+/**
+ * Accesses a named value in shared storage and returns the current value with a setter.
+ *
+ * @param _key - The storage key, either a string or an array of strings (array keys are joined with `-` to derive a single key).
+ * @param initialValue - The value used to initialize the storage when the key is absent and returned when storage has no value.
+ * @param init - If `true`, writes `initialValue` into storage when the key is not present; if `false`, does not initialize storage.
+ * @returns A tuple `[value, setValue]` where `value` is the stored value (or `initialValue` when the key is not present) and `setValue` updates the stored value for the key.
+ * @throws Error - Throws "Missing StorageProvider" when no StorageContext is available.
+ */
 export function useStorage<T>(
   _key: string | string[],
   initialValue: T,

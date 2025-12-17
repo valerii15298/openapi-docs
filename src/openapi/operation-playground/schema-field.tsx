@@ -16,6 +16,12 @@ interface FieldProps {
   value: string;
   setValue: (v: string) => void;
 }
+/**
+ * Convert an ISO 8601 timestamp into a value suitable for an HTML `datetime-local` input.
+ *
+ * @param iso - An ISO 8601 timestamp string (or a falsy value). If `iso` is falsy it is returned unchanged.
+ * @returns A local datetime-local formatted string `YYYY-MM-DDTHH:MM` adjusted for local timezone, an empty string if `iso` cannot be parsed as a valid date, or the original falsy `iso` value.
+ */
 function dateTimeFromISO(iso: string) {
   if (!iso) return iso;
   const d = new Date(iso);
@@ -26,6 +32,12 @@ function dateTimeFromISO(iso: string) {
   return d.toISOString().slice(0, 16);
 }
 
+/**
+ * Convert a datetime-local input value into an ISO 8601 timestamp.
+ *
+ * @param datetime - A string from a `datetime-local` input; may be falsy
+ * @returns The corresponding ISO 8601 timestamp string; if `datetime` is falsy returns it unchanged, if `datetime` is not a valid date returns an empty string
+ */
 function dateTimeToISO(datetime: string) {
   if (!datetime) return datetime;
   const d = new Date(datetime);
@@ -35,6 +47,19 @@ function dateTimeToISO(datetime: string) {
   return d.toISOString();
 }
 
+/**
+ * Render a form control suitable for a primitive JSON Schema field.
+ *
+ * Renders an appropriate input component (button for null, select for enums of primitive values,
+ * toggle for boolean, typed text/number inputs, or a datetime-local input for `date-time` strings)
+ * and wires it to the provided field value and setter. Returns `null` when the schema type is not handled.
+ *
+ * @param field - Field value and setter pair used to read and update the input's value
+ * @param schema - JSON Schema for the field; may include `format` to influence input type
+ * @param className - Optional CSS class names applied to the rendered input container
+ * @param name - Name attribute applied to native form controls
+ * @returns A JSX element for the field input, or `null` if the schema is unsupported
+ */
 export function primitiveInput({
   field,
   schema,

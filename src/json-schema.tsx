@@ -50,6 +50,20 @@ function renderHeader(p: ISchema) {
   );
 }
 
+/**
+ * Render a JSON/OpenAPI schema node as a nested UI block with header, description, enum values, properties, and items; collapses when the node has nested content.
+ *
+ * Renders the resolved schema at the given path, displays a header with name/type/format/title, an optional description, allowed enum values, child properties, and array items. When depth is nonzero and nested content exists, the node is rendered inside a collapsible container.
+ *
+ * @param schema - The OpenAPI/JSON Schema object to render; may be a schema reference that will be resolved.
+ * @param path - Array representing the path to this schema within the document; used for keys and resolving context.
+ * @param required - Whether this schema property is required (affects header display).
+ * @param name - Optional display name for the schema; falls back to the last segment of `path` when omitted.
+ * @param depth - Current nesting depth; when omitted it defaults to `path.length` and controls indentation and collapsibility.
+ * @param slots.header - Optional React node inserted into the header section.
+ * @param children - Optional React children rendered before the description and nested content.
+ * @returns A JSX element representing the rendered schema node.
+ */
 export function RenderJSONSchema({
   children,
   depth,

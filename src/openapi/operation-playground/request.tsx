@@ -11,6 +11,15 @@ import { useOperation } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
 import { useRequestForm } from "#openapi/operation-playground/create-request";
 
+/**
+ * Render an interactive request sample showing a curl command for the current request form.
+ *
+ * The component displays the request URL, headers, and optional body as a visual curl command,
+ * provides controls to toggle URL preview encoding and line-wrapping behavior, and includes a
+ * copy button that writes the plain curl command to the clipboard.
+ *
+ * @returns The React element for the request sample UI
+ */
 export function RequestSample() {
   const o = useOperation();
 

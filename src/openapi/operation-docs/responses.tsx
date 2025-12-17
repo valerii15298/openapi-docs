@@ -12,6 +12,13 @@ import { useOperation } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
 import { useStorage } from "#storage";
 
+/**
+ * Render a tabbed UI showing each response status for the current operation and its content.
+ *
+ * The component persists the selected response status and displays a tab and corresponding Content section for each response defined on the operation.
+ *
+ * @returns A React element containing the response status tabs and their associated content panels.
+ */
 export function Responses() {
   const o = useOperation();
   const path = [...o.path, K.responses];

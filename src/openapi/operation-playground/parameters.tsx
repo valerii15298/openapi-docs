@@ -65,8 +65,8 @@ export function ParameterInput(
 
   const spanFull = primitive ? "" : "col-span-full";
   return (
-    <div className={`group/form-item h-fit min-w-0 gap-1 ${spanFull}`}>
-      <Label className="text-wrap break-all">
+    <div className={`group/form-item h-fit min-w-0 ${spanFull}`}>
+      <Label className="mb-0.5 text-wrap break-all">
         <Checkbox
           disabled={p.required}
           checked={param.include}

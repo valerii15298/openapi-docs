@@ -62,6 +62,7 @@ export function RenderJSONSchema({
 
   ...p
 }: ISchema<{ header?: ReactNode }>) {
+  // @ts-expect-error TODO add custom OpenAPI types
   schema = resolveSchema(schema ?? {}, p.source);
   if (!schema || typeof schema !== "object") {
     schema = {};

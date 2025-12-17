@@ -8,16 +8,17 @@ import {
 } from "@sane-ts/shadcn-ui";
 
 import { K } from "#openapi/const";
-import { useOperation, useOperationState } from "#openapi/context";
+import { useOperation } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
+import { useStorage } from "#storage";
 
 export function Responses() {
   const o = useOperation();
-  const { status, setStatus, contentType, setContentType } =
-    useOperationState().response;
   const path = [...o.path, K.responses];
+
   const entries = Object.entries(o.responses);
   const id = o.makeId(path);
+  const [status, setStatus] = useStorage(id, entries[0]?.[0] ?? "");
 
   return (
     <Tabs value={status} onValueChange={setStatus} id={id}>
@@ -44,12 +45,7 @@ export function Responses() {
       <Separator className={"-mt-1"} />
       {entries.map(([status, resp]) => (
         <TabsContent key={status} value={status}>
-          <Content
-            {...resp}
-            path={[...path, status]}
-            value={contentType}
-            onValueChange={setContentType}
-          />
+          <Content {...resp} path={[...path, status]} />
         </TabsContent>
       ))}
     </Tabs>

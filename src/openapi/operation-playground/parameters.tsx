@@ -5,54 +5,74 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@sane-ts/shadcn-ui";
-import { HelpCircle } from "@sane-ts/shadcn-ui/lucide";
+import { HelpCircle, Triangle } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
+import { useEffect, useEffectEvent } from "react";
 
-import { K } from "#openapi/const";
+import { MonacoEditor } from "#json-editor/monaco-editor";
 import { useOpenAPI, useOperation } from "#openapi/context";
-import { Examples } from "#openapi/operation-docs/examples";
-import { useFormContext } from "#openapi/operation-playground/create-request";
-import { SchemaInput } from "#openapi/operation-playground/schema-field";
-import { Collapse } from "#util";
+import { Example } from "#openapi/operation-docs/example";
+import { useExample } from "#openapi/operation-docs/examples";
+import { useParam } from "#openapi/operation-playground/create-request";
+import { primitiveInput } from "#openapi/operation-playground/schema-field";
+import { queryParam } from "#openapi/operation-playground/serialize-parameters";
+import { Result } from "#result";
+import { getSample, resolveSchema } from "#schema";
 
 export function ParameterInput(
-  p: OpenAPIV3_1.ParameterObject & { path: string[] },
+  p: OpenAPIV3_1.ParameterObject & { path: string[]; name: string; in: string },
 ) {
-  const { selected, setState } = useFormContext();
-  const { resolveRefObj } = useOpenAPI();
+  const { doc } = useOpenAPI();
+  const schema = resolveSchema(p.schema ?? {}, doc);
+  const [param, setParam] = useParam(p);
+  const examples = useExample(p);
 
-  const value = useFormContext()[p.in!][p.name!];
-  const setValue = (v: unknown) =>
-    setState((s) => ({ ...s, [p.in!]: { ...s[p.in!], [p.name!]: v } }));
+  const primitive = primitiveInput({
+    field: param ?? { value: "", setValue: () => void 0 },
+    name: p.name,
+    schema,
+  });
 
-  // TODO use merge-allof strategy to get schema and account for array type
-  // Apply this to SchemaField and other places where needed
-  const schema = resolveRefObj(p.schema);
-  const path = [p.in, p.name];
+  const setDefault = useEffectEvent(() => {
+    const sample: unknown = p.example || getSample(doc, p.schema);
+    const value = primitive
+      ? String(sample)
+      : JSON.stringify(sample, null, 2).replace(/\s+/gu, " ");
+    const serialized = p.in === "query" ? queryParam(p, value) : undefined;
 
-  const key = path.join(".");
-  function toggleSelected(v: boolean) {
-    const newSelected = new Set(selected);
-    if (v) newSelected.add(key);
-    else newSelected.delete(key);
-    setState((s) => ({ ...s, selected: Array.from(newSelected) }));
-  }
+    setParam({ value, include: !!p.required, serialized });
+  });
+  const exists = !!param;
+  useEffect(() => {
+    if (!exists) setDefault();
+  }, [exists]);
 
+  if (!param) return null;
+
+  const element = primitive || (
+    <MonacoEditor
+      defaultValue={param.value}
+      onValueChange={(value) => {
+        param.setValue(value);
+        const result = Result.catchError(() => JSON.parse(value) as unknown);
+        if (!result.isOk || p.in !== "query") return;
+        param.setSerialized(queryParam(p, result.ok));
+      }}
+      schema={p.schema}
+      resizable
+    />
+  );
+
+  const spanFull = primitive ? "" : "col-span-full";
   return (
-    <div
-      className={`group/form-item h-fit min-w-0 gap-1 ${["object", "array"].includes(schema?.type ?? "") ? "col-span-full" : ""}`}
-    >
+    <div className={`group/form-item h-fit min-w-0 gap-1 ${spanFull}`}>
       <Label className="text-wrap break-all">
         <Checkbox
           disabled={p.required}
-          checked={selected.includes(key)}
-          onCheckedChange={(v) => {
-            if (typeof v === "boolean") {
-              toggleSelected(v);
-            }
-          }}
+          checked={param.include}
+          onCheckedChange={(include) => param.setInclude(!!include)}
         />
-        {path.at(-1)}
+        {p.name}
         <Popover>
           <PopoverTrigger
             hidden={!p.examples}
@@ -64,22 +84,17 @@ export function ParameterInput(
             className="resize overflow-auto"
             asChild={!Object.keys(p.examples ?? {}).length}
           >
-            <Examples examples={p.examples} schema={schema} path={p.path} />
+            {examples.tabs}
+            <div className="my-2" />
+            <Example
+              {...examples.example}
+              schema={p.schema}
+              path={examples.path}
+            />
           </PopoverContent>
         </Popover>
       </Label>
-
-      <SchemaInput
-        schema={schema ?? {}}
-        field={{
-          // TODO value should already be a string
-          value: value ?? "",
-          setValue(value) {
-            setValue(value);
-            toggleSelected(value !== "");
-          },
-        }}
-      />
+      {element}
     </div>
   );
 }
@@ -87,21 +102,31 @@ export function ParameterInput(
 export function ParametersInput() {
   const o = useOperation();
 
-  const body = (
-    <ol className="mt-2 grid gap-4 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 @5xl:grid-cols-5 @6xl:grid-cols-6 @7xl:grid-cols-7">
-      {o.parameters.map(
-        (p, idx) =>
-          p.schema && (
-            <ParameterInput
-              key={[p.in, p.name].join(".")}
-              {...p}
-              path={[...o.path, K.parameters, idx.toString()]}
-            />
-          ),
-      )}
-    </ol>
+  return (
+    <details
+      hidden={!o.parameters.length}
+      className="open:[&>summary>svg]:rotate-180"
+      onInvalid={(e) => (e.currentTarget.open = true)}
+    >
+      <summary className="flex w-full cursor-pointer items-center gap-1">
+        <Triangle className="fill-foreground w-3 rotate-90 transition-transform" />
+        <h4 className="text-lg font-medium">Parameters</h4>
+      </summary>
+      <ol className="mt-2 grid gap-4 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 @5xl:grid-cols-5 @6xl:grid-cols-6 @7xl:grid-cols-7">
+        {o.parameters.map(
+          (p) =>
+            p.schema &&
+            typeof p.name === "string" &&
+            typeof p.in === "string" && (
+              <ParameterInput
+                key={[p.in, p.name].join(".")}
+                {...p}
+                in={p.in}
+                name={p.name}
+              />
+            ),
+        )}
+      </ol>
+    </details>
   );
-  const header = <h4 className="text-lg font-medium">Parameters</h4>;
-  const hidden = !o.parameters.length;
-  return <Collapse hidden={hidden} header={header} children={body} />;
 }

@@ -1,39 +1,24 @@
 import { Button, Separator } from "@sane-ts/shadcn-ui";
 
 import { K } from "#openapi/const";
-import { useOperation, useOperationState } from "#openapi/context";
+import { useOperation } from "#openapi/context";
 import { Content } from "#openapi/operation-docs/content";
 import { ParametersDocs } from "#openapi/operation-docs/parameters";
 import { Collapse } from "#util";
 
 function RequestBodyDocs() {
   const o = useOperation();
-  const { contentType, setContentType } = useOperationState().request;
-
   if (!o.requestBody) return null;
 
-  const required = (
-    <i
-      hidden={!o.requestBody.required}
-      title="required"
-      className="text-destructive"
-    >
-      *
-    </i>
+  const required = o.requestBody.required && (
+    <i className="text-destructive">*</i>
   );
 
   const header = (
     <h3 className="text-2xl font-semibold tracking-tight">Body {required}</h3>
   );
 
-  const body = (
-    <Content
-      {...o.requestBody}
-      value={contentType}
-      onValueChange={setContentType}
-      path={[...o.path, K.requestBody]}
-    />
-  );
+  const body = <Content {...o.requestBody} path={[...o.path, K.requestBody]} />;
 
   return <Collapse header={header} className="mt-4" children={body} />;
 }

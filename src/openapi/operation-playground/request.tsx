@@ -7,18 +7,14 @@ import {
 import { AlignJustify, Copy, Eye, WrapText } from "@sane-ts/shadcn-ui/lucide";
 import { Fragment, useState } from "react";
 
-import { useOperation, useOperationState } from "#openapi/context";
+import { useOperation } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
-import {
-  createRequest,
-  useFormContext,
-} from "#openapi/operation-playground/create-request";
+import { useRequestForm } from "#openapi/operation-playground/create-request";
 
 export function RequestSample() {
-  const d = useFormContext();
   const o = useOperation();
-  const { contentType } = useOperationState().request;
-  const req = createRequest(d, o, contentType);
+
+  const req = useRequestForm();
 
   const [preview, setPreview] = useState(false);
   type Wrap = "wrap" | "line-breaks" | undefined;

@@ -23,6 +23,8 @@ export default [
   {
     rules: {
       "no-promise-executor-return": ["error", { allowVoid: true }],
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/no-dynamic-delete": "off",
       "@typescript-eslint/no-confusing-void-expression": [
         "error",
         { ignoreArrowShorthand: true },

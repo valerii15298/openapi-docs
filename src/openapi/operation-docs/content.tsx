@@ -5,29 +5,27 @@ import { Description } from "#description";
 import { RenderJSONSchema } from "#json-schema";
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
+import { useStorage } from "#storage";
 
 const key = K.content;
 export function Content(props: {
   description?: string;
   content?: Record<string, OpenAPIV3_1.MediaTypeObject>;
-
   path: string[];
-  value: string;
-  onValueChange: (value: string) => void;
 }) {
+  const op = useOperation();
   const entries = Object.entries(props[key] ?? {});
 
+  const id = op.makeId([...props.path, key]);
+  const initialMediaRange = entries[0]?.[0] ?? "";
+  const [mediaRange, setMediaRange] = useStorage(id, initialMediaRange);
+
   const { setEditPath, doc } = useOpenAPI();
-  const op = useOperation();
 
   return (
-    <Tabs
-      value={props.value}
-      onValueChange={props.onValueChange}
-      id={op.makeId(props.path)}
-    >
+    <Tabs value={mediaRange} onValueChange={setMediaRange}>
       <Description {...props} />
-      <TabsList className="ml-auto h-fit flex-wrap">
+      <TabsList className="ml-auto max-w-full justify-start overflow-auto">
         {entries.map(([type]) => (
           <TabsTrigger key={type} value={type} className="cursor-pointer">
             {type}

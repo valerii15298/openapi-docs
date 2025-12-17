@@ -1,4 +1,5 @@
 import {
+  Button,
   cn,
   Input,
   Select,
@@ -9,43 +10,70 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@sane-ts/shadcn-ui";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-
-import { MonacoEditor } from "#json-editor/monaco-editor";
+import type { IJsonSchema } from "@scalar/openapi-types";
 
 interface FieldProps {
   value: string;
   setValue: (v: string) => void;
 }
+function dateTimeFromISO(iso: string) {
+  if (!iso) return iso;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) {
+    return "";
+  }
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
 
-export function SchemaInput({
+function dateTimeToISO(datetime: string) {
+  if (!datetime) return datetime;
+  const d = new Date(datetime);
+  if (isNaN(d.getTime())) {
+    return "";
+  }
+  return d.toISOString();
+}
+
+export function primitiveInput({
   field,
   schema,
   className,
-  monacoClassName,
-  richText,
+  name,
 }: {
-  schema: OpenAPIV3_1.SchemaObject;
+  schema: IJsonSchema & { format?: string };
   field: FieldProps;
   className?: string;
-  monacoClassName?: string;
-  richText?: boolean;
+  name: string;
 }) {
-  if (typeof schema !== "object") {
-    schema = {};
-  }
-  if (schema.type === "null") {
-    return null;
+  const { type, enum: enumValues } = schema; // TODO handle all other values
+
+  if (type === "null") {
+    return (
+      <Button
+        name={name}
+        onClick={() => field.setValue("null")}
+        size={"sm"}
+        variant={"outline"}
+      >
+        null
+      </Button>
+    );
   }
 
-  if (schema.enum?.length) {
+  if (enumValues?.length && enumValues.every((e) => typeof e !== "object")) {
     return (
-      <Select required onValueChange={field.setValue} value={field.value}>
+      <Select
+        required
+        name={name}
+        onValueChange={field.setValue}
+        value={field.value}
+      >
         <SelectTrigger className={cn("w-full", className)}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {schema.enum.map((v) => (
+          {enumValues.map((v) => (
             <SelectItem key={String(v)} value={String(v)}>
               {String(v)}
             </SelectItem>
@@ -55,7 +83,7 @@ export function SchemaInput({
     );
   }
 
-  if (schema.type === "boolean") {
+  if (type === "boolean") {
     const options = [true, false];
     return (
       <ToggleGroup
@@ -77,32 +105,42 @@ export function SchemaInput({
       </ToggleGroup>
     );
   }
-
-  if (schema.type === "string") {
-    const formatMap: Record<string, React.HTMLInputTypeAttribute> = {
-      "date-time": "datetime-local",
-      date: "date",
-    };
-    if (schema.format || !richText) {
-      return (
-        <Input
-          className={className}
-          type={formatMap[schema.format ?? ""] || "text"}
-          value={field.value}
-          onChange={(e) => {
-            field.setValue(e.target.value);
-          }}
-        />
-      );
-    }
-  }
-  if (schema.type === "number" || schema.type === "integer") {
+  if (type === "string" && schema.format === "date-time") {
     return (
       <Input
+        name={name}
+        className={className}
+        type={"datetime-local"}
+        value={dateTimeFromISO(field.value)}
+        onChange={(e) => field.setValue(dateTimeToISO(e.target.value))}
+      />
+    );
+  }
+  if (type === "string") {
+    const formatMap: Record<string, React.HTMLInputTypeAttribute> = {
+      date: "date",
+    };
+    return (
+      <Input
+        name={name}
+        className={className}
+        type={formatMap[schema.format ?? ""] || "text"}
+        value={field.value}
+        onChange={(e) => {
+          field.setValue(e.target.value);
+        }}
+      />
+    );
+  }
+  if (type === "number" || type === "integer") {
+    return (
+      <Input
+        name={name}
         className={className}
         min={schema.minimum}
         max={schema.maximum}
         type="number"
+        step={type === "integer" ? 1 : undefined}
         value={field.value}
         onChange={(e) => {
           field.setValue(e.target.value);
@@ -111,14 +149,5 @@ export function SchemaInput({
     );
   }
 
-  return (
-    <MonacoEditor
-      defaultValue={field.value}
-      onValueChange={field.setValue}
-      schema={schema}
-      resizable
-      language={schema.type === "string" ? "text" : "json"}
-      className={cn(className, monacoClassName)}
-    />
-  );
+  return null;
 }

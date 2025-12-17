@@ -1,7 +1,7 @@
 import { Button } from "@sane-ts/shadcn-ui";
 import { ExternalLink } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import { type ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import { Description } from "#description";
 import { MonacoEditor } from "#json-editor/monaco-editor";
@@ -11,13 +11,12 @@ export function Example(
   e: OpenAPIV3_1.ExampleObject & {
     path: string[];
     schema?: OpenAPIV3_1.SchemaObject;
-    summaryElement?: ReactNode;
   },
 ) {
   const op = useOperation();
   const id = op.makeId(e.path);
 
-  const summary = e.summaryElement || (
+  const summary = (
     <h4
       hidden={!e.externalValue && !e.summary}
       className="flex items-center text-xl font-semibold"

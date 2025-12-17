@@ -22,3 +22,11 @@ export const methodClassNamesMap = {
   trace: { text: "text-purple-500", bg: "bg-purple-500" },
   connect: { text: "text-indigo-500", bg: "bg-indigo-500" },
 };
+
+export const statusColor: Record<string, string> = {
+  "1xx": "text-gray-500",
+  "2xx": "text-green-500",
+  "3xx": "text-yellow-500",
+  "4xx": "text-red-500",
+  "5xx": "text-purple-500",
+};

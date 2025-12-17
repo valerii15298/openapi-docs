@@ -1,20 +1,24 @@
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
+import type { IJsonSchema } from "@scalar/openapi-types";
 import { merge } from "allof-merge";
+import { sample } from "openapi-sampler";
 
-import { K } from "#openapi/const";
+export function getSample(doc: object, schema?: object | boolean) {
+  schema = typeof schema === "object" ? schema : {};
+  return sample(schema, {}, doc) ?? null;
+}
 
-export function resolveSchema(
-  schema: OpenAPIV3_1.SchemaObject,
-  source: object,
-): OpenAPIV3_1.SchemaObject {
-  if (!schema || typeof schema !== "object") return schema;
-  if (!(K.$ref in schema)) return schema;
+export function getSampleJSON(doc: object, schema?: object | boolean) {
+  return JSON.stringify(getSample(doc, schema), null, 2);
+}
 
+export function resolveSchema(schema: IJsonSchema | boolean, source: object) {
+  if (!schema || typeof schema !== "object") return {};
+  const allOf = [...(schema.allOf ?? [])];
   const { $ref, ...rest } = schema;
-  if (typeof $ref !== "string") return schema;
-
-  const allOf = schema.allOf ?? [];
-  allOf.push({ $ref });
+  if (typeof $ref === "string") {
+    allOf.push({ $ref });
+  }
+  if (!allOf.length) return schema;
 
   return merge(
     { ...rest, allOf },

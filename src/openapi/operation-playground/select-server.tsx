@@ -8,13 +8,12 @@ import {
 } from "@sane-ts/shadcn-ui";
 
 import { useOperation } from "#openapi/context";
-import { useFormContext } from "#openapi/operation-playground/create-request";
+import { useServer } from "#openapi/operation-playground/create-request";
 
 export function SelectServer() {
   const { servers } = useOperation();
-  const { serverIdx, setState } = useFormContext();
+  const { server, idx, setIdx } = useServer();
 
-  const server = servers.at(serverIdx);
   if (!server)
     return (
       <Badge className="inline max-w-full truncate" variant={"destructive"}>
@@ -24,9 +23,9 @@ export function SelectServer() {
 
   return (
     <Select
-      value={serverIdx.toString()}
+      value={idx.toString()}
       onValueChange={(v) => {
-        setState((s) => ({ ...s, serverIdx: Number(v) }));
+        setIdx(Number(v));
       }}
     >
       <SelectTrigger className="overflow-hidden">

@@ -1,44 +1,40 @@
-import {
-  Alert,
-  AlertTitle,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@sane-ts/shadcn-ui";
+import { ToggleGroup, ToggleGroupItem } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { K } from "#openapi/const";
-import { Example } from "#openapi/operation-docs/example";
+import { useOpenAPI } from "#openapi/context";
+import { useStorage } from "#storage";
 
 const key = K.examples;
-export function Examples(
+export function useExample(
   props: OpenAPIV3_1.MediaTypeObject & { path: string[] },
 ) {
-  const entries = Object.entries(props[key] ?? {});
-  if (!entries.length)
-    return (
-      <Alert variant={"destructive"}>
-        <AlertTitle>No examples found</AlertTitle>
-      </Alert>
-    );
-
+  const { resolveRefObj } = useOpenAPI();
   const path = [...props.path, key];
-
-  return (
-    <Tabs defaultValue={entries.at(0)?.[0]}>
-      <TabsList className="h-auto w-full flex-wrap">
-        {entries.map(([name]) => (
-          <TabsTrigger className="max-w-full" key={name} value={name}>
-            <span className="truncate">{name}</span>
-          </TabsTrigger>
-        ))}
-      </TabsList>
-      {entries.map(([name, e]) => (
-        <TabsContent asChild key={name} value={name}>
-          <Example {...e} schema={props.schema} path={[...path, name]} />
-        </TabsContent>
+  const examples = Object.keys(props[key] ?? {});
+  const [_exampleKey, setExampleKey] = useStorage(path, examples[0]);
+  const exampleKey = _exampleKey ?? "";
+  const tabs = !!examples.length && (
+    <ToggleGroup
+      type="single"
+      value={exampleKey}
+      onValueChange={setExampleKey}
+      size={"sm"}
+      variant={"outline"}
+      spacing={1}
+      className="max-w-full flex-wrap"
+    >
+      {examples.map((e) => (
+        <ToggleGroupItem
+          className="inline max-w-full grow truncate"
+          key={e}
+          value={e}
+          children={e}
+        />
       ))}
-    </Tabs>
+    </ToggleGroup>
   );
+  const example = resolveRefObj(props.examples?.[exampleKey]);
+
+  return { tabs, example, path: [...path, exampleKey] };
 }

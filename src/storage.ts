@@ -1,6 +1,6 @@
 import { createContext, use, useCallback, useSyncExternalStore } from "react";
 
-type StorageContext = ReturnType<typeof createStorage>;
+export type StorageContext = ReturnType<typeof createStorage>;
 export const StorageContext = createContext<StorageContext | null>(null);
 StorageContext.displayName = "StorageContext";
 
@@ -13,7 +13,8 @@ export function createStorage() {
   const storage: Record<string, unknown> = {};
 
   return {
-    getValue: (key: string) => storage[key],
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+    getValue: <T = unknown>(key: string) => storage[key] as T | undefined,
     hasValue: (key: string) => key in storage,
 
     setValue: (key: string, value: unknown) => {
@@ -21,6 +22,7 @@ export function createStorage() {
       value = typeof value === "function" ? value(storage[key]) : value;
       if (storage[key] === value) return;
       storage[key] = value;
+      if (value === undefined) delete storage[key];
       subscribers[key]?.forEach((callback) => callback(value, key));
       globalSubscribers.forEach((callback) => callback(value, key));
     },
@@ -40,7 +42,12 @@ export function createStorage() {
   };
 }
 
-export function useStorage<T>(key: string, initialValue: T | (() => T)) {
+export function useStorage<T>(
+  _key: string | string[],
+  initialValue: T,
+  init = true,
+) {
+  const key = typeof _key === "string" ? _key : _key.join("-"); // TODO find a better way to handle array keys
   const storage = use(StorageContext);
   if (!storage) throw new Error("Missing StorageProvider");
 
@@ -49,13 +56,15 @@ export function useStorage<T>(key: string, initialValue: T | (() => T)) {
     [key, storage],
   );
 
-  if (!storage.hasValue(key)) {
+  if (!storage.hasValue(key) && init) {
     storage.setValue(key, initialValue);
   }
 
-  const value = useSyncExternalStore(
+  const _value = useSyncExternalStore(
     (callback) => storage.subscribe(callback, key),
     () => storage.getValue(key) as T,
   );
+
+  const value = storage.hasValue(key) ? _value : initialValue;
   return [value, setValue] as const;
 }

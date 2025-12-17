@@ -1,134 +1,102 @@
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@sane-ts/shadcn-ui";
-import { sample } from "openapi-sampler";
-import { useEffect, useState } from "react";
+import { Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
 
-import { RenderError } from "#json-editor/render-error";
 import { Enum } from "#json-editor/utils";
 import { K } from "#openapi/const";
-import { useOpenAPI, useOperation, useOperationState } from "#openapi/context";
+import { useOpenAPI, useResponses } from "#openapi/context";
+import { statusColor } from "#openapi/methods";
 import { Example } from "#openapi/operation-docs/example";
-import { Examples } from "#openapi/operation-docs/examples";
+import { useExample } from "#openapi/operation-docs/examples";
+import type { Result } from "#result";
+import { Ok } from "#result";
+import { getSampleJSON } from "#schema";
+import { useStorage } from "#storage";
 
-export type PlaygroundResponse =
-  | {
-      status: number;
-      headers: Record<string, string>;
-      body?: string;
-    }
-  | { error: unknown };
-
-const ResponseTab = Enum("preview", "examples");
+export const ResponseTab = Enum("body", "headers", "examples");
 type ResponseTab = keyof typeof ResponseTab;
 
-function jsonParse(str: string) {
+export type ResponseResult = {
+  status: number;
+
+  headers: Record<string, string>;
+  body: Result<string, Error>;
+
+  tab: ResponseTab;
+};
+
+function parseJSON(input: string) {
   try {
-    return JSON.parse(str) as unknown;
+    return JSON.parse(input) as unknown;
   } catch {
-    return str;
+    return input;
   }
 }
 
-function OperationPlaygroundResponse(
-  resp: PlaygroundResponse & { example?: unknown; path: string[] },
-) {
-  type Option = "body" | "headers" | "example";
-  const [tab, setTab] = useState<Option>("body");
-  if ("error" in resp) {
-    return <RenderError error={resp.error} />;
-  }
-  const response = {
-    ...resp,
-    body: resp.body ? jsonParse(resp.body) : undefined,
+function useResponse() {
+  const { doc } = useOpenAPI();
+  const { media, mediaPath } = useResponses();
+
+  const body = Ok(getSampleJSON(doc, media?.schema));
+  const headers = {}; // TODO generate default headers
+  const defaultResponse: ResponseResult = {
+    body,
+    headers,
+    status: 0,
+    tab: ResponseTab.body,
   };
+  const [response, setResponse] = useStorage(mediaPath, defaultResponse);
+  const setTab = (tab: ResponseTab) => setResponse((s) => ({ ...s, tab }));
 
-  const mode = (
-    <ToggleGroup
-      type="single"
-      value={tab}
-      onValueChange={(v) => {
-        v && setTab(v as Option);
-      }}
-      size={"sm"}
-      className="flex-1"
-      variant={"outline"}
-    >
-      <ToggleGroupItem value="body">Body</ToggleGroupItem>
-      <ToggleGroupItem value="headers">Headers</ToggleGroupItem>
-      <ToggleGroupItem value="example">Example</ToggleGroupItem>
-    </ToggleGroup>
-  );
+  const example = useExample({ ...media, path: [...mediaPath, K.examples] });
 
-  const path = [...resp.path, K.example];
-  const value = response[tab];
-  return <Example key={tab} summaryElement={mode} value={value} path={path} />;
+  return {
+    ...response,
+    setTab,
+
+    media,
+    example,
+  };
 }
 
-export function ResponseSample({ resp }: { resp?: PlaygroundResponse }) {
-  const op = useOperation();
-  const { media, status, contentType } = useOperationState().response;
-  const { doc, extractSchema } = useOpenAPI();
+export function Response() {
+  const { tab, setTab, status, media, body, headers, example } = useResponse();
 
-  const path = [...op.path, K.responses, status, K.content, contentType];
-
-  const defaultTab = media?.examples ? "examples" : "preview";
-  const [tab, setTab] = useState<ResponseTab>(defaultTab);
-  useEffect(() => {
-    if (resp) setTab(ResponseTab.preview);
-  }, [resp]);
-
-  const schema = typeof media?.schema === "object" ? media.schema : {};
-  const example: unknown = media?.example ?? sample(schema as object, {}, doc);
+  const propsMap = {
+    [ResponseTab.body]: {
+      value: body.isOk ? parseJSON(body.ok) : body.err, // TODO add serializedValue as body raw string and use parse json error here
+      schema: media?.schema,
+    },
+    [ResponseTab.headers]: { value: headers },
+    [ResponseTab.examples]: {
+      ...example.example,
+      schema: media?.schema,
+    },
+  };
 
   return (
     <Tabs
-      asChild
       value={tab}
-      onValueChange={(v) => {
-        setTab(v as ResponseTab);
-      }}
+      onValueChange={(t) => t in ResponseTab && setTab(t as ResponseTab)}
     >
-      <section>
-        <h3 className="flex flex-wrap items-start justify-between gap-2 text-2xl">
-          Response
-          <TabsList>
-            <TabsTrigger value={ResponseTab.preview}>Preview</TabsTrigger>
-            <TabsTrigger hidden={!media?.examples} value={ResponseTab.examples}>
-              Examples
-            </TabsTrigger>
-          </TabsList>
-        </h3>
-        <TabsContent value={ResponseTab.examples}>
-          <Examples {...media} path={path} />
-        </TabsContent>
-        <TabsContent value={ResponseTab.preview}>
-          {
-            // Make separate function which accepts media and returns example value and its path
-            // make whole response tabs hidden when there is no examples
-            // for Example component make summary a jsx element and pass to it tabs(toggle group) of example|body|headers
-          }
-          {resp ? (
-            <OperationPlaygroundResponse
-              {...resp}
-              path={[...path, K.example]}
-              example={example}
-            />
-          ) : (
-            <Example
-              summaryElement="Example"
-              schema={extractSchema(schema)}
-              value={example}
-              path={[...path, K.example]}
-            />
-          )}
-        </TabsContent>
-      </section>
+      <h3 className="flex flex-wrap items-center gap-x-4 gap-y-2 text-2xl font-semibold">
+        Response
+        <span
+          hidden={!status}
+          className={`pt-1 text-xl font-semibold ${statusColor[`${status.toString()[0]}xx` as const] || ""}`}
+        >
+          {status}
+        </span>
+        <TabsList className="h-fit flex-wrap">
+          <TabsTrigger value={ResponseTab.headers} children="Headers" />
+          <TabsTrigger value={ResponseTab.body} children="Body" />
+          <TabsTrigger
+            hidden={!example.tabs}
+            value={ResponseTab.examples}
+            children={`Examples`}
+          />
+        </TabsList>
+        {tab === ResponseTab.examples && example.tabs}
+      </h3>
+      <Example {...propsMap[tab]} path={example.path} />
     </Tabs>
   );
 }

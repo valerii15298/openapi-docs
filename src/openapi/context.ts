@@ -1,8 +1,10 @@
 import type { OpenAPIV3, OpenAPIV3_1 } from "@scalar/openapi-types";
-import { createContext, use, useEffect, useState } from "react";
+import { createContext, use } from "react";
 
 import { resolveRef } from "#json-editor/utils";
 import { K } from "#openapi/const";
+import type { ResponseResult } from "#openapi/operation-playground/response";
+import { StorageContext, useStorage } from "#storage";
 
 export interface OpenAPIContext {
   doc: OpenAPIV3_1.Document;
@@ -16,9 +18,11 @@ export function useOpenAPI() {
   const ctx = use(OpenAPIContext);
   if (!ctx) throw new Error("useOpenAPI must be used within OpenAPIContext");
   const { doc } = ctx;
-  function resolveRefObj<T extends object | undefined>(
-    obj: T | OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject,
-  ): T & (undefined extends T ? T : { $ref?: string }) {
+  type In = OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject | undefined;
+  function resolveRefObj<T extends object>(
+    obj: T | In,
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  ): (T & { $ref?: string }) | undefined {
     if (obj && "$ref" in obj && obj.$ref) {
       const resolved = resolveRef<T>(obj.$ref, doc);
       if (!resolved) {
@@ -111,62 +115,63 @@ export function useOperation() {
   return { ...op, ...ctx, makeId, path, ...resolved };
 }
 
-export function useProviderOperationState() {
+export function useRequest() {
+  const o = useOperation();
   const { resolveRefObj } = useOpenAPI();
-  const { requestBody, responses = {} } = useOperation();
-
-  const request = resolveRefObj(requestBody);
-  const [_requestType = ""] = Object.keys(request?.content ?? {});
-  const [requestType, setRequestType] = useState(_requestType);
-  const requestMedia = request?.content?.[requestType];
-
-  const [_responseStatus = ""] = Object.keys(responses);
-  const [responseStatus, setResponseStatus] = useState(_responseStatus);
-  const response = resolveRefObj(responses[responseStatus]);
-
-  const [_responseType = ""] = Object.keys(response?.content ?? {});
-  const [responseType, setResponseType] = useState(_responseType);
-  const responseMedia = response?.content?.[responseType];
-
-  useEffect(() => {
-    !requestMedia && setRequestType(_requestType);
-    !response && setResponseStatus(_responseStatus);
-  }, [requestMedia, _requestType, response, _responseStatus]);
-
-  useEffect(() => {
-    !responseMedia && setResponseType(_responseType);
-  }, [_responseType, responseMedia, responseStatus]);
-
-  return {
-    request: {
-      ...request,
-      contentType: requestType,
-      setContentType: setRequestType,
-      media: requestMedia,
-    },
-
-    response: {
-      ...response,
-      status: responseStatus,
-      setStatus: setResponseStatus,
-
-      contentType: responseType,
-      setContentType: setResponseType,
-      media: responseMedia,
-    },
-  };
+  const mediaRangePath = [...o.path, K.requestBody, K.content];
+  const [_mediaRange = ""] = Object.keys(o.requestBody?.content ?? {});
+  const [mediaRange, setMediaRange] = useStorage(mediaRangePath, _mediaRange);
+  const media = resolveRefObj(o.requestBody?.content?.[mediaRange]);
+  const mediaPath = [...mediaRangePath, mediaRange];
+  return { media, mediaRange, setMediaRange, mediaRangePath, mediaPath };
 }
 
-type OperationState = ReturnType<typeof useProviderOperationState>;
+export function useResponses() {
+  const o = useOperation();
+  const { resolveRefObj } = useOpenAPI();
+  const storage = use(StorageContext);
+  if (!storage) {
+    throw new Error("Storage not found");
+  }
 
-export const OperationStateContext = createContext<OperationState | null>(null);
-OperationStateContext.displayName = "OperationState";
+  const [_statusRange = ""] = Object.keys(o.responses);
+  const statusRangePath = [...o.path, K.responses];
+  const [statusRange, setStatusRange] = useStorage(
+    statusRangePath,
+    _statusRange,
+  );
+  const response = o.responses[statusRange];
 
-export function useOperationState() {
-  const ctx = use(OperationStateContext);
-  if (!ctx)
-    throw new Error("useOperationState must be used within OperationState");
-  return ctx;
+  const [_mediaRange = ""] = Object.keys(response?.content ?? {});
+  const mediaRangePath = [...statusRangePath, statusRange, K.content];
+  const [mediaRange, setMediaRange] = useStorage(mediaRangePath, _mediaRange);
+  const media = resolveRefObj(response?.content?.[mediaRange]);
+  const mediaPath = [...mediaRangePath, mediaRange];
+
+  function setStatusMediaResponse(
+    statusRange: string,
+    mediaRange: string,
+    resp: ResponseResult,
+  ) {
+    setStatusRange(statusRange);
+    const mediaRangePath = [...statusRangePath, statusRange, K.content];
+    storage?.setValue(o.makeId(mediaRangePath), mediaRange);
+    const mediaPath = [...mediaRangePath, mediaRange];
+    storage?.setValue(o.makeId(mediaPath), resp);
+  }
+
+  return {
+    response,
+    statusRange,
+    setStatusRange,
+
+    media,
+    mediaRange,
+    setMediaRange,
+    mediaPath,
+
+    setStatusMediaResponse,
+  };
 }
 
 export interface HttpProxyContext {

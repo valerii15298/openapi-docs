@@ -29,27 +29,27 @@
     "release:netlify": "rm -rf dist && vite build && ntl deploy -p -d dist --no-build -s openapi-ui --open"
   },
   "dependencies": {
-    "@scalar/openapi-types": "^0.5.0",
+    "@scalar/openapi-types": "^0.5.3",
     "@types/content-type": "^1.1.9",
     "allof-merge": "^0.6.7",
     "content-type": "^1.0.5",
     "marked": "^17.0.1",
-    "monaco-graphql": "^1.7.2",
+    "monaco-graphql": "^1.7.3",
     "monaco-yaml": "^5.4.0",
     "openapi-sampler": "^1.6.2",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.16",
+    "@tailwindcss/vite": "^4.1.18",
     "@tsconfig/strictest": "^2.0.6",
-    "@types/node": "^24.7.0",
-    "@vitejs/plugin-react": "^5.0.4",
+    "@types/node": "^25.0.3",
+    "@vitejs/plugin-react": "^5.1.2",
     "@vpetryniak/eslint-config-base": "^0.0.17",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^9.39.1",
-    "netlify-cli": "^23.11.1",
-    "prettier": "^3.6.2",
-    "prettier-plugin-tailwindcss": "^0.7.1",
+    "eslint": "^9.39.2",
+    "netlify-cli": "^23.12.3",
+    "prettier": "^3.7.4",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "surge": "^0.24.6",
     "typescript": "^5.9.3",
     "vite": "npm:rolldown-vite@latest"
@@ -58,7 +58,7 @@
     "@sane-ts/shadcn-ui": "^0.0.5",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
-    "monaco-editor": "^0.54.0",
+    "monaco-editor": "^0.55.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.16"

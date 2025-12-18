@@ -88,7 +88,7 @@ export function ParameterInput(
             <div className="my-2" />
             <Example
               {...examples.example}
-              schema={p.schema}
+              schema={p.schema as OpenAPIV3_1.SchemaObject}
               path={examples.path}
             />
           </PopoverContent>

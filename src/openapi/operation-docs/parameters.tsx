@@ -5,6 +5,7 @@ import { RenderJSONSchema } from "#json-schema";
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
+import type { OpenAPIV3_1 } from "#types";
 import { Collapse } from "#util";
 
 export function ParametersDocs() {
@@ -35,7 +36,7 @@ export function ParametersDocs() {
           {...{
             ...p,
             source: doc,
-            schema: p.schema,
+            schema: p.schema as OpenAPIV3_1.SchemaObject,
             path: [...path, "schema"],
             children: <Description {...p} path={path} />,
             depth: 1,

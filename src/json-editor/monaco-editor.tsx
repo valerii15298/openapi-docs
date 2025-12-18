@@ -4,7 +4,12 @@ import { useEffect, useRef } from "react";
 
 import { createAsyncSequential } from "#hooks/use-async-sequential";
 import { EditorFormat } from "#json-editor/enums";
-import { monaco } from "#json-editor/monaco";
+import * as monaco from "#json-editor/monaco";
+
+const { createWebWorker } = monaco.editor;
+monaco.editor.createWebWorker = (
+  opts: monaco.IWebWorkerOptions | monaco.editor.IInternalWebWorkerOptions,
+) => ("worker" in opts ? createWebWorker(opts) : monaco.createWebWorker(opts));
 
 const markerToIgnore = {
   message:
@@ -35,7 +40,7 @@ monaco.editor.onDidChangeMarkers((e) => {
   });
 });
 
-monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+monaco.json.jsonDefaults.setDiagnosticsOptions({
   enableSchemaRequest: true,
   schemas: [],
 });
@@ -56,7 +61,7 @@ function setYamlSchema(schema: SchemasSettings) {
   };
 }
 
-const jsonOpts = monaco.languages.json.jsonDefaults;
+const jsonOpts = monaco.json.jsonDefaults;
 function setJsonSchema(schema: SchemasSettings) {
   const { schemas = [] } = jsonOpts.diagnosticsOptions;
   jsonOpts.setDiagnosticsOptions({

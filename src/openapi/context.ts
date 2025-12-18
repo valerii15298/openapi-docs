@@ -21,7 +21,6 @@ export function useOpenAPI() {
   type In = OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject | undefined;
   function resolveRefObj<T extends object>(
     obj: T | In,
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   ): (T & { $ref?: string }) | undefined {
     if (obj && "$ref" in obj && obj.$ref) {
       const resolved = resolveRef<T>(obj.$ref, doc);

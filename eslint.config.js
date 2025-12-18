@@ -18,6 +18,7 @@ export default [
       "./example",
       "./gen-*",
       "./cloudflare-http-proxy.js",
+      "src/**/*.js",
     ],
   },
   {

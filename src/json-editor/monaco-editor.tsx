@@ -178,14 +178,14 @@ export function MonacoEditor({
     });
 
     const textarea = elementRef.current.querySelector("textarea");
-    if (textarea) {
+    if (!textarea) {
+      // eslint-disable-next-line no-console
+      console.error("Monaco editor textarea not found for setting validity");
+    } else if (!readOnly) {
       textarea.readOnly = false;
       textarea.removeAttribute("aria-hidden");
       // @ts-expect-error extend the model to set custom validity
       model[validitySymbol] = textarea.setCustomValidity.bind(textarea);
-    } else {
-      // eslint-disable-next-line no-console
-      console.error("Monaco editor textarea not found for setting validity");
     }
 
     elementRef.current.addEventListener(

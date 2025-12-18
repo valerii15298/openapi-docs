@@ -51,7 +51,7 @@ export function ParameterInput(
 
   const element = primitive || (
     <MonacoEditor
-      defaultValue={param.value}
+      value={param.value}
       onValueChange={(value) => {
         param.setValue(value);
         const result = Result.catchError(() => JSON.parse(value) as unknown);

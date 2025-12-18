@@ -18,7 +18,7 @@ export function useExample(
     <ToggleGroup
       type="single"
       value={exampleKey}
-      onValueChange={setExampleKey}
+      onValueChange={(v) => examples.includes(v) && setExampleKey(v)}
       size={"sm"}
       variant={"outline"}
       spacing={1}

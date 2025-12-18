@@ -1,4 +1,4 @@
-import { Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
+import { cn, Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
 import { SquarePen } from "@sane-ts/shadcn-ui/lucide";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
@@ -17,8 +17,8 @@ export function RequestBodyInput() {
       defaultValue={body}
       onValueChange={setBody}
       schema={extractSchema(media?.schema)}
-      resizable
-      className={"mb-2 h-32"}
+      resizable="label"
+      className={cn("mb-2 h-32", tab !== RequestBodyTab.edit && "hidden")}
     />
   );
 
@@ -46,7 +46,8 @@ export function RequestBodyInput() {
         </TabsList>
         {tab === RequestBodyTab.examples && example.tabs}
       </h4>
-      {tab === RequestBodyTab.edit ? editElement : exampleElement}
+      {editElement}
+      {tab === RequestBodyTab.examples && exampleElement}
     </Tabs>
   );
 }

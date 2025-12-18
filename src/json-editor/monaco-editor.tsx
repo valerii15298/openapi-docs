@@ -217,17 +217,25 @@ export function MonacoEditor({
     return <div {...props} className={className} ref={elementRef} />;
   }
 
+  if (!("safari" in window)) {
+    return (
+      <div
+        {...props}
+        className={cn("min-h-6 resize-y overflow-hidden", className)}
+        ref={elementRef}
+      />
+    );
+  }
+
   const resizeLabel = resizable === "label" && "drag to resize ->";
   return (
     <div
       {...props}
-      className={cn(`min-h-10 resize-y overflow-hidden pb-4`, className)}
+      className={cn(`-mb-4 min-h-10 resize-y overflow-hidden pb-4`, className)}
     >
       <div
         className="h-full min-h-6"
-        style={{
-          overscrollBehavior: "contain",
-        }}
+        style={{ overscrollBehavior: "contain" }}
         ref={elementRef}
       />
       <div

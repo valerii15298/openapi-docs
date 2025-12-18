@@ -2,6 +2,7 @@ import { Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
 import { SquarePen } from "@sane-ts/shadcn-ui/lucide";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
+import { useOpenAPI } from "#openapi/context";
 import { Example } from "#openapi/operation-docs/example";
 import {
   RequestBodyTab,
@@ -10,12 +11,12 @@ import {
 
 export function RequestBodyInput() {
   const { media, setTab, tab, body, setBody, example } = useRequestBody();
-
+  const { extractSchema } = useOpenAPI();
   const editElement = (
     <MonacoEditor
       defaultValue={body}
       onValueChange={setBody}
-      schema={media?.schema}
+      schema={extractSchema(media?.schema)}
       resizable
       className={"mb-2 h-32"}
     />

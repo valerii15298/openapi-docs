@@ -5,7 +5,7 @@ import { useMemo } from "react";
 
 import { Description } from "#description";
 import { MonacoEditor } from "#json-editor/monaco-editor";
-import { useOperation } from "#openapi/context";
+import { useOpenAPI, useOperation } from "#openapi/context";
 
 export function Example(
   e: OpenAPIV3_1.ExampleObject & {
@@ -49,12 +49,13 @@ export function Example(
 
   const value = useMemo(() => JSON.stringify(e.value, null, 2), [e.value]);
 
+  const { extractSchema } = useOpenAPI();
   return (
     <section id={id}>
       <MonacoEditor
         hidden={!("value" in e)}
         style={{ height: `${initialHeight}px` }}
-        schema={e.schema}
+        schema={extractSchema(e.schema)}
         value={value}
         readOnly
         resizable="label"

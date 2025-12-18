@@ -22,7 +22,7 @@ import { getSample, resolveSchema } from "#schema";
 export function ParameterInput(
   p: OpenAPIV3_1.ParameterObject & { path: string[]; name: string; in: string },
 ) {
-  const { doc } = useOpenAPI();
+  const { doc, extractSchema } = useOpenAPI();
   const schema = resolveSchema(p.schema ?? {}, doc);
   const [param, setParam] = useParam(p);
   const examples = useExample(p);
@@ -58,7 +58,7 @@ export function ParameterInput(
         if (!result.isOk || p.in !== "query") return;
         param.setSerialized(queryParam(p, result.ok));
       }}
-      schema={p.schema}
+      schema={extractSchema(p.schema as OpenAPIV3_1.SchemaObject)}
       resizable
     />
   );

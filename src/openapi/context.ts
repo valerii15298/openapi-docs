@@ -36,7 +36,7 @@ export function useOpenAPI() {
   }
 
   function extractSchema(
-    schema: OpenAPIV3_1.SchemaObject,
+    schema?: OpenAPIV3_1.SchemaObject,
   ): OpenAPIV3_1.SchemaObject {
     if (!schema || typeof schema !== "object") {
       return {};

@@ -84,7 +84,7 @@ export function OperationPlayground() {
         </h2>
 
         <ParametersInput />
-        <RequestBodyInput />
+        {o.requestBody && <RequestBodyInput />}
 
         <div className="mt-1 flex flex-wrap items-center gap-3">
           <Button hidden className="flex-1" type="button" variant={"outline"}>

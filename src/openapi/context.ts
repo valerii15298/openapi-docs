@@ -7,6 +7,7 @@ import type { ResponseResult } from "#openapi/operation-playground/response";
 import { StorageContext, useStorage } from "#storage";
 
 export interface OpenAPIContext {
+  uri: string;
   doc: OpenAPIV3_1.Document;
   path: string[];
   setPath: (path: string[]) => void;

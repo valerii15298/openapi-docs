@@ -1,4 +1,12 @@
-import { createContext, use, useCallback, useSyncExternalStore } from "react";
+import {
+  createContext,
+  createElement,
+  use,
+  useCallback,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 export type StorageContext = ReturnType<typeof createStorage>;
 export const StorageContext = createContext<StorageContext | null>(null);
@@ -40,6 +48,20 @@ export function createStorage() {
       return () => subscribers[key]?.delete(callback);
     },
   };
+}
+
+export function StorageProvider({
+  buster,
+  children,
+}: {
+  buster: string;
+  children: React.ReactNode;
+}) {
+  const [value, setValue] = useState(createStorage);
+  useEffect(() => {
+    setValue(createStorage());
+  }, [buster]);
+  return createElement(StorageContext, { value, children });
 }
 
 export function useStorage<T>(

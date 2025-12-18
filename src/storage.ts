@@ -4,6 +4,7 @@ import {
   use,
   useCallback,
   useEffect,
+  useRef,
   useState,
   useSyncExternalStore,
 } from "react";
@@ -58,9 +59,14 @@ export function StorageProvider({
   children: React.ReactNode;
 }) {
   const [value, setValue] = useState(createStorage);
+  const busterRef = useRef(buster);
+
   useEffect(() => {
+    if (buster === busterRef.current) return;
     setValue(createStorage());
+    busterRef.current = buster;
   }, [buster]);
+
   return createElement(StorageContext, { value, children });
 }
 

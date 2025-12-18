@@ -42,7 +42,7 @@ export function Example(
     const stringified = JSON.stringify(e.value ?? {}, null, 2);
     const linesLength = stringified.split("\n").length;
     const linesHeight = linesLength * 23;
-    const minHeight = 100;
+    const minHeight = 30;
     const maxHeight = 600;
     return Math.min(Math.max(linesHeight, minHeight), maxHeight);
   }, [e.value]);

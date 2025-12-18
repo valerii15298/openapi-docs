@@ -75,15 +75,12 @@ export function ParameterInput(
         {p.name}
         <Popover>
           <PopoverTrigger
-            hidden={!p.examples}
+            hidden={!examples.tabs}
             className="data-[state=open]:text-foreground text-muted-foreground hover:text-foreground cursor-pointer rounded opacity-0 group-hover/form-item:opacity-100 data-[state=open]:opacity-100"
           >
             <HelpCircle size={16} />
           </PopoverTrigger>
-          <PopoverContent
-            className="resize overflow-auto"
-            asChild={!Object.keys(p.examples ?? {}).length}
-          >
+          <PopoverContent className="resize overflow-auto">
             {examples.tabs}
             <div className="my-2" />
             <Example

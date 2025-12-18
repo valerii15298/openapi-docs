@@ -15,7 +15,7 @@ export function RequestBodyInput() {
   const { extractSchema } = useOpenAPI();
   const editElement = (
     <MonacoEditor
-      defaultValue={body}
+      value={body}
       onValueChange={setBody}
       schema={extractSchema(media?.schema)}
       resizable="label"

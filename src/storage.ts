@@ -14,7 +14,8 @@ export const StorageContext = createContext<StorageContext | null>(null);
 StorageContext.displayName = "StorageContext";
 
 export function createStorage() {
-  type Subscribers = Set<(value: unknown, key: string) => void>;
+  type Subscriber = (value: unknown, key: string, s: typeof storage) => void;
+  type Subscribers = Set<Subscriber>;
 
   const subscribers: Record<string, Subscribers> = {};
   const globalSubscribers: Subscribers = new Set();
@@ -32,21 +33,18 @@ export function createStorage() {
       if (storage[key] === value) return;
       storage[key] = value;
       if (value === undefined) delete storage[key];
-      subscribers[key]?.forEach((callback) => callback(value, key));
-      globalSubscribers.forEach((callback) => callback(value, key));
+      subscribers[key]?.forEach((callback) => callback(value, key, storage));
+      globalSubscribers.forEach((callback) => callback(value, key, storage));
     },
 
-    subscribe: (
-      callback: (value: unknown, key: string) => void,
-      key?: string,
-    ) => {
+    subscribe: (callback: Subscriber, key?: string) => {
       if (key === undefined) {
         globalSubscribers.add(callback);
-        return () => globalSubscribers.delete(callback);
+        return () => void globalSubscribers.delete(callback);
       }
       subscribers[key] ??= new Set();
       subscribers[key].add(callback);
-      return () => subscribers[key]?.delete(callback);
+      return () => void subscribers[key]?.delete(callback);
     },
   };
 }

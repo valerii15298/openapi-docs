@@ -177,14 +177,15 @@ export function MonacoEditor({
       scrollBeyondLastLine: false,
     });
 
-    if (!readOnly) {
-      const textarea = elementRef.current.querySelector("textarea");
-      if (textarea) {
-        textarea.readOnly = false;
-        textarea.removeAttribute("aria-hidden");
-        // @ts-expect-error extend the model to set custom validity
-        model[validitySymbol] = textarea.setCustomValidity.bind(textarea);
-      }
+    const textarea = elementRef.current.querySelector("textarea");
+    if (textarea) {
+      textarea.readOnly = false;
+      textarea.removeAttribute("aria-hidden");
+      // @ts-expect-error extend the model to set custom validity
+      model[validitySymbol] = textarea.setCustomValidity.bind(textarea);
+    } else {
+      // eslint-disable-next-line no-console
+      console.error("Monaco editor textarea not found for setting validity");
     }
 
     elementRef.current.addEventListener(

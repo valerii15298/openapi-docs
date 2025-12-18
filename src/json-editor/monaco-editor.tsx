@@ -18,6 +18,14 @@ const markerToIgnore = {
   owner: "json",
 };
 
+const validitySymbol = Symbol("monaco-editor-validity");
+
+function setModelError(err: string, model: monaco.editor.ITextModel) {
+  // @ts-expect-error extend the model to set custom validity
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  model[validitySymbol]?.(err);
+}
+
 function filterMarkers(modelUri: monaco.Uri) {
   const model = monaco.editor.getModel(modelUri);
   if (!model) return;
@@ -30,6 +38,8 @@ function filterMarkers(modelUri: monaco.Uri) {
     (m) =>
       m.message !== markerToIgnore.message || m.code !== markerToIgnore.code,
   );
+  const msg = filtered.map((m) => m.message).join("\n");
+  setModelError(msg, model);
   if (markers.length !== filtered.length) {
     monaco.editor.setModelMarkers(model, markerToIgnore.owner, filtered);
   }
@@ -166,6 +176,16 @@ export function MonacoEditor({
       },
       scrollBeyondLastLine: false,
     });
+
+    if (!readOnly) {
+      const textarea = elementRef.current.querySelector("textarea");
+      if (textarea) {
+        textarea.readOnly = false;
+        textarea.removeAttribute("aria-hidden");
+        // @ts-expect-error extend the model to set custom validity
+        model[validitySymbol] = textarea.setCustomValidity.bind(textarea);
+      }
+    }
 
     elementRef.current.addEventListener(
       "wheel",

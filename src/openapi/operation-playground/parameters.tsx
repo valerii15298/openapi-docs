@@ -102,12 +102,15 @@ export function ParametersInput() {
   return (
     <details
       hidden={!o.parameters.length}
-      className="open:[&>summary>svg]:rotate-180"
+      className="open:mb-2 open:[&>summary>svg]:rotate-180"
       onInvalid={(e) => (e.currentTarget.open = true)}
     >
-      <summary className="flex w-full cursor-pointer items-center gap-1">
+      <summary
+        className="flex w-full cursor-pointer items-center gap-1"
+        onMouseDown={(e) => e.detail > 1 && e.preventDefault()}
+      >
         <Triangle className="fill-foreground w-3 rotate-90 transition-transform" />
-        <h4 className="text-lg font-medium">Parameters</h4>
+        <h4 className="text-xl font-semibold">Parameters</h4>
       </summary>
       <ol className="mt-2 grid gap-4 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 @5xl:grid-cols-5 @6xl:grid-cols-6 @7xl:grid-cols-7">
         {o.parameters.map(

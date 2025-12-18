@@ -84,6 +84,7 @@ export function Playground(p: {
       <ResizableHandle />
       <ResizablePanel style={{ transform: "translateZ(0)" }}>
         <Docs
+          uri={uri}
           setEditPath={selectingEditTarget ? setEditPath : undefined}
           doc={editorCtx.data}
           path={path}

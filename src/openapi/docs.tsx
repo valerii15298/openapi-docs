@@ -1,16 +1,14 @@
 import { SidebarProvider } from "@sane-ts/shadcn-ui";
-import { useState } from "react";
 
 import { OpenAPIContext } from "#openapi/context";
 import { matchRoute } from "#openapi/router";
 import { SideBar } from "#openapi/sidebar";
-import { createStorage, StorageContext } from "#storage";
+import { StorageProvider } from "#storage";
 
 export function Docs(ctx: OpenAPIContext) {
   const renderRoute = matchRoute(ctx.path);
-  const [storage] = useState(createStorage);
   return (
-    <StorageContext value={storage}>
+    <StorageProvider buster={ctx.uri}>
       <OpenAPIContext value={ctx}>
         <SidebarProvider className="h-full min-h-full">
           <SideBar />
@@ -19,6 +17,6 @@ export function Docs(ctx: OpenAPIContext) {
           </main>
         </SidebarProvider>
       </OpenAPIContext>
-    </StorageContext>
+    </StorageProvider>
   );
 }

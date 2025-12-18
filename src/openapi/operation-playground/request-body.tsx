@@ -1,5 +1,6 @@
-import { cn, Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
+import { Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
 import { SquarePen } from "@sane-ts/shadcn-ui/lucide";
+import { Activity } from "react";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
 import { useOpenAPI } from "#openapi/context";
@@ -18,7 +19,7 @@ export function RequestBodyInput() {
       onValueChange={setBody}
       schema={extractSchema(media?.schema)}
       resizable="label"
-      className={cn("mb-2 h-32", tab !== RequestBodyTab.edit && "hidden")}
+      className={"mb-2 h-32"}
     />
   );
 
@@ -46,8 +47,12 @@ export function RequestBodyInput() {
         </TabsList>
         {tab === RequestBodyTab.examples && example.tabs}
       </h4>
-      {editElement}
-      {tab === RequestBodyTab.examples && exampleElement}
+      <Activity mode={tab === RequestBodyTab.edit ? "visible" : "hidden"}>
+        {editElement}
+      </Activity>
+      <Activity mode={tab === RequestBodyTab.examples ? "visible" : "hidden"}>
+        {exampleElement}
+      </Activity>
     </Tabs>
   );
 }

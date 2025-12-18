@@ -59,7 +59,7 @@ export function Example(
         value={value}
         readOnly
         resizable="label"
-        className="mb-0"
+        className="mb-1"
       />
       {summary}
       <Description {...e} />

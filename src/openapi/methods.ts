@@ -16,7 +16,7 @@ export const methodClassNamesMap = {
   post: { text: "text-blue-500", bg: "bg-blue-500" },
   put: { text: "text-yellow-500", bg: "bg-yellow-500" },
   patch: { text: "text-pink-500", bg: "bg-pink-500" },
-  delete: { text: "text-red-500", bg: "bg-red-500" },
+  delete: { text: "text-destructive", bg: "bg-destructive" },
   options: { text: "text-teal-500", bg: "bg-teal-500" },
   head: { text: "text-gray-500", bg: "bg-gray-500" },
   trace: { text: "text-purple-500", bg: "bg-purple-500" },

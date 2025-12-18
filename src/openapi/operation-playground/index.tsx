@@ -1,9 +1,12 @@
-import { Button, Label, Switch } from "@sane-ts/shadcn-ui";
+import { Button, Label, Spinner, Switch } from "@sane-ts/shadcn-ui";
+import { SendHorizonal } from "@sane-ts/shadcn-ui/lucide";
 import * as ContentType from "content-type";
 import { use, useState } from "react";
 
+import { useAsyncLazy } from "#hooks/use-async";
 import { K } from "#openapi/const";
 import { useHttpProxy, useOperation, useResponses } from "#openapi/context";
+import { methodClassNamesMap } from "#openapi/methods";
 import { useRequestForm } from "#openapi/operation-playground/create-request";
 import { ParametersInput } from "#openapi/operation-playground/parameters";
 import { RequestSample } from "#openapi/operation-playground/request";
@@ -36,6 +39,7 @@ export function OperationPlayground() {
   const { setStatusMediaResponse } = useResponses();
 
   const onSubmit = async () => {
+    const minDelay = new Promise((res) => void setTimeout(res, 300));
     const req = { ...request };
     if (proxy && httpProxy) {
       req.headers = { ...req.headers, [httpProxy.urlHeader]: req.url };
@@ -64,19 +68,21 @@ export function OperationPlayground() {
     setStatusMediaResponse(statusRange, mediaRange, response);
 
     const id = o.makeId([...o.path, K.responses]);
+    await minDelay;
     document.getElementById(id)?.scrollIntoView({
       behavior: "smooth",
       block: "nearest",
       inline: "nearest",
     });
   };
+  const [{ loading }, handleSubmit] = useAsyncLazy(onSubmit);
   return (
     <section className="@container flex flex-col gap-4">
       <form
         className="flex flex-col gap-2"
         onSubmit={(e) => {
           e.preventDefault();
-          void onSubmit();
+          handleSubmit();
         }}
       >
         <h2 className="flex justify-center">
@@ -99,8 +105,13 @@ export function OperationPlayground() {
             Proxy
           </Label>
 
-          <Button className="flex-1" type="submit">
-            Try it
+          <Button
+            disabled={loading}
+            className={`${methodClassNamesMap[o.method].bg} flex-1 cursor-pointer text-base font-bold select-none`}
+            type="submit"
+          >
+            {loading ? <Spinner /> : <SendHorizonal />}
+            {o.method.toUpperCase()}
           </Button>
         </div>
       </form>

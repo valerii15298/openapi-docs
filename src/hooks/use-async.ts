@@ -30,7 +30,7 @@ export function useAsync<T>(promise: Promise<T>) {
   return state;
 }
 
-export function useLazyAsync<T>(promise: () => Promise<T>) {
+export function useAsyncLazy<T>(promise: () => Promise<T>) {
   const [state, setState] = useState({
     loading: false,
     data: undefined as T | undefined,

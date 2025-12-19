@@ -42,7 +42,7 @@ export function OperationPlayground() {
     const minDelay = new Promise((res) => void setTimeout(res, 300));
     const req = { ...request };
     if (proxy && httpProxy) {
-      req.headers = { ...req.headers, [httpProxy.urlHeader]: req.url };
+      req.headers = [...req.headers, [httpProxy.urlHeader, req.url]];
       req.url = httpProxy.url;
     }
 

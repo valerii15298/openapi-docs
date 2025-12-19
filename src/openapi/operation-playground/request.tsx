@@ -49,7 +49,7 @@ export function RequestSample() {
       ))}
     </span>
   );
-  const headersEl = Object.entries(req.headers).map(([k, v]) => (
+  const headersEl = req.headers.map(([k, v]) => (
     <Fragment key={k}>
       <span className={className}>
         <span className={`${methodColor} text-nowrap`}>-H</span> '{k}
@@ -67,9 +67,7 @@ export function RequestSample() {
     </>
   );
 
-  const headersText = Object.entries(req.headers)
-    .map(([k, v]) => `-H '${k}: ${v}'`)
-    .join(" ");
+  const headersText = req.headers.map(([k, v]) => `-H '${k}: ${v}'`).join(" ");
   const bodyText = req.body ? `-d '${req.body}'` : "";
   const curlText = `curl -X ${req.method} '${req.url}' ${headersText} ${bodyText}`;
   return (

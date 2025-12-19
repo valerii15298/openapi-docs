@@ -17,25 +17,21 @@ import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { useState } from "react";
 
 import { Description } from "#description";
-import { useLocalStorage } from "#hooks/use-local-storage";
+import { useSecurityScheme } from "#openapi/operation-playground/create-request";
 
-function ClientCredentials(p: {
-  scheme: OpenAPIV3_1.OAuth2SecurityScheme;
-  id: string;
-  type: "clientCredentials" | "authorizationCode";
+function OAuthFlow(flow: {
+  name: string; // e.g. authorizationCode, clientCredentials, etc.
+  tokenUrl?: string;
+  scopes?: Record<string, string>;
+  refreshUrl?: string;
+  setToken: (token: string) => void;
 }) {
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [scopes, setScopes] = useState<string[]>([]);
 
-  const key = p.type;
-  // const id = p.id + "-" + key;
-  const [secret, setSecret] = useLocalStorage(p.id, "");
-  const flow = p.scheme.flows?.[key];
-
-  if (!flow) return null;
   return (
-    <TabsContent asChild className="grid gap-2" value={key}>
+    <TabsContent asChild className="grid gap-2" value={flow.name}>
       <form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={async (e) => {
@@ -52,7 +48,7 @@ function ClientCredentials(p: {
             return;
           }
           const json = (await resp.json()) as { access_token: string };
-          setSecret(json.access_token);
+          flow.setToken(json.access_token);
         }}
       >
         {flow.refreshUrl && (
@@ -67,6 +63,7 @@ function ClientCredentials(p: {
           <i>Client Id:</i>
           <code>
             <Input
+              required
               name="client_id"
               autoComplete="username"
               value={clientId}
@@ -80,6 +77,7 @@ function ClientCredentials(p: {
           <i>Client Secret:</i>
           <code>
             <Input
+              required
               name="client_secret"
               autoComplete="current-password"
               type="password"
@@ -106,7 +104,6 @@ function ClientCredentials(p: {
           </Label>
         ))}
         <Button>Fetch Token</Button>
-        {secret}
       </form>
     </TabsContent>
   );
@@ -120,16 +117,14 @@ export function OAuth2SecurityScheme({
   path: string[];
 }) {
   const name = path.at(-1) || "oauth2";
-  const id = name;
-  // const id = name + "-" + scheme.type;
-  const [secret] = useLocalStorage<string>(id, "");
+  const [secret, setSecret] = useSecurityScheme(name);
 
   const flows = Object.keys(scheme.flows ?? {});
   return (
     <Card className="gap-0">
       <CardHeader>
         <h3 className="flex items-center gap-2">
-          {secret ? <Lock /> : <LockOpen className="text-destructive" />}
+          {secret?.value ? <Lock /> : <LockOpen className="text-destructive" />}
           <span className="text-2xl">{name}</span>
           <Badge className="ml-auto">{scheme.type}</Badge>
         </h3>
@@ -144,8 +139,20 @@ export function OAuth2SecurityScheme({
               </TabsTrigger>
             ))}
           </TabsList>
-          <ClientCredentials type="clientCredentials" scheme={scheme} id={id} />
-          <ClientCredentials type="authorizationCode" scheme={scheme} id={id} />
+          {Object.entries(scheme.flows ?? {}).map(([k, v]) => (
+            <OAuthFlow
+              key={k}
+              name={k}
+              {...v}
+              setToken={(value) =>
+                setSecret({
+                  in: "header",
+                  name: "Authorization",
+                  value: `Bearer ${value}`,
+                })
+              }
+            />
+          ))}
         </Tabs>
       </CardContent>
     </Card>

@@ -1,5 +1,6 @@
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
+import { K } from "#openapi/const";
 import { useOpenAPI } from "#openapi/context";
 import { ApiKeySecurityScheme } from "#openapi/security/api-key";
 import { OAuth2SecurityScheme } from "#openapi/security/oauth2";
@@ -8,7 +9,7 @@ function renderSecurityScheme(
   scheme: OpenAPIV3_1.SecuritySchemeObject,
   name: string,
 ) {
-  const path = ["components", "securitySchemes", name];
+  const path = [K.components, K.securitySchemes, name];
   if (scheme.type === "apiKey") {
     return <ApiKeySecurityScheme scheme={scheme} path={path} />;
   }

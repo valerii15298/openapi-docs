@@ -15,6 +15,7 @@ export const K = Enum(
   "enum",
   "$ref",
 
+  "flows",
   "examples",
   "example",
   "responses",

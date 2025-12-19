@@ -11,7 +11,7 @@ export type Param = {
   include: boolean;
 };
 
-type ParamIn = "query" | "header" | "path" | "cookie";
+export type ParamIn = "query" | "header" | "path" | "cookie";
 type Params = Record<ParamIn, Record<string, Param>>;
 const defaultParams: Params = { query: {}, header: {}, path: {}, cookie: {} };
 
@@ -43,6 +43,27 @@ export function useParam(p: { in: ParamIn; name: string }) {
   return [{ ...param, setInclude, setValue, setSerialized }, setParam] as const;
 }
 
+type Secret = { in: ParamIn; name: string; value: string } | undefined;
+type Secrets = Record<string, Secret | undefined>;
+export function useSecuritySchemes() {
+  const path = [K.components, K.securitySchemes];
+  return useStorage(path, {} as Secrets);
+}
+
+export function useSecurityScheme(name: string) {
+  const [schemes, setSchemes] = useSecuritySchemes();
+  const setScheme = useCallback(
+    (secret: Secret | ((prev: Secret) => Secret)) =>
+      setSchemes((s) => {
+        const val = typeof secret === "function" ? secret(s[name]) : secret;
+        return { ...s, [name]: val };
+      }),
+    [name, setSchemes],
+  );
+
+  return [schemes[name], setScheme] as const;
+}
+
 export function useServer() {
   const o = useOperation();
   const [idx, setIdx] = useStorage([...o.path, K.servers], 0);
@@ -62,6 +83,9 @@ function substitutePathParams(path: string, params: Record<string, Param>) {
 }
 
 export function useRequestForm() {
+  const [securitySchemes] = useSecuritySchemes();
+  const secret = Object.values(securitySchemes).find((s) => s?.value);
+
   const { server } = useServer();
   const [d] = useParams();
   const o = useOperation();
@@ -80,21 +104,28 @@ export function useRequestForm() {
       ([k, v]) =>
         v.serialized ??
         `${encodeURIComponent(k)}=${encodeURIComponent(v.value)}`,
-    )
-    .join("&");
-  const queryString = query && `?${query}`;
+    );
+  if (secret?.in === "query") {
+    query.push(
+      `${encodeURIComponent(secret.name)}=${encodeURIComponent(secret.value)}`,
+    );
+  }
+
+  const queryString = query.length ? `?${query.join("&")}` : "";
   const url = `${base + path}${queryString}`;
 
-  const token = (o.security ?? [])
-    .flatMap((s) => Object.keys(s))
-    .map((k) => localStorage.getItem(k))
-    .find((k) => !!k);
-
-  const headers: Record<string, string> = token
-    ? { Authorization: `Bearer ${JSON.parse(token)}` }
-    : {};
+  const rawHeaders = Object.entries(d.header)
+    .filter(([, v]) => v.include)
+    .reduce(
+      (acc, [name, { value }]) => (acc.append(name, value), acc),
+      new Headers(),
+    );
+  if (secret?.in === "header") {
+    rawHeaders.append(secret.name, secret.value);
+  }
 
   const body = useActiveRequestBody();
+  const headers = [...rawHeaders.entries()];
 
   return { url, method: o.method.toUpperCase(), body, headers };
 }

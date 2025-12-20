@@ -1,5 +1,5 @@
 import type { OpenAPIV3, OpenAPIV3_1 } from "@scalar/openapi-types";
-import { createContext, use } from "react";
+import { createContext, use, useCallback } from "react";
 
 import { resolveRef } from "#json-editor/utils";
 import { K } from "#openapi/const";
@@ -15,6 +15,7 @@ export interface OpenAPIContext {
 }
 export const OpenAPIContext = createContext<OpenAPIContext | null>(null);
 OpenAPIContext.displayName = "OpenAPIContext";
+const emptySchema = {};
 export function useOpenAPI() {
   const ctx = use(OpenAPIContext);
   if (!ctx) throw new Error("useOpenAPI must be used within OpenAPIContext");
@@ -36,25 +37,26 @@ export function useOpenAPI() {
     return obj;
   }
 
-  function extractSchema(
-    schema?: OpenAPIV3_1.SchemaObject,
-  ): OpenAPIV3_1.SchemaObject {
-    if (!schema || typeof schema !== "object") {
-      return {};
-    }
-    const { components, paths, webhooks } = doc;
-    const reusable = { components, paths, webhooks };
+  const extractSchema = useCallback(
+    (schema?: OpenAPIV3_1.SchemaObject): OpenAPIV3_1.SchemaObject => {
+      if (!schema || typeof schema !== "object") {
+        return emptySchema;
+      }
+      const { components, paths, webhooks } = doc;
+      const reusable = { components, paths, webhooks };
 
-    const rootKeys = new Set(Object.keys(reusable));
-    const schemaKeys = new Set(Object.keys(schema));
-    const commonKeys = rootKeys.intersection(schemaKeys);
-    if (commonKeys.size) {
-      // eslint-disable-next-line no-console
-      console.error("Common keys: ", commonKeys);
-    }
+      const rootKeys = new Set(Object.keys(reusable));
+      const schemaKeys = new Set(Object.keys(schema));
+      const commonKeys = rootKeys.intersection(schemaKeys);
+      if (commonKeys.size) {
+        // eslint-disable-next-line no-console
+        console.error("Common keys: ", commonKeys);
+      }
 
-    return { ...reusable, ...schema };
-  }
+      return { ...reusable, ...schema };
+    },
+    [doc],
+  );
 
   return { ...ctx, resolveRefObj, extractSchema };
 }

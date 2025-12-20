@@ -7,7 +7,7 @@ import {
 } from "@sane-ts/shadcn-ui";
 import { HelpCircle, Triangle } from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import { useEffect, useEffectEvent } from "react";
+import { useEffect, useEffectEvent, useMemo } from "react";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
 import { useOpenAPI, useOperation } from "#openapi/context";
@@ -23,14 +23,13 @@ export function ParameterInput(
   p: OpenAPIV3_1.ParameterObject & { path: string[]; name: string; in: string },
 ) {
   const { doc, extractSchema } = useOpenAPI();
-  const schema = resolveSchema(p.schema ?? {}, doc);
   const [param, setParam] = useParam(p);
   const examples = useExample(p);
 
   const primitive = primitiveInput({
     field: param ?? { value: "", setValue: () => void 0 },
     name: p.name,
-    schema,
+    schema: resolveSchema(p.schema ?? {}, doc),
   });
 
   const setDefault = useEffectEvent(() => {
@@ -47,6 +46,11 @@ export function ParameterInput(
     if (!exists) setDefault();
   }, [exists]);
 
+  const schema = useMemo(
+    () => extractSchema(p.schema as OpenAPIV3_1.SchemaObject),
+    [p.schema, extractSchema],
+  );
+
   if (!param) return null;
 
   const element = primitive || (
@@ -58,7 +62,7 @@ export function ParameterInput(
         if (!result.isOk || p.in !== "query") return;
         param.setSerialized(queryParam(p, result.ok));
       }}
-      schema={extractSchema(p.schema as OpenAPIV3_1.SchemaObject)}
+      schema={schema}
       resizable
     />
   );

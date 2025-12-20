@@ -50,12 +50,16 @@ export function Example(
   const value = useMemo(() => JSON.stringify(e.value, null, 2), [e.value]);
 
   const { extractSchema } = useOpenAPI();
+  const schema = useMemo(
+    () => extractSchema(e.schema),
+    [e.schema, extractSchema],
+  );
   return (
     <section id={id}>
       <MonacoEditor
         hidden={!("value" in e)}
         style={{ height: `${initialHeight}px` }}
-        schema={extractSchema(e.schema)}
+        schema={schema}
         value={value}
         readOnly
         resizable="label"

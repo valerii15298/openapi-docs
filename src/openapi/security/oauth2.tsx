@@ -7,18 +7,47 @@ import {
   Checkbox,
   Input,
   Label,
+  Spinner,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@sane-ts/shadcn-ui";
-import { Lock, LockOpen } from "@sane-ts/shadcn-ui/lucide";
+import {
+  Copy,
+  Fullscreen,
+  KeyRound,
+  Lock,
+  LockOpen,
+} from "@sane-ts/shadcn-ui/lucide";
 import type { OpenAPIV3_1 } from "@scalar/openapi-types";
-import { useState } from "react";
+import { useActionState } from "react";
 
 import { Description } from "#description";
 import { useSecurityScheme } from "#openapi/operation-playground/create-request";
 
+function Form<T>({
+  initialState,
+  action,
+  children,
+  ...props
+}: Omit<React.ComponentProps<"form">, "action" | "children"> & {
+  action: (prev: Awaited<T>, data: FormData) => Promise<T>;
+  initialState: Awaited<T>;
+  children: (state: Awaited<T>, pending: boolean) => React.ReactNode;
+}) {
+  const [state, formAction, pending] = useActionState(
+    (prev: Awaited<T>, formData: FormData) => action(prev, formData),
+    initialState,
+  );
+  return (
+    <form {...props} action={formAction}>
+      {children(state, pending)}
+    </form>
+  );
+}
+
+const SCOPE = "scope";
 function OAuthFlow(flow: {
   name: string; // e.g. authorizationCode, clientCredentials, etc.
   tokenUrl?: string;
@@ -26,85 +55,111 @@ function OAuthFlow(flow: {
   refreshUrl?: string;
   setToken: (token: string) => void;
 }) {
-  const [clientId, setClientId] = useState("");
-  const [clientSecret, setClientSecret] = useState("");
-  const [scopes, setScopes] = useState<string[]>([]);
-
+  // TODO: add request/response viewer similar how we have for operations
   return (
     <TabsContent asChild className="grid gap-2" value={flow.name}>
-      <form
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const body = new URLSearchParams({
-            grant_type: "client_credentials",
-            client_id: clientId,
-            client_secret: clientSecret,
-            scope: scopes.join(" "),
-          });
-          if (!flow.tokenUrl) return;
+      <Form
+        ref={(e) => void (e && (e.reset = () => null))}
+        initialState={""}
+        action={async (_, formData) => {
+          if (!flow.tokenUrl) return "";
+          const minDelay = new Promise((r) => void setTimeout(r, 300));
+          const scopes = formData.getAll(SCOPE);
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
+          scopes.length && formData.set(SCOPE, scopes.join(" "));
+
+          // @ts-expect-error all entries values are strings
+          const body = new URLSearchParams(formData);
           const resp = await fetch(flow.tokenUrl, { method: "POST", body });
           if (!resp.ok) {
-            return;
+            return "";
           }
           const json = (await resp.json()) as { access_token: string };
           flow.setToken(json.access_token);
+          await minDelay;
+          return json.access_token;
         }}
       >
-        {flow.refreshUrl && (
-          <p>
-            Refresh URL: <code>{flow.refreshUrl}</code>
-          </p>
+        {(token, pending) => (
+          <fieldset disabled={pending || !flow.tokenUrl} className="grid gap-2">
+            {flow.refreshUrl && (
+              <p>
+                Refresh URL: <code>{flow.refreshUrl}</code>
+              </p>
+            )}
+            <p>
+              Token URL: <code>{flow.tokenUrl}</code>
+            </p>
+            <input type="hidden" name="grant_type" value="client_credentials" />
+            <Label className="mt-2 grid gap-1">
+              <i>Client Id:</i>
+              <code>
+                <Input required name="client_id" autoComplete="username" />
+              </code>
+            </Label>
+            <Label className="mt-2 grid gap-1">
+              <i>Client Secret:</i>
+              <code>
+                <Input
+                  required
+                  name="client_secret"
+                  autoComplete="current-password"
+                  type="password"
+                />
+              </code>
+            </Label>
+            {Object.entries(flow.scopes ?? {}).map(([name, value]) => (
+              <Label className="mt-1" key={name}>
+                <Checkbox value={name} name={SCOPE} />
+                {name}: {value}
+              </Label>
+            ))}
+            <Button disabled={pending}>
+              {pending ? <Spinner /> : <KeyRound />} Fetch Token
+            </Button>
+
+            <div
+              hidden={!token}
+              className="flex items-center gap-1 overflow-hidden"
+            >
+              <Button
+                hidden // TODO implement JWT viewer
+                type="button"
+                variant={"ghost"}
+                size={"icon-sm"}
+                className="cursor-pointer"
+                aria-label="View token details"
+              >
+                <Fullscreen />
+              </Button>
+              <Button
+                type="button"
+                variant={"ghost"}
+                size={"icon-sm"}
+                className="cursor-pointer"
+                aria-label="Copy token to clipboard"
+                onClick={() => void navigator.clipboard.writeText(token)}
+              >
+                <Copy />
+              </Button>
+              <label
+                onMouseDown={(e) => e.detail > 1 && e.preventDefault()}
+                className="inline-block w-full cursor-pointer truncate font-mono"
+              >
+                <input
+                  className="peer sr-only"
+                  aria-label="Toggle token visibility"
+                  type="checkbox"
+                />
+                <span className="hidden peer-checked:inline">{token}</span>
+                <span className="peer-checked:hidden">
+                  {"*".repeat(token.length)}
+                </span>
+              </label>
+            </div>
+          </fieldset>
         )}
-        <p>
-          Token URL: <code>{flow.tokenUrl}</code>
-        </p>
-        <Label className="mt-2 grid gap-1">
-          <i>Client Id:</i>
-          <code>
-            <Input
-              required
-              name="client_id"
-              autoComplete="username"
-              value={clientId}
-              onChange={(e) => {
-                setClientId(e.target.value);
-              }}
-            />
-          </code>
-        </Label>
-        <Label className="mt-2 grid gap-1">
-          <i>Client Secret:</i>
-          <code>
-            <Input
-              required
-              name="client_secret"
-              autoComplete="current-password"
-              type="password"
-              value={clientSecret}
-              onChange={(e) => {
-                setClientSecret(e.target.value);
-              }}
-            />
-          </code>
-        </Label>
-        {Object.entries(flow.scopes ?? {}).map(([name, value]) => (
-          <Label className="mt-1" key={name}>
-            <Checkbox
-              checked={scopes.includes(name)}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  setScopes((prev) => [...prev, name]);
-                } else {
-                  setScopes((prev) => prev.filter((s) => s !== name));
-                }
-              }}
-            />
-            {name}:{value}
-          </Label>
-        ))}
-        <Button>Fetch Token</Button>
-      </form>
+      </Form>
     </TabsContent>
   );
 }

@@ -11,7 +11,6 @@ import { Collapse } from "#util";
 export function ParametersDocs() {
   const o = useOperation();
   const { doc } = useOpenAPI();
-  const key = K.parameters;
   const header = (
     <span className="flex flex-wrap gap-2">
       <Badge
@@ -24,12 +23,11 @@ export function ParametersDocs() {
       </Badge>
     </span>
   );
-  if (!o[key].length) {
+  if (!o.parameters.length) {
     return <div>{header}</div>;
   }
-  const parameters = o[key].map((p, idx) => {
-    const path = [...o.path, key, idx.toString()];
-    const id = o.makeId(path);
+  const parameters = o.parameters.map((p) => {
+    const id = o.makeId(p.path);
     return (
       <li key={id} id={id} className={`grid gap-1`}>
         <RenderJSONSchema
@@ -37,8 +35,8 @@ export function ParametersDocs() {
             ...p,
             source: doc,
             schema: p.schema as OpenAPIV3_1.SchemaObject,
-            path: [...path, "schema"],
-            children: <Description {...p} path={path} />,
+            path: [...p.path, K.schema],
+            children: <Description {...p} path={p.path} />,
             depth: 1,
           }}
         />

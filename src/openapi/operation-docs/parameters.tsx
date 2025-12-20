@@ -1,11 +1,11 @@
 import { Badge } from "@sane-ts/shadcn-ui";
+import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { Description } from "#description";
 import { RenderJSONSchema } from "#json-schema";
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
-import type { OpenAPIV3_1 } from "#types";
 import { Collapse } from "#util";
 
 export function ParametersDocs() {

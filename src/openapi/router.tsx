@@ -1,7 +1,6 @@
 import { Intro } from "#openapi/intro";
 import { Operation } from "#openapi/operation";
 import { SecuritySchemes } from "#openapi/security/index";
-import type { OpenAPIV3_1 } from "#types";
 
 interface Router {
   [key: `^${string}$`]: Router;
@@ -15,10 +14,8 @@ const router: Router = {
     "^/.*$": {
       "^(get|head|post|put|delete|connect|options|trace|patch)$": {
         render: ([_, pathname, method]) => (
-          <Operation
-            method={method as OpenAPIV3_1.HttpMethods}
-            pathname={pathname!}
-          />
+          // @ts-expect-error TODO use new OpenAPI types
+          <Operation method={method} pathname={pathname!} />
         ),
       },
     },

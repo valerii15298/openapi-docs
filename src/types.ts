@@ -263,7 +263,6 @@ export type Parameter = {
   description?: string;
   required?: boolean;
   deprecated?: boolean;
-  allowEmptyValue?: boolean;
 } & Examples &
   (
     | ({
@@ -280,6 +279,7 @@ export type Parameter = {
       ))
     | ({
         in: typeof ParameterIn.query;
+        allowEmptyValue?: boolean;
       } & (
         | ({
             style?:

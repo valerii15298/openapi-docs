@@ -144,7 +144,7 @@ export type OasSchema32 =
 
 type Discriminator = {
   propertyName: string;
-  mappings?: Record<string, string>;
+  mapping?: Record<string, string>;
   defaultMapping?: string;
 };
 

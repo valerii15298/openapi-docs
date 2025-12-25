@@ -139,8 +139,9 @@ export type Parameter = {
   required?: boolean;
   deprecated?: boolean;
   allowEmptyValue?: boolean;
-} & Examples &
-  (SchemaParameter | ContentParameter);
+  example?: Json;
+  examples?: Record<string, Example | Reference>;
+} & (SchemaParameter | ContentParameter);
 
 export type SchemaParameter = {
   style?: ParameterStyle;
@@ -167,10 +168,12 @@ export type RequestBody = {
 export type MediaType = {
   schema?: Schema;
   itemSchema?: Schema;
+  example?: Json;
+  examples?: Record<string, Example | Reference>;
   encoding?: Record<string, Encoding>;
   prefixEncoding?: Encoding[];
   itemEncoding?: Encoding;
-} & Examples;
+};
 
 export type Encoding = {
   contentType?: string;
@@ -209,11 +212,6 @@ export type Response = {
 
 export type Callback = Record<string, PathItem>;
 
-export type Examples = {
-  example?: Json;
-  examples?: Record<string, Example | Reference>;
-};
-
 export type Example = {
   summary?: string;
   description?: string;
@@ -236,8 +234,9 @@ export type Header = {
   description?: string;
   required?: boolean;
   deprecated?: boolean;
-} & Examples &
-  (SchemaHeader | ContentHeader);
+  example?: Json;
+  examples?: Record<string, Example | Reference>;
+} & (SchemaHeader | ContentHeader);
 
 export type SchemaHeader = {
   style?: typeof ParameterStyle.simple;

@@ -414,43 +414,17 @@ type SecurityScheme = { description?: string; deprecated?: boolean } & (
 );
 
 type OauthFlows = {
-  implicit?: Implicit;
-  password?: Password;
-  clientCredentials?: ClientCredentials;
-  authorizationCode?: AuthorizationCode;
-  deviceAuthorization?: DeviceAuthorization;
+  implicit?: Omit<OAuthFlow, "tokenUrl"> & { authorizationUrl: string };
+  password?: OAuthFlow;
+  clientCredentials?: OAuthFlow;
+  authorizationCode?: OAuthFlow & { authorizationUrl: string };
+  deviceAuthorization?: OAuthFlow & { deviceAuthorizationUrl: string };
 };
 
-type Implicit = {
-  authorizationUrl: string;
+type OAuthFlow = {
   refreshUrl?: string;
   scopes: Record<string, string>;
-};
-
-type Password = {
   tokenUrl: string;
-  refreshUrl?: string;
-  scopes: Record<string, string>;
-};
-
-type ClientCredentials = {
-  tokenUrl: string;
-  refreshUrl?: string;
-  scopes: Record<string, string>;
-};
-
-type AuthorizationCode = {
-  authorizationUrl: string;
-  tokenUrl: string;
-  refreshUrl?: string;
-  scopes: Record<string, string>;
-};
-
-type DeviceAuthorization = {
-  deviceAuthorizationUrl: string;
-  tokenUrl: string;
-  refreshUrl?: string;
-  scopes: Record<string, string>;
 };
 
 type SecurityRequirement = Record<string, string[]>;

@@ -1,16 +1,16 @@
 import { Button } from "@sane-ts/shadcn-ui";
 import { ExternalLink } from "@sane-ts/shadcn-ui/lucide";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { useMemo } from "react";
 
 import { Description } from "#description";
 import { MonacoEditor } from "#json-editor/monaco-editor";
 import { useOpenAPI, useOperation } from "#openapi/context";
+import type { OpenAPIV3_1 } from "#types/index";
 
 export function Example(
-  e: OpenAPIV3_1.ExampleObject & {
+  e: OpenAPIV3_1.Example & {
     path: string[];
-    schema?: OpenAPIV3_1.SchemaObject;
+    schema?: OpenAPIV3_1.Schema;
   },
 ) {
   const op = useOperation();

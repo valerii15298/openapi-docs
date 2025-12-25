@@ -9,11 +9,11 @@ import {
   Textarea,
 } from "@sane-ts/shadcn-ui";
 import { FileJson, Loader } from "@sane-ts/shadcn-ui/lucide";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { useState } from "react";
 import yaml from "yaml";
 
 import { useHttpProxy } from "#openapi/context";
+import type { OpenAPIV3_1 } from "#types/index";
 
 const commonSpecs = [
   {

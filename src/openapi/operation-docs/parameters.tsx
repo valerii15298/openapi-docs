@@ -1,5 +1,4 @@
 import { Badge } from "@sane-ts/shadcn-ui";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { Description } from "#description";
 import { RenderJSONSchema } from "#json-schema";
@@ -34,7 +33,7 @@ export function ParametersDocs() {
           {...{
             ...p,
             source: doc,
-            schema: p.schema as OpenAPIV3_1.SchemaObject,
+            schema: p.schema,
             path: [...p.path, K.schema],
             children: <Description {...p} path={p.path} />,
             depth: 1,

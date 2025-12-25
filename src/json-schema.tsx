@@ -1,14 +1,14 @@
 import { Badge, cn } from "@sane-ts/shadcn-ui";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import type { ReactNode } from "react";
 
 import { Description } from "#description";
 import { K } from "#openapi/const";
 import { resolveSchema } from "#schema";
+import type { OpenAPIV3_1 } from "#types/index";
 import { Collapse } from "#util";
 
 interface ISchema<Slots = object> {
-  schema?: OpenAPIV3_1.SchemaObject;
+  schema?: OpenAPIV3_1.Schema;
   path: string[];
   required?: boolean;
   children?: ReactNode | undefined;
@@ -62,9 +62,8 @@ export function RenderJSONSchema({
 
   ...p
 }: ISchema<{ header?: ReactNode }>) {
-  // @ts-expect-error TODO add custom OpenAPI types
   schema = resolveSchema(schema ?? {}, p.source);
-  if (!schema || typeof schema !== "object") {
+  if (typeof schema !== "object") {
     schema = {};
   }
 
@@ -86,8 +85,8 @@ export function RenderJSONSchema({
   const allowedValues = K.enum in schema && (
     <p className="flex flex-wrap items-center gap-1">
       Allowed values:{" "}
-      {schema[K.enum]?.map((v) => (
-        <Badge variant="secondary" key={[...path, K.enum, v].join("-")} asChild>
+      {schema[K.enum]?.map((v, i) => (
+        <Badge variant="secondary" key={i} asChild>
           <code>{JSON.stringify(v)}</code>
         </Badge>
       ))}

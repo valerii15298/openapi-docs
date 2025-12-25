@@ -6,7 +6,6 @@ import {
   PopoverTrigger,
 } from "@sane-ts/shadcn-ui";
 import { HelpCircle, Triangle } from "@sane-ts/shadcn-ui/lucide";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { useEffect, useEffectEvent, useMemo } from "react";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
@@ -18,9 +17,10 @@ import { primitiveInput } from "#openapi/operation-playground/schema-field";
 import { queryParam } from "#openapi/operation-playground/serialize-parameters";
 import { Result } from "#result";
 import { getSample, resolveSchema } from "#schema";
+import type { OpenAPIV3_1 } from "#types/index";
 
 export function ParameterInput(
-  p: OpenAPIV3_1.ParameterObject & { path: string[]; name: string; in: string },
+  p: OpenAPIV3_1.Parameter & { path: string[]; name: string; in: string },
 ) {
   const { doc, extractSchema } = useOpenAPI();
   const [param, setParam] = useParam(p);
@@ -47,7 +47,7 @@ export function ParameterInput(
   }, [exists]);
 
   const schema = useMemo(
-    () => extractSchema(p.schema as OpenAPIV3_1.SchemaObject),
+    () => extractSchema(p.schema),
     [p.schema, extractSchema],
   );
 
@@ -89,7 +89,7 @@ export function ParameterInput(
             <div className="my-2" />
             <Example
               {...examples.example}
-              schema={p.schema as OpenAPIV3_1.SchemaObject}
+              schema={p.schema}
               path={examples.path}
             />
           </PopoverContent>

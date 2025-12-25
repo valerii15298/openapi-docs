@@ -15,13 +15,13 @@ import {
   SidebarRail,
 } from "@sane-ts/shadcn-ui";
 import { Mail } from "@sane-ts/shadcn-ui/lucide";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { K } from "#openapi/const";
 import { useOpenAPI } from "#openapi/context";
 import { renderSidebarContent } from "#openapi/sidebar-content";
+import type { OpenAPIV3_1 } from "#types/index";
 
-function renderLicense(license?: OpenAPIV3_1.LicenseObject) {
+function renderLicense(license?: OpenAPIV3_1.License) {
   if (!license) return null;
   if (!Object.values(license).join("").trim()) return null;
 
@@ -39,7 +39,7 @@ function renderLicense(license?: OpenAPIV3_1.LicenseObject) {
   );
 }
 
-function renderContact(contact?: OpenAPIV3_1.ContactObject) {
+function renderContact(contact?: OpenAPIV3_1.Contact) {
   if (!contact) return null;
   if (!Object.values(contact).join("").trim()) return null;
 

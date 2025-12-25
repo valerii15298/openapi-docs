@@ -1,4 +1,4 @@
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
+import type { OpenAPIV3_1 } from "#types/index";
 
 function stringify(value: unknown) {
   if (value && typeof value === "object") return JSON.stringify(value);
@@ -18,7 +18,7 @@ function flattenWithBrackets(name: string, obj: unknown): [string, unknown][] {
 const queryStyles = ["spaceDelimited", "pipeDelimited", "deepObject"] as const;
 const delimiterMap = { spaceDelimited: "20", pipeDelimited: "%7C", form: "," };
 export function queryParam(
-  p: OpenAPIV3_1.ParameterObject & { name: string },
+  p: OpenAPIV3_1.Parameter & { name: string },
   value: unknown, // value is json parsed json value
 ) {
   const style = queryStyles.find((s) => s === p.style) || "form";

@@ -10,9 +10,9 @@ import {
   SidebarMenuSubItem,
 } from "@sane-ts/shadcn-ui";
 import { ChevronRight } from "@sane-ts/shadcn-ui/lucide";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { methods } from "#openapi/methods";
+import type { OpenAPIV3_1 } from "#types/index";
 
 function renderFlat(
   doc: OpenAPIV3_1.Document,
@@ -24,7 +24,7 @@ function renderFlat(
     <SidebarMenu>
       {paths.flatMap(([pathname, pathItem]) =>
         methods.map((method) => {
-          const op = pathItem?.[method];
+          const op = pathItem[method];
           if (!op) return null;
           const opPath = ["paths", pathname, method];
           const isActive = JSON.stringify(path) === JSON.stringify(opPath);
@@ -51,13 +51,11 @@ function renderByTag(
   setPath: (path: string[]) => void,
 ) {
   const operations = Object.entries(doc.paths ?? {})
-    .flatMap(
-      ([path, item]) =>
-        item &&
-        methods.flatMap((m) => {
-          const op = item[m];
-          return op && op.tags?.map((tag) => ({ ...op, method: m, path, tag }));
-        }),
+    .flatMap(([path, item]) =>
+      methods.flatMap((m) => {
+        const op = item[m];
+        return op?.tags?.map((tag) => ({ ...op, method: m, path, tag }));
+      }),
     )
     .filter((op) => !!op);
   const byTag = Object.groupBy(operations, (o) => o.tag);
@@ -65,7 +63,7 @@ function renderByTag(
   const [prefix, pathname, method] = path;
   const activeOp =
     prefix === "paths" && pathname?.startsWith("/") && method
-      ? doc.paths?.[pathname]?.[method as OpenAPIV3_1.HttpMethods]
+      ? doc.paths?.[pathname]?.[method as OpenAPIV3_1.HttpMethod]
       : null;
   return (
     <SidebarMenu>

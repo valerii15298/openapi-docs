@@ -20,11 +20,11 @@ import {
   Lock,
   LockOpen,
 } from "@sane-ts/shadcn-ui/lucide";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { useActionState } from "react";
 
 import { Description } from "#description";
 import { useSecurityScheme } from "#openapi/operation-playground/create-request";
+import type { OpenAPIV3_1 } from "#types/index";
 
 function Form<T>({
   initialState,
@@ -168,7 +168,7 @@ export function OAuth2SecurityScheme({
   path,
   scheme,
 }: {
-  scheme: OpenAPIV3_1.OAuth2SecurityScheme;
+  scheme: OpenAPIV3_1.SecurityScheme;
   path: string[];
 }) {
   const name = path.at(-1) || "oauth2";

@@ -1,6 +1,7 @@
-import type { IJsonSchema } from "@scalar/openapi-types";
 import { merge } from "allof-merge";
 import { sample } from "openapi-sampler";
+
+import type { OpenAPIV3_1 } from "#types/index";
 
 export function getSample(doc: object, schema?: object | boolean) {
   schema = typeof schema === "object" ? schema : {};
@@ -11,7 +12,7 @@ export function getSampleJSON(doc: object, schema?: object | boolean) {
   return JSON.stringify(getSample(doc, schema), null, 2);
 }
 
-export function resolveSchema(schema: IJsonSchema | boolean, source: object) {
+export function resolveSchema(schema: OpenAPIV3_1.Schema, source: object) {
   if (!schema || typeof schema !== "object") return {};
   const allOf = [...(schema.allOf ?? [])];
   const { $ref, ...rest } = schema;

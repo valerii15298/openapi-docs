@@ -1,10 +1,10 @@
-import type { OpenAPIV3, OpenAPIV3_1 } from "@scalar/openapi-types";
 import { createContext, use, useCallback } from "react";
 
 import { resolveRef } from "#json-editor/utils";
 import { K } from "#openapi/const";
 import type { ResponseResult } from "#openapi/operation-playground/response";
 import { StorageContext, useStorage } from "#storage";
+import type { OpenAPIV3_1 } from "#types/index";
 
 export interface OpenAPIContext {
   uri: string;
@@ -20,25 +20,25 @@ export function useOpenAPI() {
   const ctx = use(OpenAPIContext);
   if (!ctx) throw new Error("useOpenAPI must be used within OpenAPIContext");
   const { doc } = ctx;
-  type In = OpenAPIV3_1.ReferenceObject | OpenAPIV3.ReferenceObject | undefined;
-  function resolveRefObj<T extends object>(
-    obj: T | In,
-  ): (T & { $ref?: string }) | undefined {
+
+  function resolveRefObj<T extends object | undefined>(
+    obj: T | OpenAPIV3_1.Reference,
+  ): (T & { $ref?: string }) | (T & undefined) {
     if (obj && "$ref" in obj && obj.$ref) {
       const resolved = resolveRef<T>(obj.$ref, doc);
       if (!resolved) {
         // eslint-disable-next-line no-console
         console.error(`${obj.$ref} cannot be resolved`);
+        return obj as T;
       }
-      return { ...resolved!, ...obj, $ref: obj.$ref };
+      return { ...resolved, ...obj, $ref: obj.$ref };
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return obj;
+
+    return obj as T;
   }
 
   const extractSchema = useCallback(
-    (schema?: OpenAPIV3_1.SchemaObject): OpenAPIV3_1.SchemaObject => {
+    (schema?: OpenAPIV3_1.Schema): Exclude<OpenAPIV3_1.Schema, boolean> => {
       if (!schema || typeof schema !== "object") {
         return emptySchema;
       }
@@ -62,7 +62,7 @@ export function useOpenAPI() {
 }
 
 export interface OperationContext {
-  method: OpenAPIV3_1.HttpMethods;
+  method: OpenAPIV3_1.HttpMethod;
   pathname: string;
 }
 export const OperationContext = createContext<OperationContext | null>(null);
@@ -74,7 +74,7 @@ export function useOperation() {
     throw new Error("useOperation must be used within OperationContext");
 
   const pathItem = doc.paths?.[ctx.pathname];
-  const op: OpenAPIV3_1.OperationObject | undefined = pathItem?.[ctx.method];
+  const op: OpenAPIV3_1.Operation | undefined = pathItem?.[ctx.method];
 
   function makeId(path: string[]) {
     return path.join("-");
@@ -84,7 +84,7 @@ export function useOperation() {
 
   const servers = doc.servers || pathItem?.servers || op?.servers || [];
 
-  type Params = (OpenAPIV3_1.ParameterObject & {
+  type Params = (OpenAPIV3_1.Parameter & {
     $ref?: string;
     path: string[];
   })[];

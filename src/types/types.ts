@@ -141,7 +141,7 @@ export type Parameter = {
   allowEmptyValue?: boolean;
   example?: Json;
   examples?: Record<string, Example | Reference>;
-} & (SchemaParameter | ContentParameter);
+} & (SchemaParameter & ContentParameter);
 
 export type SchemaParameter = {
   style?: ParameterStyle;
@@ -149,11 +149,11 @@ export type SchemaParameter = {
   allowReserved?: boolean;
   /** Required */
   schema?: Schema;
-  content?: never;
+  // content?: never;
 };
 
 export type ContentParameter = {
-  schema?: never;
+  // schema?: never;
   /** Required */
   content?: Record<string, MediaType | Reference>;
 };

@@ -93,7 +93,7 @@ export type Components = {
   headers?: Record<string, Header | Reference>;
   securitySchemes?: Record<string, SecurityScheme | Reference>;
   links?: Record<string, Link | Reference>;
-  callbacks?: Record<string, Callbacks | Reference>;
+  callbacks?: Record<string, Callback | Reference>;
   pathItems?: Record<string, PathItem>;
   mediaTypes?: Record<string, MediaType | Reference>;
 };
@@ -118,7 +118,7 @@ export type Operation = {
   parameters?: (Parameter | Reference)[];
   requestBody?: RequestBody | Reference;
   responses?: Responses;
-  callbacks?: Record<string, Callbacks | Reference>;
+  callbacks?: Record<string, Callback | Reference>;
   deprecated?: boolean;
   security?: SecurityRequirement[];
   servers?: Server[];
@@ -207,7 +207,7 @@ export type Response = {
   links?: Record<string, Link | Reference>;
 };
 
-export type Callbacks = Record<string, PathItem | Reference>;
+export type Callback = Record<string, PathItem>;
 
 export type Examples = {
   example?: Json;

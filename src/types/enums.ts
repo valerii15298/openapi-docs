@@ -77,7 +77,7 @@ export const JsonSchemaType = Enum(
 
 export type JsonSchemaType = keyof typeof JsonSchemaType;
 
-const HttpMethod = Enum(
+export const HttpMethod = Enum(
   "get",
   "put",
   "post",

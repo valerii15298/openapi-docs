@@ -302,7 +302,7 @@ type Responses = {
   "3XX": Response | Reference;
   "4XX": Response | Reference;
   "5XX": Response | Reference;
-} & Record<string, Response | Reference>;
+} & Record<`${number}`, Response | Reference>;
 
 type Response = {
   summary?: string;

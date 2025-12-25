@@ -1,18 +1,19 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { Description } from "#description";
 import { RenderJSONSchema } from "#json-schema";
 import { K } from "#openapi/const";
 import { useOpenAPI, useOperation } from "#openapi/context";
 import { useStorage } from "#storage";
+import type { OpenAPIV3_1 } from "#types/index";
 
 const key = K.content;
 export function Content(props: {
   description?: string;
-  content?: Record<string, OpenAPIV3_1.MediaTypeObject>;
+  content?: Record<string, OpenAPIV3_1.MediaType | OpenAPIV3_1.Reference>;
   path: string[];
 }) {
+  const { resolveRefObj } = useOpenAPI();
   const op = useOperation();
   const entries = Object.entries(props[key] ?? {});
 
@@ -38,7 +39,7 @@ export function Content(props: {
           <TabsContent key={type} value={type}>
             <RenderJSONSchema
               {...{
-                schema: media.schema,
+                schema: resolveRefObj(media).schema,
                 path: [...path, K.schema],
                 name: "",
                 depth: 0,

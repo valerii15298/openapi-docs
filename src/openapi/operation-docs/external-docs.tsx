@@ -4,12 +4,12 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@sane-ts/shadcn-ui";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { Description } from "#description";
+import type { OpenAPIV3_1 } from "#types/index";
 
 export function ExternalDocs(d: {
-  externalDocs?: OpenAPIV3_1.ExternalDocumentationObject;
+  externalDocs?: OpenAPIV3_1.ExternalDocumentation;
   path: string[];
 }) {
   const key = "externalDocs";

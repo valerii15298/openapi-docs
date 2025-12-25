@@ -1,14 +1,12 @@
 import { ToggleGroup, ToggleGroupItem } from "@sane-ts/shadcn-ui";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 
 import { K } from "#openapi/const";
 import { useOpenAPI } from "#openapi/context";
 import { useStorage } from "#storage";
+import type { OpenAPIV3_1 } from "#types/index";
 
 const key = K.examples;
-export function useExample(
-  props: OpenAPIV3_1.MediaTypeObject & { path: string[] },
-) {
+export function useExample(props: OpenAPIV3_1.MediaType & { path: string[] }) {
   const { resolveRefObj } = useOpenAPI();
   const path = [...props.path, key];
   const examples = Object.keys(props[key] ?? {});

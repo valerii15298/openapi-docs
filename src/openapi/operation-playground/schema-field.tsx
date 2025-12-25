@@ -10,8 +10,10 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@sane-ts/shadcn-ui";
-import type { IJsonSchema } from "@scalar/openapi-types";
 
+import type { OpenAPIV3_1 } from "#types/index";
+
+type IJsonSchema = Exclude<OpenAPIV3_1.Schema, boolean>;
 interface FieldProps {
   value: string;
   setValue: (v: string) => void;

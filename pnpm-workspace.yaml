@@ -1,2 +1,0 @@
-patchedDependencies:
-  '@scalar/openapi-types': patches/@scalar__openapi-types.patch

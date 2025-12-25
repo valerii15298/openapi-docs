@@ -6,7 +6,6 @@ import {
   Toggle,
 } from "@sane-ts/shadcn-ui";
 import { MousePointerSquareDashed } from "@sane-ts/shadcn-ui/lucide";
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
 import { use, useState } from "react";
 
 import { EditorBreadcrumbs } from "#json-editor/breadcrumbs";
@@ -15,6 +14,7 @@ import { Editor } from "#json-editor/editor";
 import { EditorTabs } from "#json-editor/tabs";
 import { Docs } from "#openapi/docs";
 import { ImportSpec } from "#openapi/import-spec";
+import type { OpenAPIV3_1 } from "#types/index";
 
 // TODO import schema from openapi-validator package when it will be ready
 // This is a temporary workaround to have the schema available

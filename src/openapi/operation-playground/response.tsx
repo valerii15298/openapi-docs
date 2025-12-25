@@ -10,6 +10,7 @@ import type { Result } from "#result";
 import { Ok } from "#result";
 import { getSampleJSON } from "#schema";
 import { useStorage } from "#storage";
+import type { OpenAPIV3_1 } from "#types/index";
 
 export const ResponseTab = Enum("body", "headers", "examples");
 type ResponseTab = keyof typeof ResponseTab;
@@ -25,7 +26,7 @@ export type ResponseResult = {
 
 function parseJSON(input: string) {
   try {
-    return JSON.parse(input) as unknown;
+    return JSON.parse(input) as OpenAPIV3_1.Json;
   } catch {
     return input;
   }
@@ -62,7 +63,9 @@ export function Response() {
 
   const propsMap = {
     [ResponseTab.body]: {
-      value: body.isOk ? parseJSON(body.ok) : body.err, // TODO add serializedValue as body raw string and use parse json error here
+      value: body.isOk
+        ? parseJSON(body.ok)
+        : { name: body.err.name, message: body.err.message }, // TODO add serializedValue as body raw string and use parse json error here
       schema: media?.schema,
     },
     [ResponseTab.headers]: { value: headers },

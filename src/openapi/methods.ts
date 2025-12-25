@@ -1,15 +1,6 @@
-import type { OpenAPIV3_1 } from "@scalar/openapi-types";
+import { HttpMethod } from "#types/index";
 
-export const methods = [
-  "get",
-  "post",
-  "put",
-  "delete",
-  "patch",
-  "options",
-  "head",
-  "trace",
-] as OpenAPIV3_1.HttpMethods[];
+export const methods = Object.values(HttpMethod);
 
 export const methodClassNamesMap = {
   get: { text: "text-green-500", bg: "bg-green-500" },
@@ -21,6 +12,7 @@ export const methodClassNamesMap = {
   head: { text: "text-gray-500", bg: "bg-gray-500" },
   trace: { text: "text-purple-500", bg: "bg-purple-500" },
   connect: { text: "text-indigo-500", bg: "bg-indigo-500" },
+  query: { text: "text-cyan-500", bg: "bg-cyan-500" },
 };
 
 export const statusColor: Record<string, string> = {

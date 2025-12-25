@@ -4,6 +4,7 @@ import { K } from "#openapi/const";
 import { useOperation } from "#openapi/context";
 import { useActiveRequestBody } from "#openapi/operation-playground/use-request-body";
 import { useStorage } from "#storage";
+import type { OpenAPIV3_1 } from "#types/index";
 
 export type Param = {
   value: string;
@@ -11,9 +12,15 @@ export type Param = {
   include: boolean;
 };
 
-export type ParamIn = "query" | "header" | "path" | "cookie";
+export type ParamIn = OpenAPIV3_1.ParameterIn;
 type Params = Record<ParamIn, Record<string, Param>>;
-const defaultParams: Params = { query: {}, header: {}, path: {}, cookie: {} };
+const defaultParams: Params = {
+  query: {},
+  header: {},
+  path: {},
+  cookie: {},
+  querystring: {},
+};
 
 export function useParams() {
   const o = useOperation();

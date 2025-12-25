@@ -89,3 +89,6 @@ const HttpMethod = Enum(
   "query",
 );
 export type HttpMethod = keyof typeof HttpMethod;
+
+export const TagKind = Enum("nav", "badge", "audience");
+export type TagKind = keyof typeof TagKind;

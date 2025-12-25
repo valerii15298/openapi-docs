@@ -5,6 +5,7 @@ import type {
   ParameterIn,
   ParameterStyle,
   SecuritySchemeType,
+  TagKind,
   XMLNodeType,
 } from "./enums.js";
 
@@ -15,6 +16,7 @@ export type {
   ParameterIn,
   ParameterStyle,
   SecuritySchemeType,
+  TagKind,
   XMLNodeType,
 };
 
@@ -212,65 +214,28 @@ export type Operation = {
 export type Parameter = {
   /** Required */
   name?: string;
+  /** Required */
+  in?: ParameterIn;
   description?: string;
   required?: boolean;
   deprecated?: boolean;
+  allowEmptyValue?: boolean;
 } & Examples &
-  (
-    | ({
-        in: typeof ParameterIn.path;
-        /** Required */
-        required?: true;
-      } & (
-        | ({
-            style?:
-              | typeof ParameterStyle.matrix
-              | typeof ParameterStyle.label
-              | typeof ParameterStyle.simple;
-          } & SchemaParameter)
-        | ContentParameter
-      ))
-    | ({
-        in: typeof ParameterIn.query;
-        allowEmptyValue?: boolean;
-      } & (
-        | ({
-            style?:
-              | typeof ParameterStyle.form
-              | typeof ParameterStyle.spaceDelimited
-              | typeof ParameterStyle.pipeDelimited
-              | typeof ParameterStyle.deepObject;
-          } & SchemaParameter)
-        | ContentParameter
-      ))
-    | ({
-        in: typeof ParameterIn.header;
-      } & (
-        | ({ style?: typeof ParameterStyle.simple } & SchemaParameter)
-        | ContentParameter
-      ))
-    | ({
-        in: typeof ParameterIn.cookie;
-      } & (
-        | ({ style?: typeof ParameterStyle.cookie } & SchemaParameter)
-        | ContentParameter
-      ))
-    | ({ in: typeof ParameterIn.querystring } & ContentParameter)
-    | { in?: never }
-  );
-
-export type ContentParameter = {
-  schema?: never;
-  /** Required */
-  content?: Record<string, MediaType | Reference>;
-};
+  (SchemaParameter | ContentParameter);
 
 export type SchemaParameter = {
+  style?: ParameterStyle;
   explode?: boolean;
   allowReserved?: boolean;
   /** Required */
   schema?: Schema;
   content?: never;
+};
+
+export type ContentParameter = {
+  schema?: never;
+  /** Required */
+  content?: Record<string, MediaType | Reference>;
 };
 
 export type RequestBody = {
@@ -283,23 +248,20 @@ export type RequestBody = {
 export type MediaType = {
   schema?: Schema;
   itemSchema?: Schema;
-} & Examples &
-  (
-    | {
-        encoding?: Record<string, Encoding>;
-        prefixEncoding?: never;
-        itemEncoding?: never;
-      }
-    | {
-        encoding?: never;
-        prefixEncoding?: Encoding[];
-        itemEncoding?: Encoding;
-      }
-  );
+  encoding?: Record<string, Encoding>;
+  prefixEncoding?: Encoding[];
+  itemEncoding?: Encoding;
+} & Examples;
 
 export type Encoding = {
   contentType?: string;
   headers?: Record<string, Header | Reference>;
+  encoding?: Record<string, Encoding>;
+  prefixEncoding?: Encoding[];
+  itemEncoding?: Encoding;
+} & EncodingRFC6570;
+
+export type EncodingRFC6570 = {
   style?:
     | typeof ParameterStyle.form
     | typeof ParameterStyle.spaceDelimited
@@ -307,18 +269,7 @@ export type Encoding = {
     | typeof ParameterStyle.deepObject;
   explode?: boolean;
   allowReserved?: boolean;
-} & (
-  | {
-      encoding?: Record<string, Encoding>;
-      prefixEncoding?: never;
-      itemEncoding?: never;
-    }
-  | {
-      encoding?: never;
-      prefixEncoding?: Encoding[];
-      itemEncoding?: Encoding;
-    }
-);
+};
 
 export type Responses = {
   default?: Response | Reference;
@@ -347,26 +298,11 @@ export type Examples = {
 export type Example = {
   summary?: string;
   description?: string;
-} & (
-  | {
-      value?: Json;
-      dataValue?: never;
-      serializedValue?: never;
-      externalValue?: never;
-    }
-  | {
-      dataValue?: Json;
-      serializedValue?: string;
-      value?: never;
-      externalValue?: never;
-    }
-  | {
-      dataValue?: Json;
-      externalValue?: string;
-      value?: never;
-      serializedValue?: never;
-    }
-);
+  dataValue?: Json;
+  serializedValue?: string;
+  externalValue?: string;
+  value?: Json;
+};
 
 export type Link = {
   operationRef?: string;
@@ -382,20 +318,21 @@ export type Header = {
   required?: boolean;
   deprecated?: boolean;
 } & Examples &
-  (
-    | {
-        style?: typeof ParameterStyle.simple;
-        explode?: boolean;
-        /** Required */
-        schema?: Schema;
-        content?: never;
-      }
-    | {
-        schema?: never;
-        /** Required */
-        content?: Record<string, MediaType | Reference>;
-      }
-  );
+  (SchemaHeader | ContentHeader);
+
+export type SchemaHeader = {
+  style?: typeof ParameterStyle.simple;
+  explode?: boolean;
+  /** Required */
+  schema?: Schema;
+  content?: never;
+};
+
+export type ContentHeader = {
+  schema?: never;
+  /** Required */
+  content?: Record<string, MediaType | Reference>;
+};
 
 export type Tag = {
   /** Required */
@@ -404,7 +341,7 @@ export type Tag = {
   description?: string;
   externalDocs?: ExternalDocs;
   parent?: string;
-  kind?: "nav" | "badge" | "audience" | (string & {});
+  kind?: TagKind | (string & {});
 };
 
 export type Reference = {
@@ -414,63 +351,51 @@ export type Reference = {
   description?: string;
 };
 
-export type SecurityScheme = { description?: string; deprecated?: boolean } & (
-  | {
-      type: typeof SecuritySchemeType.apiKey;
-      /** Required */
-      name?: string;
-      /** Required */
-      in?:
-        | typeof ParameterIn.query
-        | typeof ParameterIn.header
-        | typeof ParameterIn.cookie;
-    }
-  | {
-      type: typeof SecuritySchemeType.http;
-      /** Required */
-      scheme?: string;
-      bearerFormat?: string;
-    }
-  | {
-      type: typeof SecuritySchemeType.mutualTLS;
-    }
-  | {
-      type: typeof SecuritySchemeType.oauth2;
-      /** Required */
-      flows?: OauthFlows;
-      oauth2MetadataUrl?: string;
-    }
-  | {
-      type: typeof SecuritySchemeType.openIdConnect;
-      /** Required */
-      openIdConnectUrl?: string;
-    }
-  | { type?: never }
-);
+export type SecurityScheme = {
+  description?: string;
+  deprecated?: boolean;
+  /** Required */
+  type?: SecuritySchemeType;
+
+  // ApiKey Security Scheme
+  /** Required */
+  name?: string;
+  /** Required */
+  in?:
+    | typeof ParameterIn.query
+    | typeof ParameterIn.header
+    | typeof ParameterIn.cookie;
+
+  // Http Security Scheme
+  /** Required */
+  scheme?: string;
+  bearerFormat?: string;
+
+  // OAuth2 Security Scheme
+  /** Required */
+  flows?: OauthFlows;
+  oauth2MetadataUrl?: string;
+
+  // OpenID Connect Security Scheme
+  /** Required */
+  openIdConnectUrl?: string;
+};
 
 export type OauthFlows = {
-  implicit?: Omit<OauthFlow, "tokenUrl"> & {
-    /** Required */
-    authorizationUrl?: string;
-  };
+  implicit?: OauthFlow;
   password?: OauthFlow;
   clientCredentials?: OauthFlow;
-  authorizationCode?: OauthFlow & {
-    /** Required */
-    authorizationUrl?: string;
-  };
-  deviceAuthorization?: OauthFlow & {
-    /** Required */
-    deviceAuthorizationUrl?: string;
-  };
+  authorizationCode?: OauthFlow;
+  deviceAuthorization?: OauthFlow;
 };
 
 export type OauthFlow = {
+  authorizationUrl?: string;
+  deviceAuthorizationUrl?: string;
+  tokenUrl?: string;
   refreshUrl?: string;
   /** Required */
   scopes?: Record<string, string>;
-  /** Required */
-  tokenUrl?: string;
 };
 
 export type SecurityRequirement = Record<string, string[]>;

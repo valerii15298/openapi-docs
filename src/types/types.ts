@@ -330,10 +330,16 @@ type Example = {
       externalValue?: never;
     }
   | {
-      value?: never;
       dataValue?: Json;
       serializedValue?: string;
+      value?: never;
+      externalValue?: never;
+    }
+  | {
+      dataValue?: Json;
       externalValue?: string;
+      value?: never;
+      serializedValue?: never;
     }
 );
 

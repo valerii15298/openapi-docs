@@ -7,7 +7,7 @@ import type {
   SecuritySchemeType,
   TagKind,
   XMLNodeType,
-} from "./enums.js";
+} from "#types/enums";
 
 export type {
   Format,

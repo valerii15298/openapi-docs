@@ -5,6 +5,7 @@ import type {
   ParameterStyle,
   SecuritySchemeType,
   XMLNodeType,
+  HttpMethod,
 } from "./enums.js";
 
 export type Json =
@@ -103,7 +104,7 @@ type Xml = {
 };
 
 export type OpenApi = {
-  openapi: string;
+  openapi: "3.2" | `"3.2.${number}"`;
   $self?: string;
   info: Info;
   jsonSchemaDialect?: string;
@@ -169,19 +170,10 @@ type PathItem = {
   $ref?: string;
   summary?: string;
   description?: string;
-  get?: Operation;
-  put?: Operation;
-  post?: Operation;
-  delete?: Operation;
-  options?: Operation;
-  head?: Operation;
-  patch?: Operation;
-  trace?: Operation;
-  query?: Operation;
   additionalOperations?: Record<string, Operation>;
   servers?: Server[];
   parameters?: (Parameter | Reference)[];
-};
+} & Partial<Record<HttpMethod, Operation>>;
 
 type Operation = {
   tags?: string[];

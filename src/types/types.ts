@@ -8,6 +8,16 @@ import type {
   XMLNodeType,
 } from "./enums.js";
 
+export type {
+  Format,
+  HttpMethod,
+  JsonSchemaType,
+  ParameterIn,
+  ParameterStyle,
+  SecuritySchemeType,
+  XMLNodeType,
+};
+
 export type Json =
   | number
   | string
@@ -103,7 +113,7 @@ export type Xml = {
   wrapped?: boolean;
 };
 
-export type OpenApi = {
+export type Document = {
   openapi: "3.2" | `"3.2.${number}"`;
   $self?: string;
   info: Info;

@@ -41,7 +41,7 @@ export type Document = {
   components?: Components;
   security?: SecurityRequirement[];
   tags?: Tag[];
-  externalDocs?: ExternalDocs;
+  externalDocs?: ExternalDocumentation;
 };
 
 export type Info = {
@@ -113,7 +113,7 @@ export type Operation = {
   tags?: string[];
   summary?: string;
   description?: string;
-  externalDocs?: ExternalDocs;
+  externalDocs?: ExternalDocumentation;
   operationId?: string;
   parameters?: (Parameter | Reference)[];
   requestBody?: RequestBody | Reference;
@@ -124,7 +124,7 @@ export type Operation = {
   servers?: Server[];
 };
 
-export type ExternalDocs = {
+export type ExternalDocumentation = {
   /** Required */
   url?: string;
   description?: string;
@@ -257,7 +257,7 @@ export type Tag = {
   name?: string;
   summary?: string;
   description?: string;
-  externalDocs?: ExternalDocs;
+  externalDocs?: ExternalDocumentation;
   parent?: string;
   kind?: TagKind | (string & {});
 };
@@ -332,8 +332,8 @@ export type Schema =
       contentSchema?: Schema;
       example?: Json;
       discriminator?: Discriminator;
-      externalDocs?: ExternalDocs;
-      xml?: Xml;
+      externalDocs?: ExternalDocumentation;
+      xml?: XML;
     };
 
 export type Discriminator = {
@@ -343,7 +343,7 @@ export type Discriminator = {
   defaultMapping?: string;
 };
 
-export type Xml = {
+export type XML = {
   nodeType?: XMLNodeType;
   name?: string;
   namespace?: string;
@@ -374,7 +374,7 @@ export type SecurityScheme = {
 
   // OAuth2 Security Scheme
   /** Required */
-  flows?: OauthFlows;
+  flows?: OAuthFlows;
   oauth2MetadataUrl?: string;
 
   // OpenID Connect Security Scheme
@@ -382,15 +382,15 @@ export type SecurityScheme = {
   openIdConnectUrl?: string;
 };
 
-export type OauthFlows = {
-  implicit?: OauthFlow;
-  password?: OauthFlow;
-  clientCredentials?: OauthFlow;
-  authorizationCode?: OauthFlow;
-  deviceAuthorization?: OauthFlow;
+export type OAuthFlows = {
+  implicit?: OAuthFlow;
+  password?: OAuthFlow;
+  clientCredentials?: OAuthFlow;
+  authorizationCode?: OAuthFlow;
+  deviceAuthorization?: OAuthFlow;
 };
 
-export type OauthFlow = {
+export type OAuthFlow = {
   authorizationUrl?: string;
   deviceAuthorizationUrl?: string;
   tokenUrl?: string;

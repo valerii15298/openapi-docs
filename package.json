@@ -29,7 +29,6 @@
     "release:netlify": "rm -rf dist && vite build && ntl deploy -p -d dist --no-build -s openapi-ui --open"
   },
   "dependencies": {
-    "@scalar/openapi-types": "^0.5.3",
     "@types/content-type": "^1.1.9",
     "allof-merge": "^0.6.7",
     "content-type": "^1.0.5",

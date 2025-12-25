@@ -94,13 +94,15 @@ export type Schema =
     };
 
 export type Discriminator = {
-  propertyName: string;
+  /** Required */
+  propertyName?: string;
   mapping?: Record<string, string>;
   defaultMapping?: string;
 };
 
 export type ExternalDocs = {
-  url: string;
+  /** Required */
+  url?: string;
   description?: string;
 };
 
@@ -114,9 +116,11 @@ export type Xml = {
 };
 
 export type Document = {
-  openapi: "3.2" | `"3.2.${number}"`;
+  /** Required */
+  openapi?: "3.2" | `"3.2.${number}"`;
   $self?: string;
-  info: Info;
+  /** Required */
+  info?: Info;
   jsonSchemaDialect?: string;
   servers?: Server[];
   paths?: Record<string, PathItem>;
@@ -128,13 +132,15 @@ export type Document = {
 };
 
 export type Info = {
-  title: string;
+  /** Required */
+  title?: string;
   summary?: string;
   description?: string;
   termsOfService?: string;
   contact?: Contact;
   license?: License;
-  version: string;
+  /** Required */
+  version?: string;
 };
 
 export type Contact = {
@@ -144,13 +150,15 @@ export type Contact = {
 };
 
 export type License = {
-  name: string;
+  /** Required */
+  name?: string;
   identifier?: string;
   url?: string;
 };
 
 export type Server = {
-  url: string;
+  /** Required */
+  url?: string;
   description?: string;
   name?: string;
   variables?: Record<string, ServerVariable>;
@@ -158,7 +166,8 @@ export type Server = {
 
 export type ServerVariable = {
   enum?: string[];
-  default: string;
+  /** Required */
+  default?: string;
   description?: string;
 };
 
@@ -201,7 +210,8 @@ export type Operation = {
 };
 
 export type Parameter = {
-  name: string;
+  /** Required */
+  name?: string;
   description?: string;
   required?: boolean;
   deprecated?: boolean;
@@ -209,7 +219,8 @@ export type Parameter = {
   (
     | ({
         in: typeof ParameterIn.path;
-        required: true;
+        /** Required */
+        required?: true;
       } & (
         | ({
             style?:
@@ -245,23 +256,27 @@ export type Parameter = {
         | ContentParameter
       ))
     | ({ in: typeof ParameterIn.querystring } & ContentParameter)
+    | { in?: never }
   );
 
 export type ContentParameter = {
   schema?: never;
-  content: Record<string, MediaType | Reference>;
+  /** Required */
+  content?: Record<string, MediaType | Reference>;
 };
 
 export type SchemaParameter = {
   explode?: boolean;
   allowReserved?: boolean;
-  schema: Schema;
+  /** Required */
+  schema?: Schema;
   content?: never;
 };
 
 export type RequestBody = {
   description?: string;
-  content: Record<string, MediaType | Reference>;
+  /** Required */
+  content?: Record<string, MediaType | Reference>;
   required?: boolean;
 };
 
@@ -307,11 +322,11 @@ export type Encoding = {
 
 export type Responses = {
   default?: Response | Reference;
-  "1XX": Response | Reference;
-  "2XX": Response | Reference;
-  "3XX": Response | Reference;
-  "4XX": Response | Reference;
-  "5XX": Response | Reference;
+  "1XX"?: Response | Reference;
+  "2XX"?: Response | Reference;
+  "3XX"?: Response | Reference;
+  "4XX"?: Response | Reference;
+  "5XX"?: Response | Reference;
 } & Record<`${number}`, Response | Reference>;
 
 export type Response = {
@@ -371,17 +386,20 @@ export type Header = {
     | {
         style?: typeof ParameterStyle.simple;
         explode?: boolean;
-        schema: Schema;
+        /** Required */
+        schema?: Schema;
         content?: never;
       }
     | {
         schema?: never;
-        content: Record<string, MediaType | Reference>;
+        /** Required */
+        content?: Record<string, MediaType | Reference>;
       }
   );
 
 export type Tag = {
-  name: string;
+  /** Required */
+  name?: string;
   summary?: string;
   description?: string;
   externalDocs?: ExternalDocs;
@@ -390,7 +408,8 @@ export type Tag = {
 };
 
 export type Reference = {
-  $ref: string;
+  /** Required */
+  $ref?: string;
   summary?: string;
   description?: string;
 };
@@ -398,15 +417,18 @@ export type Reference = {
 export type SecurityScheme = { description?: string; deprecated?: boolean } & (
   | {
       type: typeof SecuritySchemeType.apiKey;
-      name: string;
-      in:
+      /** Required */
+      name?: string;
+      /** Required */
+      in?:
         | typeof ParameterIn.query
         | typeof ParameterIn.header
         | typeof ParameterIn.cookie;
     }
   | {
       type: typeof SecuritySchemeType.http;
-      scheme: string;
+      /** Required */
+      scheme?: string;
       bearerFormat?: string;
     }
   | {
@@ -414,27 +436,41 @@ export type SecurityScheme = { description?: string; deprecated?: boolean } & (
     }
   | {
       type: typeof SecuritySchemeType.oauth2;
-      flows: OauthFlows;
+      /** Required */
+      flows?: OauthFlows;
       oauth2MetadataUrl?: string;
     }
   | {
       type: typeof SecuritySchemeType.openIdConnect;
-      openIdConnectUrl: string;
+      /** Required */
+      openIdConnectUrl?: string;
     }
+  | { type?: never }
 );
 
 export type OauthFlows = {
-  implicit?: Omit<OauthFlow, "tokenUrl"> & { authorizationUrl: string };
+  implicit?: Omit<OauthFlow, "tokenUrl"> & {
+    /** Required */
+    authorizationUrl?: string;
+  };
   password?: OauthFlow;
   clientCredentials?: OauthFlow;
-  authorizationCode?: OauthFlow & { authorizationUrl: string };
-  deviceAuthorization?: OauthFlow & { deviceAuthorizationUrl: string };
+  authorizationCode?: OauthFlow & {
+    /** Required */
+    authorizationUrl?: string;
+  };
+  deviceAuthorization?: OauthFlow & {
+    /** Required */
+    deviceAuthorizationUrl?: string;
+  };
 };
 
 export type OauthFlow = {
   refreshUrl?: string;
-  scopes: Record<string, string>;
-  tokenUrl: string;
+  /** Required */
+  scopes?: Record<string, string>;
+  /** Required */
+  tokenUrl?: string;
 };
 
 export type SecurityRequirement = Record<string, string[]>;

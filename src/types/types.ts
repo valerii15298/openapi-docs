@@ -36,7 +36,7 @@ export type Document = {
   info?: Info;
   jsonSchemaDialect?: string;
   servers?: Server[];
-  paths?: Record<string, PathItem>;
+  paths?: Paths;
   webhooks?: Record<string, PathItem>;
   components?: Components;
   security?: SecurityRequirement[];
@@ -97,6 +97,8 @@ export type Components = {
   pathItems?: Record<string, PathItem>;
   mediaTypes?: Record<string, MediaType | Reference>;
 };
+
+export type Paths = Record<string, PathItem>;
 
 export type PathItem = {
   $ref?: string;

@@ -1,11 +1,11 @@
 import type {
   Format,
+  HttpMethod,
   JsonSchemaType,
   ParameterIn,
   ParameterStyle,
   SecuritySchemeType,
   XMLNodeType,
-  HttpMethod,
 } from "./enums.js";
 
 export type Json =
@@ -385,42 +385,33 @@ type Reference = {
   description?: string;
 };
 
-type SecurityScheme =
+type SecurityScheme = { description?: string; deprecated?: boolean } & (
   | {
       type: typeof SecuritySchemeType.apiKey;
-      description?: string;
       name: string;
       in:
         | typeof ParameterIn.query
         | typeof ParameterIn.header
         | typeof ParameterIn.cookie;
-      deprecated?: boolean;
     }
   | {
       type: typeof SecuritySchemeType.http;
-      description?: string;
       scheme: string;
       bearerFormat?: string;
-      deprecated?: boolean;
     }
   | {
       type: typeof SecuritySchemeType.mutualTLS;
-      description?: string;
-      deprecated?: boolean;
     }
   | {
       type: typeof SecuritySchemeType.oauth2;
-      description?: string;
       flows: OauthFlows;
       oauth2MetadataUrl?: string;
-      deprecated?: boolean;
     }
   | {
       type: typeof SecuritySchemeType.openIdConnect;
-      description?: string;
       openIdConnectUrl: string;
-      deprecated?: boolean;
-    };
+    }
+);
 
 type OauthFlows = {
   implicit?: Implicit;

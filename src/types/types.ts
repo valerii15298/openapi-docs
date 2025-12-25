@@ -346,8 +346,8 @@ type Example = {
 type Link = {
   operationRef?: string;
   operationId?: string;
-  parameters?: Record<string, string>;
-  requestBody?: Json;
+  parameters?: Record<string, string | Json>;
+  requestBody?: string | Json;
   description?: string;
   server?: Server;
 };
@@ -362,8 +362,10 @@ type Header = {
         style?: typeof ParameterStyle.simple;
         explode?: boolean;
         schema: OasSchema32;
+        content?: never;
       }
     | {
+        schema?: never;
         content: Record<string, MediaType | Reference>;
       }
   );
@@ -374,7 +376,7 @@ type Tag = {
   description?: string;
   externalDocs?: ExternalDocs;
   parent?: string;
-  kind?: string;
+  kind?: "nav" | "badge" | "audience" | (string & {});
 };
 
 type Reference = {

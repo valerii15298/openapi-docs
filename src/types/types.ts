@@ -16,7 +16,7 @@ export type Json =
   | Json[]
   | { [key: string]: Json };
 
-export type OasSchema32 =
+export type Schema =
   | boolean
   | {
       $schema?: string;
@@ -27,25 +27,25 @@ export type OasSchema32 =
       $dynamicAnchor?: string;
       $vocabulary?: Record<string, boolean>;
       $comment?: string;
-      $defs?: Record<string, OasSchema32>;
-      additionalItems?: OasSchema32;
-      unevaluatedItems?: OasSchema32;
-      prefixItems?: OasSchema32[];
-      items?: OasSchema32;
-      contains?: OasSchema32;
-      additionalProperties?: OasSchema32;
-      unevaluatedProperties?: OasSchema32;
-      properties?: Record<string, OasSchema32>;
-      patternProperties?: Record<string, OasSchema32>;
-      dependentSchemas?: Record<string, OasSchema32>;
-      propertyNames?: OasSchema32;
-      if?: OasSchema32;
-      then?: OasSchema32;
-      else?: OasSchema32;
-      allOf?: OasSchema32[];
-      anyOf?: OasSchema32[];
-      oneOf?: OasSchema32[];
-      not?: OasSchema32;
+      $defs?: Record<string, Schema>;
+      additionalItems?: Schema;
+      unevaluatedItems?: Schema;
+      prefixItems?: Schema[];
+      items?: Schema;
+      contains?: Schema;
+      additionalProperties?: Schema;
+      unevaluatedProperties?: Schema;
+      properties?: Record<string, Schema>;
+      patternProperties?: Record<string, Schema>;
+      dependentSchemas?: Record<string, Schema>;
+      propertyNames?: Schema;
+      if?: Schema;
+      then?: Schema;
+      else?: Schema;
+      allOf?: Schema[];
+      anyOf?: Schema[];
+      oneOf?: Schema[];
+      not?: Schema;
       multipleOf?: number;
       maximum?: number;
       exclusiveMaximum?: number;
@@ -76,7 +76,7 @@ export type OasSchema32 =
       format?: Format;
       contentMediaType?: string;
       contentEncoding?: string;
-      contentSchema?: OasSchema32;
+      contentSchema?: Schema;
       example?: Json;
       discriminator?: Discriminator;
       externalDocs?: ExternalDocs;
@@ -153,7 +153,7 @@ type ServerVariable = {
 };
 
 type Components = {
-  schemas?: Record<string, OasSchema32>;
+  schemas?: Record<string, Schema>;
   responses?: Record<string, Response | Reference>;
   parameters?: Record<string, Parameter | Reference>;
   examples?: Record<string, Example | Reference>;
@@ -245,7 +245,7 @@ type ContentParameter = {
 type SchemaParameter = {
   explode?: boolean;
   allowReserved?: boolean;
-  schema: OasSchema32;
+  schema: Schema;
   content?: never;
 };
 
@@ -256,8 +256,8 @@ type RequestBody = {
 };
 
 type MediaType = {
-  schema?: OasSchema32;
-  itemSchema?: OasSchema32;
+  schema?: Schema;
+  itemSchema?: Schema;
 } & Examples &
   (
     | {
@@ -361,7 +361,7 @@ type Header = {
     | {
         style?: typeof ParameterStyle.simple;
         explode?: boolean;
-        schema: OasSchema32;
+        schema: Schema;
         content?: never;
       }
     | {
@@ -414,14 +414,14 @@ type SecurityScheme = { description?: string; deprecated?: boolean } & (
 );
 
 type OauthFlows = {
-  implicit?: Omit<OAuthFlow, "tokenUrl"> & { authorizationUrl: string };
-  password?: OAuthFlow;
-  clientCredentials?: OAuthFlow;
-  authorizationCode?: OAuthFlow & { authorizationUrl: string };
-  deviceAuthorization?: OAuthFlow & { deviceAuthorizationUrl: string };
+  implicit?: Omit<OauthFlow, "tokenUrl"> & { authorizationUrl: string };
+  password?: OauthFlow;
+  clientCredentials?: OauthFlow;
+  authorizationCode?: OauthFlow & { authorizationUrl: string };
+  deviceAuthorization?: OauthFlow & { deviceAuthorizationUrl: string };
 };
 
-type OAuthFlow = {
+type OauthFlow = {
   refreshUrl?: string;
   scopes: Record<string, string>;
   tokenUrl: string;

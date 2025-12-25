@@ -56,6 +56,15 @@ export const ParameterStyle = Enum(
 );
 export type ParameterStyle = keyof typeof ParameterStyle;
 
+export const SecuritySchemeType = Enum(
+  "apiKey",
+  "http",
+  "mutualTLS",
+  "oauth2",
+  "openIdConnect",
+);
+export type SecuritySchemeType = keyof typeof SecuritySchemeType;
+
 export const JsonSchemaType = Enum(
   "null",
   "boolean",
@@ -442,7 +451,7 @@ type Reference = {
 
 type SecurityScheme =
   | {
-      type: "apiKey";
+      type: typeof SecuritySchemeType.apiKey;
       description?: string;
       name: string;
       in:
@@ -452,26 +461,26 @@ type SecurityScheme =
       deprecated?: boolean;
     }
   | {
-      type: "http";
+      type: typeof SecuritySchemeType.http;
       description?: string;
       scheme: string;
       bearerFormat?: string;
       deprecated?: boolean;
     }
   | {
-      type: "mutualTLS";
+      type: typeof SecuritySchemeType.mutualTLS;
       description?: string;
       deprecated?: boolean;
     }
   | {
-      type: "oauth2";
+      type: typeof SecuritySchemeType.oauth2;
       description?: string;
       flows: OauthFlows;
       oauth2MetadataUrl?: string;
       deprecated?: boolean;
     }
   | {
-      type: "openIdConnect";
+      type: typeof SecuritySchemeType.openIdConnect;
       description?: string;
       openIdConnectUrl: string;
       deprecated?: boolean;

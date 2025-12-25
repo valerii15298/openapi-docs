@@ -297,6 +297,11 @@ type Encoding = {
 
 type Responses = {
   default?: Response | Reference;
+  "1XX": Response | Reference;
+  "2XX": Response | Reference;
+  "3XX": Response | Reference;
+  "4XX": Response | Reference;
+  "5XX": Response | Reference;
 } & Record<string, Response | Reference>;
 
 type Response = {

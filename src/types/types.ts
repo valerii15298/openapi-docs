@@ -28,98 +28,9 @@ export type Json =
   | Json[]
   | { [key: string]: Json };
 
-export type Schema =
-  | boolean
-  | {
-      $schema?: string;
-      $id?: string;
-      $anchor?: string;
-      $ref?: string;
-      $dynamicRef?: string;
-      $dynamicAnchor?: string;
-      $vocabulary?: Record<string, boolean>;
-      $comment?: string;
-      $defs?: Record<string, Schema>;
-      additionalItems?: Schema;
-      unevaluatedItems?: Schema;
-      prefixItems?: Schema[];
-      items?: Schema;
-      contains?: Schema;
-      additionalProperties?: Schema;
-      unevaluatedProperties?: Schema;
-      properties?: Record<string, Schema>;
-      patternProperties?: Record<string, Schema>;
-      dependentSchemas?: Record<string, Schema>;
-      propertyNames?: Schema;
-      if?: Schema;
-      then?: Schema;
-      else?: Schema;
-      allOf?: Schema[];
-      anyOf?: Schema[];
-      oneOf?: Schema[];
-      not?: Schema;
-      multipleOf?: number;
-      maximum?: number;
-      exclusiveMaximum?: number;
-      minimum?: number;
-      exclusiveMinimum?: number;
-      maxLength?: number;
-      minLength?: number;
-      pattern?: string;
-      maxItems?: number;
-      minItems?: number;
-      uniqueItems?: boolean;
-      maxContains?: number;
-      minContains?: number;
-      maxProperties?: number;
-      minProperties?: number;
-      required?: string[];
-      dependentRequired?: Record<string, string[]>;
-      const?: Json;
-      enum?: Json[];
-      type?: JsonSchemaType | JsonSchemaType[];
-      title?: string;
-      description?: string;
-      default?: Json;
-      deprecated?: boolean;
-      readOnly?: boolean;
-      writeOnly?: boolean;
-      examples?: Json[];
-      format?: Format;
-      contentMediaType?: string;
-      contentEncoding?: string;
-      contentSchema?: Schema;
-      example?: Json;
-      discriminator?: Discriminator;
-      externalDocs?: ExternalDocs;
-      xml?: Xml;
-    };
-
-export type Discriminator = {
-  /** Required */
-  propertyName?: string;
-  mapping?: Record<string, string>;
-  defaultMapping?: string;
-};
-
-export type ExternalDocs = {
-  /** Required */
-  url?: string;
-  description?: string;
-};
-
-export type Xml = {
-  nodeType?: XMLNodeType;
-  name?: string;
-  namespace?: string;
-  prefix?: string;
-  attribute?: boolean;
-  wrapped?: boolean;
-};
-
 export type Document = {
   /** Required */
-  openapi?: "3.2" | `"3.2.${number}"`;
+  openapi?: "3.2" | `3.2.${number}`;
   $self?: string;
   /** Required */
   info?: Info;
@@ -209,6 +120,12 @@ export type Operation = {
   deprecated?: boolean;
   security?: SecurityRequirement[];
   servers?: Server[];
+};
+
+export type ExternalDocs = {
+  /** Required */
+  url?: string;
+  description?: string;
 };
 
 export type Parameter = {
@@ -349,6 +266,89 @@ export type Reference = {
   $ref?: string;
   summary?: string;
   description?: string;
+};
+
+export type Schema =
+  | boolean
+  | {
+      $schema?: string;
+      $id?: string;
+      $anchor?: string;
+      $ref?: string;
+      $dynamicRef?: string;
+      $dynamicAnchor?: string;
+      $vocabulary?: Record<string, boolean>;
+      $comment?: string;
+      $defs?: Record<string, Schema>;
+      additionalItems?: Schema;
+      unevaluatedItems?: Schema;
+      prefixItems?: Schema[];
+      items?: Schema;
+      contains?: Schema;
+      additionalProperties?: Schema;
+      unevaluatedProperties?: Schema;
+      properties?: Record<string, Schema>;
+      patternProperties?: Record<string, Schema>;
+      dependentSchemas?: Record<string, Schema>;
+      propertyNames?: Schema;
+      if?: Schema;
+      then?: Schema;
+      else?: Schema;
+      allOf?: Schema[];
+      anyOf?: Schema[];
+      oneOf?: Schema[];
+      not?: Schema;
+      multipleOf?: number;
+      maximum?: number;
+      exclusiveMaximum?: number;
+      minimum?: number;
+      exclusiveMinimum?: number;
+      maxLength?: number;
+      minLength?: number;
+      pattern?: string;
+      maxItems?: number;
+      minItems?: number;
+      uniqueItems?: boolean;
+      maxContains?: number;
+      minContains?: number;
+      maxProperties?: number;
+      minProperties?: number;
+      required?: string[];
+      dependentRequired?: Record<string, string[]>;
+      const?: Json;
+      enum?: Json[];
+      type?: JsonSchemaType | JsonSchemaType[];
+      title?: string;
+      description?: string;
+      default?: Json;
+      deprecated?: boolean;
+      readOnly?: boolean;
+      writeOnly?: boolean;
+      examples?: Json[];
+      format?: Format;
+      contentMediaType?: string;
+      contentEncoding?: string;
+      contentSchema?: Schema;
+      example?: Json;
+      discriminator?: Discriminator;
+      externalDocs?: ExternalDocs;
+      xml?: Xml;
+    };
+
+export type Discriminator = {
+  /** Required */
+  propertyName?: string;
+  mapping?: Record<string, string>;
+  defaultMapping?: string;
+};
+
+export type Xml = {
+  nodeType?: XMLNodeType;
+  name?: string;
+  namespace?: string;
+  prefix?: string;
+  attribute?: boolean;
+  wrapped?: boolean;
 };
 
 export type SecurityScheme = {

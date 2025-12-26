@@ -107,7 +107,13 @@ export function ParametersInput() {
     <details
       hidden={!o.parameters.length}
       className="open:mb-2 open:[&>summary>svg]:rotate-180"
-      onInvalid={(e) => (e.currentTarget.open = true)}
+      onInvalid={(e) => {
+        e.currentTarget.open = true;
+        // fix for Safari not focusing the invalid element
+        if (e.target instanceof HTMLElement) {
+          e.target.focus();
+        }
+      }}
     >
       <summary
         className="flex w-full cursor-pointer items-center gap-1"

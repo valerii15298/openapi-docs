@@ -17,7 +17,7 @@
     ".": "./src/index.js",
     "./const": "./src/const.js",
     "./types": "./src/types/index.js",
-    "./workers/*.js": "./src/workers/*.worker.js"
+    "./workers/*": "./src/workers/*"
   },
   "sideEffects": [
     "./src/json-editor/monaco.*"
@@ -33,7 +33,6 @@
     "allof-merge": "^0.6.7",
     "content-type": "^1.0.5",
     "marked": "^17.0.1",
-    "monaco-graphql": "^1.7.3",
     "monaco-yaml": "^5.4.0",
     "openapi-sampler": "^1.6.2",
     "yaml": "^2.8.2"
@@ -51,7 +50,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "surge": "^0.24.6",
     "typescript": "^5.9.3",
-    "vite": "npm:rolldown-vite@latest"
+    "vite": "8.0.0-beta.5"
   },
   "peerDependencies": {
     "@sane-ts/shadcn-ui": "^0.0.5",

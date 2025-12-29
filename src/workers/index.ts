@@ -1,21 +1,13 @@
-export const workers = {
-  json: () =>
-    new Worker(new URL("./json.worker.js", import.meta.url), {
-      type: "module",
-    }),
-  yaml: () =>
-    new Worker(new URL("./yaml.worker.js", import.meta.url), {
-      type: "module",
-    }),
-  graphql: () =>
-    new Worker(new URL("./graphql.worker.js", import.meta.url), {
-      type: "module",
-    }),
-  editor: () =>
-    new Worker(new URL("./editor.worker.js", import.meta.url), {
-      type: "module",
-    }),
-};
+const json = () =>
+  new Worker(new URL("./json.js", import.meta.url), { type: "module" });
+
+const yaml = () =>
+  new Worker(new URL("./yaml.js", import.meta.url), { type: "module" });
+
+const editor = () =>
+  new Worker(new URL("./editor.js", import.meta.url), { type: "module" });
+
+export const workers = { json, yaml, editor } as const;
 
 export function getWorker(_: string, label: string) {
   if (label in workers) {
@@ -23,3 +15,5 @@ export function getWorker(_: string, label: string) {
   }
   return workers.editor();
 }
+
+export const MonacoEnvironment = { getWorker };

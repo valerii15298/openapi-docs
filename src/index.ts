@@ -5,11 +5,9 @@ import { Operation } from "#openapi/operation";
 import { Playground } from "#openapi/playground";
 import { SecuritySchemes } from "#openapi/security/index";
 import { SideBar } from "#openapi/sidebar";
-import { getWorker, workers } from "#workers/index";
 
 export {
   Docs,
-  getWorker,
   HttpProxyContext,
   Intro,
   OpenAPIContext,
@@ -17,5 +15,4 @@ export {
   Playground,
   SecuritySchemes,
   SideBar,
-  workers,
 };

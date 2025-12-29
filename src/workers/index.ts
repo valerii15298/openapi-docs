@@ -15,3 +15,5 @@ export function getWorker(_: string, label: string) {
   }
   return workers.editor();
 }
+
+export const MonacoEnvironment = { getWorker };

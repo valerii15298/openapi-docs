@@ -166,7 +166,7 @@ export function MonacoEditor({
 
   const { resolvedTheme } = useTheme();
 
-  const modelRef = useRef({} as monaco.editor.ITextModel);
+  const modelRef = useRef<monaco.editor.ITextModel>(null!);
   useEffect(() => {
     const model = monaco.editor.createModel(getDefault() ?? "");
     modelRef.current = model;

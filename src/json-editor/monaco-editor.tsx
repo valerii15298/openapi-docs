@@ -5,9 +5,7 @@ import { useEffect, useEffectEvent, useRef } from "react";
 import { createAsyncSequential } from "#hooks/use-async-sequential";
 import { EditorFormat } from "#json-editor/enums";
 import * as monaco from "#json-editor/monaco";
-import { getWorker } from "#workers/index";
 
-globalThis.MonacoEnvironment = { getWorker }; // TODO find a better way
 const { createWebWorker } = monaco.editor;
 monaco.editor.createWebWorker = (
   opts: monaco.IWebWorkerOptions | monaco.editor.IInternalWebWorkerOptions,
@@ -138,9 +136,6 @@ interface MonacoEditorProps {
   style?: React.CSSProperties;
 }
 
-const placeholderModel = monaco.editor.createModel("");
-placeholderModel.dispose();
-
 export function MonacoEditor({
   value,
   defaultValue,
@@ -171,7 +166,7 @@ export function MonacoEditor({
 
   const { resolvedTheme } = useTheme();
 
-  const modelRef = useRef(placeholderModel);
+  const modelRef = useRef({} as monaco.editor.ITextModel);
   useEffect(() => {
     const model = monaco.editor.createModel(getDefault() ?? "");
     modelRef.current = model;

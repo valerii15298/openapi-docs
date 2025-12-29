@@ -7,10 +7,6 @@ export const workers = {
     new Worker(new URL("./yaml.worker.js", import.meta.url), {
       type: "module",
     }),
-  graphql: () =>
-    new Worker(new URL("./graphql.worker.js", import.meta.url), {
-      type: "module",
-    }),
   editor: () =>
     new Worker(new URL("./editor.worker.js", import.meta.url), {
       type: "module",

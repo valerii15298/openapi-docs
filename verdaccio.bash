@@ -5,7 +5,9 @@ container_id=$(docker run --name verdaccio.localhost -d -p 4873:4873 verdaccio/v
 echo "Started Verdaccio container with ID: $container_id"
 
 pnpm build
-cat package.json | jq -r '.version="0.0.1-verdaccio"' > dist/package.json
+
+VERSION=$RANDOM
+jq --arg v "0.0.$VERSION" '.version = $v' package.json > dist/package.json
 
 expect <<'EOF'
   spawn pnpm login --registry http://localhost:4873
@@ -17,6 +19,10 @@ expect <<'EOF'
 EOF
 
 cd dist
-pnpm publish --registry http://localhost:4873 --no-git-checks --tag verdaccio
+TAG="verdaccio-$VERSION"
+pnpm publish --registry http://localhost:4873 --no-git-checks --tag $TAG
+INSTALL_COMMAND="pnpm rm openapi-docs && pnpm add openapi-docs@$TAG --registry http://localhost:4873"
+echo "$INSTALL_COMMAND" | pbcopy
+echo "Copied to clipboard: $INSTALL_COMMAND"
 
 docker attach $container_id

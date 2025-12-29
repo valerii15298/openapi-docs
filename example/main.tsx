@@ -2,11 +2,12 @@
 import "./index.css";
 import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import { Playground, HttpProxyContext, getWorker } from "openapi-docs";
+import { Playground, HttpProxyContext } from "openapi-docs";
+import { MonacoEnvironment } from "openapi-docs/workers/index.js";
 import { ThemeProvider } from "@sane-ts/shadcn-ui";
 import type { OpenAPIV3_1 } from "openapi-docs/types";
 
-globalThis.MonacoEnvironment = { getWorker };
+Object.assign(self, { MonacoEnvironment });
 
 const defaultUrl =
   "https://raw.githubusercontent.com/OAI/learn.openapis.org/refs/heads/main/examples/v3.1/tictactoe.json";

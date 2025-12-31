@@ -25,7 +25,7 @@ export function useOpenAPI() {
     obj: T | OpenAPIV3_1.Reference,
   ): (T & { $ref?: string }) | (T & undefined) {
     if (obj && "$ref" in obj && obj.$ref) {
-      const resolved = resolveRef<T>(obj.$ref, doc);
+      const resolved = resolveRef(obj.$ref, doc) as T;
       if (!resolved) {
         // eslint-disable-next-line no-console
         console.error(`${obj.$ref} cannot be resolved`);

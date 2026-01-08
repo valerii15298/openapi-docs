@@ -221,7 +221,10 @@ export function MonacoEditor({
     const controller = new AbortController();
     elementRef.current.addEventListener(
       "wheel",
-      (e) => editor.hasTextFocus() && e.preventDefault(),
+      (e) =>
+        editor.hasTextFocus() &&
+        editor.getContentHeight() === editor.getScrollHeight() &&
+        e.preventDefault(),
       { signal: controller.signal },
     );
 

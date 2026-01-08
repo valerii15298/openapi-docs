@@ -208,7 +208,6 @@ export function MonacoEditor({
       model: modelRef.current,
       automaticLayout: true,
       fixedOverflowWidgets: true,
-      // allowOverflow: false,
       minimap: { enabled: false },
       lineNumbers: "off",
       scrollbar: {

@@ -10,7 +10,7 @@ export function Docs(ctx: OpenAPIContext) {
   return (
     <StorageProvider buster={ctx.uri}>
       <OpenAPIContext value={ctx}>
-        <SidebarProvider className="h-full min-h-full">
+        <SidebarProvider className="relative h-full min-h-full">
           <SideBar />
           <main className="flex-1 overflow-auto">
             {renderRoute?.(ctx.path)}

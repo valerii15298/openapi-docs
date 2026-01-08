@@ -67,7 +67,7 @@ export function SideBar() {
   const { info = {} } = spec;
 
   return (
-    <Sidebar className="h-full">
+    <Sidebar className="absolute h-full">
       <SidebarHeader>
         <SidebarMenuButton isActive={!path.length} className="block" asChild>
           <h1 className="h-fit text-xl" onClick={() => setPath([])}>

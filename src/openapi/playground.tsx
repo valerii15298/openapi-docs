@@ -82,7 +82,7 @@ export function Playground(p: {
         </Editor>
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel style={{ transform: "translateZ(0)" }}>
+      <ResizablePanel>
         <Docs
           uri={uri}
           setEditPath={selectingEditTarget ? setEditPath : undefined}

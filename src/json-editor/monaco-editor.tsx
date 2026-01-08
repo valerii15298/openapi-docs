@@ -2,7 +2,6 @@ import { cn, useTheme } from "@sane-ts/shadcn-ui";
 import { configureMonacoYaml, type SchemasSettings } from "monaco-yaml";
 import { useEffect, useEffectEvent, useRef } from "react";
 
-import { createAsyncSequential } from "#hooks/use-async-sequential";
 import { EditorFormat } from "#json-editor/enums";
 import * as monaco from "#json-editor/monaco";
 
@@ -117,6 +116,36 @@ function setModelSchema(
       URL.revokeObjectURL(opts.uri);
     }
   };
+}
+
+function createAsyncSequential<T, Args extends unknown[]>(
+  promise: (...args: Args) => Promise<T>,
+  onResolve?: (data: Awaited<T>, synced: boolean) => void,
+) {
+  const state = { loading: false, data: undefined as T | undefined };
+
+  let argsRef = undefined as Args | undefined;
+
+  async function run() {
+    const args = argsRef;
+    if (!args) return state.data as T;
+    argsRef = undefined;
+    const data = await promise(...args);
+    onResolve?.(data, !argsRef);
+    state.loading = !!argsRef;
+    state.data = data;
+    return run();
+  }
+
+  async function trigger(...args: Args) {
+    argsRef = args;
+    if (state.loading) return;
+
+    state.loading = true;
+    return run();
+  }
+
+  return trigger;
 }
 
 interface MonacoEditorProps {

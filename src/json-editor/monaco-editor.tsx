@@ -118,34 +118,9 @@ function setModelSchema(
   };
 }
 
-function createAsyncSequential<T, Args extends unknown[]>(
-  promise: (...args: Args) => Promise<T>,
-  onResolve?: (data: Awaited<T>, synced: boolean) => void,
-) {
-  const state = { loading: false, data: undefined as T | undefined };
-
-  let argsRef = undefined as Args | undefined;
-
-  async function run() {
-    const args = argsRef;
-    if (!args) return state.data as T;
-    argsRef = undefined;
-    const data = await promise(...args);
-    onResolve?.(data, !argsRef);
-    state.loading = !!argsRef;
-    state.data = data;
-    return run();
-  }
-
-  async function trigger(...args: Args) {
-    argsRef = args;
-    if (state.loading) return;
-
-    state.loading = true;
-    return run();
-  }
-
-  return trigger;
+function asyncLatestQueue<Fn extends () => Promise<void>>(...q: [Fn?]) {
+  let c = q[0]?.() ?? Promise.resolve();
+  return (fn: Fn) => void ((q = [fn]), (c = c.then(() => q.pop()?.())));
 }
 
 interface MonacoEditorProps {
@@ -200,17 +175,23 @@ export function MonacoEditor({
     const model = monaco.editor.createModel(getDefault() ?? "");
     modelRef.current = model;
 
-    const trigger = createAsyncSequential(async (data: string) => {
+    const onChange = async (data: string) => {
       try {
         handleValueChange(data);
-        const maxWait = 10_000;
-        const delay = Math.min(Math.max(data.length / maxWait, 1), maxWait);
-        await new Promise((resolve) => void setTimeout(resolve, delay));
       } catch (e) {
         handleError(e);
+      } finally {
+        const maxWait = 5_000;
+        const charsPerMs = 10_000;
+        const delay = Math.min(Math.max(data.length / charsPerMs, 1), maxWait);
+        await new Promise((resolve) => void setTimeout(resolve, delay));
       }
+    };
+    const trigger = asyncLatestQueue();
+    model.onDidChangeContent(() => {
+      const data = model.getValue();
+      trigger(() => onChange(data));
     });
-    model.onDidChangeContent(() => void trigger(model.getValue()));
 
     return () => modelRef.current.dispose();
   }, []);

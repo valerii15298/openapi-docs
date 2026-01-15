@@ -6,7 +6,7 @@ echo "Started Verdaccio container with ID: $container_id"
 
 pnpm build
 
-NAME=$(cat package.json | jq -r .name)
+NAME=$(jq -r .name package.json)
 VERSION=$RANDOM
 jq --arg v "0.0.$VERSION" '.version = $v' package.json > dist/package.json
 

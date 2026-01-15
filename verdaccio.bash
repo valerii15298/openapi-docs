@@ -6,6 +6,7 @@ echo "Started Verdaccio container with ID: $container_id"
 
 pnpm build
 
+NAME=$(cat package.json | jq -r .name)
 VERSION=$RANDOM
 jq --arg v "0.0.$VERSION" '.version = $v' package.json > dist/package.json
 
@@ -21,7 +22,7 @@ EOF
 cd dist
 TAG="verdaccio-$VERSION"
 pnpm publish --registry http://localhost:4873 --no-git-checks --tag $TAG
-INSTALL_COMMAND="pnpm rm openapi-docs && pnpm add openapi-docs@$TAG --registry http://localhost:4873"
+INSTALL_COMMAND="pnpm rm $NAME && pnpm add $NAME@$TAG --registry http://localhost:4873"
 echo "$INSTALL_COMMAND" | pbcopy
 echo "Copied to clipboard: $INSTALL_COMMAND"
 

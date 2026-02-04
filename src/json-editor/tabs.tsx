@@ -8,9 +8,12 @@ import {
 
 import { useEditorContext } from "#json-editor/context";
 import { EditorFormat } from "#json-editor/enums";
+import { deepGet } from "#json-editor/utils";
 
 export function EditorTabs(props: React.ComponentProps<typeof SelectTrigger>) {
   const ctx = useEditorContext();
+
+  const objectValue = typeof deepGet(ctx.data, ctx.path) !== "string";
 
   return (
     <Select
@@ -25,7 +28,11 @@ export function EditorTabs(props: React.ComponentProps<typeof SelectTrigger>) {
       </SelectTrigger>
       <SelectContent>
         {Object.values(EditorFormat).map((f) => (
-          <SelectItem key={f} value={f}>
+          <SelectItem
+            disabled={f === EditorFormat.text && objectValue}
+            key={f}
+            value={f}
+          >
             {f}
           </SelectItem>
         ))}

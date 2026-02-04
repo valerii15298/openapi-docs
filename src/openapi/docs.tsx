@@ -1,4 +1,4 @@
-import { SidebarProvider } from "@sane-ts/shadcn-ui";
+import { SidebarProvider } from "@sane-ts/base-shadcn";
 
 import { OpenAPIContext } from "#openapi/context";
 import { matchRoute } from "#openapi/router";

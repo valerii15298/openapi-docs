@@ -9,7 +9,7 @@ import {
   SelectValue,
   ToggleGroup,
   ToggleGroupItem,
-} from "@sane-ts/shadcn-ui";
+} from "@sane-ts/base-shadcn";
 
 import type { OpenAPIV3_1 } from "#types/index";
 
@@ -68,7 +68,7 @@ export function primitiveInput({
       <Select
         required
         name={name}
-        onValueChange={field.setValue}
+        onValueChange={(v) => typeof v === "string" && field.setValue(v)}
         value={field.value}
       >
         <SelectTrigger className={cn("w-full", className)}>
@@ -89,11 +89,10 @@ export function primitiveInput({
     const options = [true, false];
     return (
       <ToggleGroup
-        type="single"
         className={cn("w-full", className)}
         variant={"outline"}
-        value={field.value}
-        onValueChange={field.setValue}
+        value={[field.value]}
+        onValueChange={([v]) => typeof v === "string" && field.setValue(v)}
       >
         {options.map((option) => (
           <ToggleGroupItem

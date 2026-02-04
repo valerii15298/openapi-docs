@@ -1,5 +1,5 @@
-import { Button, Label, Spinner, Switch } from "@sane-ts/shadcn-ui";
-import { SendHorizonal } from "@sane-ts/shadcn-ui/lucide";
+import { Button, Label, Spinner, Switch } from "@sane-ts/base-shadcn";
+import { SendHorizonal } from "@sane-ts/base-shadcn/lucide";
 import * as ContentType from "content-type";
 import { use, useActionState, useState } from "react";
 

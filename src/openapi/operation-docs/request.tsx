@@ -1,4 +1,4 @@
-import { Button, Separator } from "@sane-ts/shadcn-ui";
+import { Button, Separator } from "@sane-ts/base-shadcn";
 
 import { K } from "#openapi/const";
 import { useOperation } from "#openapi/context";
@@ -30,13 +30,14 @@ export function RequestDocs() {
     <section id={id}>
       <Button
         variant={"link"}
-        asChild
+        nativeButton={false}
+        render={
+          <h2>
+            <a href={`#${id}`}>Request</a>
+          </h2>
+        }
         className="p-0 text-3xl font-semibold tracking-tight"
-      >
-        <h2>
-          <a href={`#${id}`}>Request</a>
-        </h2>
-      </Button>
+      />
       <Separator className="mt-0.5 mb-2" />
       <ParametersDocs />
       <RequestBodyDocs />

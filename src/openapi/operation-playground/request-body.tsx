@@ -1,5 +1,5 @@
-import { Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
-import { SquarePen } from "@sane-ts/shadcn-ui/lucide";
+import { Tabs, TabsList, TabsTrigger } from "@sane-ts/base-shadcn";
+import { SquarePen } from "@sane-ts/base-shadcn/lucide";
 import { Activity, useMemo } from "react";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";

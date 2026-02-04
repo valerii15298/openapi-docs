@@ -1,4 +1,4 @@
-import { ToggleGroup, ToggleGroupItem } from "@sane-ts/shadcn-ui";
+import { ToggleGroup, ToggleGroupItem } from "@sane-ts/base-shadcn";
 
 import { K } from "#openapi/const";
 import { useOpenAPI } from "#openapi/context";
@@ -14,9 +14,10 @@ export function useExample(props: OpenAPIV3_1.MediaType & { path: string[] }) {
   const exampleKey = _exampleKey ?? "";
   const tabs = !!examples.length && (
     <ToggleGroup
-      type="single"
-      value={exampleKey}
-      onValueChange={(v) => examples.includes(v) && setExampleKey(v)}
+      value={[exampleKey]}
+      onValueChange={([v]: string[]) =>
+        typeof v === "string" && setExampleKey(v)
+      }
       size={"sm"}
       variant={"outline"}
       spacing={1}

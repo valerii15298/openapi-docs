@@ -7,8 +7,8 @@ import {
   PopoverTrigger,
   Switch,
   Textarea,
-} from "@sane-ts/shadcn-ui";
-import { FileJson, Loader } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { FileJson, Loader } from "@sane-ts/base-shadcn/lucide";
 import { useState } from "react";
 import yaml from "yaml";
 
@@ -48,16 +48,18 @@ export function ImportSpec({
         !loading && setOpen(o);
       }}
     >
-      <PopoverTrigger asChild>
-        <Button
-          disabled={loading}
-          size={"sm"}
-          variant={"outline"}
-          className="size-7 cursor-pointer"
-        >
-          <FileJson />
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <Button
+            disabled={loading}
+            size={"sm"}
+            variant={"outline"}
+            className="size-7 cursor-pointer"
+          >
+            <FileJson />
+          </Button>
+        }
+      />
       <PopoverContent align="start" className="flex flex-col items-end gap-2">
         <div className="flex w-full items-center gap-2">
           {commonSpecs.map((s) => (

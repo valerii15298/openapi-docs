@@ -29,6 +29,7 @@
     "release:netlify": "rm -rf dist && vite build && ntl deploy -p -d dist --no-build -s openapi-ui --open"
   },
   "dependencies": {
+    "@sane-ts/base-shadcn": "^0.0.3",
     "@types/content-type": "^1.1.9",
     "allof-merge": "^0.6.7",
     "content-type": "^1.0.5",
@@ -53,7 +54,6 @@
     "vite": "8.0.0-beta.5"
   },
   "peerDependencies": {
-    "@sane-ts/shadcn-ui": "^0.0.5",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "monaco-editor": "^0.55.1",

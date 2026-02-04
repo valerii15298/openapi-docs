@@ -1,5 +1,5 @@
-import { Button } from "@sane-ts/shadcn-ui";
-import { ExternalLink } from "@sane-ts/shadcn-ui/lucide";
+import { Button } from "@sane-ts/base-shadcn";
+import { ExternalLink } from "@sane-ts/base-shadcn/lucide";
 import { useMemo } from "react";
 
 import { Description } from "#description";
@@ -22,16 +22,17 @@ export function Example(
       className="flex items-center text-xl font-semibold"
     >
       <Button
-        asChild
         hidden={!e.externalValue}
         variant={"link"}
         size={"icon"}
         className="hover:bg-accent mr-2 size-6"
-      >
-        <a href={e.externalValue} target="_blank" rel="noopener noreferrer">
-          <ExternalLink />
-        </a>
-      </Button>
+        nativeButton={false}
+        render={
+          <a href={e.externalValue} target="_blank" rel="noopener noreferrer">
+            <ExternalLink />
+          </a>
+        }
+      />
       <span title={e.summary || e.externalValue} className="truncate">
         {e.summary || e.externalValue}
       </span>

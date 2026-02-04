@@ -4,8 +4,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@sane-ts/shadcn-ui";
-import { HelpCircle, Triangle } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { HelpCircle, Triangle } from "@sane-ts/base-shadcn/lucide";
 import { useEffect, useEffectEvent, useMemo } from "react";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
@@ -74,7 +74,7 @@ export function ParameterInput(
         <Checkbox
           disabled={p.required}
           checked={param.include}
-          onCheckedChange={(include) => param.setInclude(!!include)}
+          onCheckedChange={(include) => param.setInclude(include)}
         />
         {p.name}
         <Popover>

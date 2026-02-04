@@ -1,4 +1,4 @@
-import { Badge } from "@sane-ts/shadcn-ui";
+import { Badge } from "@sane-ts/base-shadcn";
 
 import { Description } from "#description";
 import { RenderJSONSchema } from "#json-schema";

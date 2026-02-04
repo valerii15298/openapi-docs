@@ -5,8 +5,8 @@ import {
   CardHeader,
   Input,
   Label,
-} from "@sane-ts/shadcn-ui";
-import { Lock, LockOpen } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { Lock, LockOpen } from "@sane-ts/base-shadcn/lucide";
 import { useEffect } from "react";
 
 import { Description } from "#description";

@@ -1,4 +1,4 @@
-import { cn, useTheme } from "@sane-ts/shadcn-ui";
+import { cn, useTheme } from "@sane-ts/base-shadcn";
 import { configureMonacoYaml, type SchemasSettings } from "monaco-yaml";
 import { useEffect, useEffectEvent, useRef } from "react";
 

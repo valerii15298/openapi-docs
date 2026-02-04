@@ -1,4 +1,4 @@
-import { Tabs, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
+import { Tabs, TabsList, TabsTrigger } from "@sane-ts/base-shadcn";
 
 import { Enum } from "#json-editor/utils";
 import { K } from "#openapi/const";

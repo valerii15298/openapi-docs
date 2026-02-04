@@ -8,8 +8,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@sane-ts/shadcn-ui";
-import { ChevronRight } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { ChevronRight } from "@sane-ts/base-shadcn/lucide";
 
 import { methods } from "#openapi/methods";
 import type { OpenAPIV3_1 } from "#types/index";
@@ -68,35 +68,41 @@ function renderByTag(
   return (
     <SidebarMenu>
       {Object.entries(byTag).map(([tag, ops]) => (
-        <Collapsible key={tag} asChild className="group/collapsible">
-          <SidebarMenuItem>
-            <CollapsibleTrigger asChild>
-              <SidebarMenuButton isActive={activeOp?.tags?.includes(tag)}>
-                {tag}
-                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-              </SidebarMenuButton>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarMenuSub>
-                {ops?.map((op) => (
-                  <SidebarMenuSubItem key={`${op.method}-${op.path}`}>
-                    <SidebarMenuSubButton
-                      isActive={
-                        !!activeOp &&
-                        method === op.method &&
-                        pathname === op.path
-                      }
-                      onClick={() => setPath(["paths", op.path, op.method])}
-                      className="min-h-fit cursor-pointer py-1"
-                    >
-                      {op.summary || `${op.method} ${op.path}`}
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                ))}
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </SidebarMenuItem>
-        </Collapsible>
+        <Collapsible
+          key={tag}
+          render={
+            <SidebarMenuItem>
+              <CollapsibleTrigger
+                render={
+                  <SidebarMenuButton isActive={activeOp?.tags?.includes(tag)}>
+                    {tag}
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                }
+              />
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {ops?.map((op) => (
+                    <SidebarMenuSubItem key={`${op.method}-${op.path}`}>
+                      <SidebarMenuSubButton
+                        isActive={
+                          !!activeOp &&
+                          method === op.method &&
+                          pathname === op.path
+                        }
+                        onClick={() => setPath(["paths", op.path, op.method])}
+                        className="min-h-fit cursor-pointer py-1"
+                      >
+                        {op.summary || `${op.method} ${op.path}`}
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          }
+          className="group/collapsible"
+        />
       ))}
     </SidebarMenu>
   );

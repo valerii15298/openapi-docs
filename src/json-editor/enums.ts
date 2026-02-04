@@ -2,7 +2,7 @@ import yaml from "yaml";
 
 import { Enum } from "#json-editor/utils";
 
-export const EditorFormat = Enum("text", "json", "yaml");
+export const EditorFormat = Enum("json", "yaml", "text");
 export type EditorFormat = keyof typeof EditorFormat;
 
 export const formatParse: Record<EditorFormat, (value: string) => unknown> = {

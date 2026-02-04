@@ -42,7 +42,8 @@ export function Playground(p: {
       onPressedChange={setSelectingEditTarget}
       size={"sm"}
       variant={"outline"}
-      className="size-7 min-w-7"
+      // TODO use $ref for element position and unhide
+      className="hidden size-7 min-w-7"
     >
       <MousePointerSquareDashed />
     </Toggle>

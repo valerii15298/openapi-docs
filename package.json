@@ -36,6 +36,7 @@
     "marked": "^17.0.1",
     "monaco-yaml": "^5.4.0",
     "openapi-sampler": "^1.6.2",
+    "react-error-boundary": "^6.1.0",
     "yaml": "^2.8.2"
   },
   "devDependencies": {

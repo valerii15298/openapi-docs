@@ -4,8 +4,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
   Toggle,
-} from "@sane-ts/shadcn-ui";
-import { MousePointerSquareDashed } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { MousePointerSquareDashed } from "@sane-ts/base-shadcn/lucide";
 import { use, useState } from "react";
 
 import { EditorBreadcrumbs } from "#json-editor/breadcrumbs";
@@ -49,8 +49,8 @@ export function Playground(p: {
   );
 
   return (
-    <ResizablePanelGroup direction="horizontal">
-      <ResizablePanel defaultSize={25} className="flex flex-col">
+    <ResizablePanelGroup>
+      <ResizablePanel defaultSize={"25"} className="flex flex-col">
         <Editor
           key={uri}
           ctx={editorCtx}
@@ -82,7 +82,7 @@ export function Playground(p: {
         </Editor>
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel style={{ transform: "translateZ(0)" }}>
+      <ResizablePanel>
         <Docs
           uri={uri}
           setEditPath={selectingEditTarget ? setEditPath : undefined}

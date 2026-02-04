@@ -4,7 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@sane-ts/shadcn-ui";
+} from "@sane-ts/base-shadcn";
 
 import { useEditorContext } from "#json-editor/context";
 import { EditorFormat } from "#json-editor/enums";
@@ -17,7 +17,7 @@ export function EditorTabs(props: React.ComponentProps<typeof SelectTrigger>) {
       disabled={!!ctx.error}
       value={ctx.format}
       onValueChange={(v) => {
-        if (v in EditorFormat) ctx.setFormat(v as EditorFormat);
+        if (v !== null) ctx.setFormat(v);
       }}
     >
       <SelectTrigger {...props} className="h-full! w-20 py-0">

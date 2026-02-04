@@ -1,9 +1,10 @@
-export function deepGet(obj: unknown, path: string[]) {
+import type { Json } from "#types/types";
+
+export function deepGet(obj: unknown, path: (string | number)[]) {
   return path.reduce((v: unknown, key) => v?.[key as keyof typeof v], obj);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-export function resolveRef<T = unknown>(ref: string, obj: object) {
+export function resolveRef(ref: string, obj: object) {
   if (!ref.startsWith("#/")) {
     // eslint-disable-next-line no-console
     console.error("Only local references are supported");
@@ -15,34 +16,31 @@ export function resolveRef<T = unknown>(ref: string, obj: object) {
     .split("/")
     .map((s) => s.replaceAll("~1", "/").replaceAll("~0", "~"));
 
-  return deepGet(obj, path) as T;
+  return deepGet(obj, path);
 }
 
-export function deepSet(obj: unknown, path: string[], value: unknown): unknown {
+export function deepSet(
+  obj: Json | undefined,
+  path: (string | number)[],
+  value: Json,
+): Json {
   if (path.length === 0) return value;
 
   const [key, ...rest] = path;
   if (key === undefined) return value;
 
   if (typeof obj !== "object" || obj === null) {
-    if (typeof key === "number") {
-      obj = [];
-    } else {
-      obj = {};
-    }
+    obj = typeof key === "string" ? {} : [];
   }
 
   if (Array.isArray(obj)) {
-    const newArr = [...(obj as unknown[])];
+    const newArr = [...obj];
     const k = key as `${number}`;
     newArr[k] = deepSet(newArr[k], rest, value);
     return newArr;
   }
 
-  return {
-    ...(obj as object),
-    [key]: deepSet((obj as Record<string, unknown>)[key], rest, value),
-  };
+  return { ...obj, [key]: deepSet(obj[key], rest, value) };
 }
 
 export function Enum<Key extends string>(...keys: Key[]) {

@@ -5,7 +5,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@sane-ts/shadcn-ui";
+} from "@sane-ts/base-shadcn";
 
 import { useOperation } from "#openapi/context";
 import { useServer } from "#openapi/operation-playground/create-request";

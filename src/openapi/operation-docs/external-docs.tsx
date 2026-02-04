@@ -3,7 +3,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@sane-ts/shadcn-ui";
+} from "@sane-ts/base-shadcn";
 
 import { Description } from "#description";
 import type { OpenAPIV3_1 } from "#types/index";
@@ -20,12 +20,15 @@ export function ExternalDocs(d: {
     <HoverCard>
       <HoverCardTrigger
         className="inline-block max-w-full tracking-wider wrap-break-word"
-        asChild
-      >
-        <Button asChild variant="link" className="h-min p-0 whitespace-normal">
-          <a href={d.externalDocs.url}>{d.externalDocs.url}</a>
-        </Button>
-      </HoverCardTrigger>
+        render={
+          <Button
+            nativeButton={false}
+            render={<a href={d.externalDocs.url}>{d.externalDocs.url}</a>}
+            variant="link"
+            className="h-min p-0 whitespace-normal"
+          />
+        }
+      />
       <HoverCardContent align="end">
         <Description {...d.externalDocs} path={path} />
       </HoverCardContent>

@@ -2,8 +2,8 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@sane-ts/shadcn-ui";
-import { Triangle } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { Triangle } from "@sane-ts/base-shadcn/lucide";
 import type { ReactNode } from "react";
 
 type Props = React.ComponentProps<typeof Collapsible> & {

@@ -5,7 +5,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@sane-ts/shadcn-ui";
+} from "@sane-ts/base-shadcn";
 
 import { K } from "#openapi/const";
 import { useOperation } from "#openapi/context";
@@ -25,11 +25,10 @@ export function Responses() {
       <h2 className="flex flex-wrap items-end gap-x-3">
         <Button
           variant={"link"}
-          asChild
+          nativeButton={false}
+          render={<a href={`#${id}`}>Response</a>}
           className="p-0 text-3xl font-semibold tracking-tight"
-        >
-          <a href={`#${id}`}>Response</a>
-        </Button>
+        />
         <TabsList className="h-fit grow flex-wrap">
           {entries.map(([status]) => (
             <TabsTrigger

@@ -1,7 +1,7 @@
 @import "tailwindcss";
-@import "@sane-ts/shadcn-ui/index.css";
-@import "@sane-ts/shadcn-ui/themes/zinc.css";
-@source "../node_modules/@sane-ts/shadcn-ui/src/**/*.js";
+@import "@sane-ts/base-shadcn/index.css";
+@import "@sane-ts/base-shadcn/themes/zinc.css";
+@source "../node_modules/@sane-ts/base-shadcn/src/**/*.js";
 @source "../node_modules/openapi-docs/src/**/*.js";
 
 @layer base {

@@ -1,9 +1,8 @@
-import { Button, Label, Spinner, Switch } from "@sane-ts/shadcn-ui";
-import { SendHorizonal } from "@sane-ts/shadcn-ui/lucide";
+import { Button, Label, Spinner, Switch } from "@sane-ts/base-shadcn";
+import { SendHorizonal } from "@sane-ts/base-shadcn/lucide";
 import * as ContentType from "content-type";
-import { use, useState } from "react";
+import { use, useActionState, useState } from "react";
 
-import { useAsyncLazy } from "#hooks/use-async";
 import { K } from "#openapi/const";
 import { useHttpProxy, useOperation, useResponses } from "#openapi/context";
 import { methodClassNamesMap } from "#openapi/methods";
@@ -75,15 +74,13 @@ export function OperationPlayground() {
       inline: "nearest",
     });
   };
-  const [{ loading }, handleSubmit] = useAsyncLazy(onSubmit);
+
+  const [, formAction, loading] = useActionState(onSubmit, void 0);
   return (
     <section className="@container flex flex-col gap-4">
       <form
         className="flex flex-col gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
+        action={loading ? () => void 0 : formAction}
       >
         <h2 className="flex justify-center">
           <SelectServer />
@@ -106,8 +103,9 @@ export function OperationPlayground() {
           </Label>
 
           <Button
-            disabled={loading}
-            className={`${methodClassNamesMap[o.method].bg} flex-1 cursor-pointer text-base font-bold select-none`}
+            aria-disabled={loading}
+            aria-busy={loading}
+            className={`${methodClassNamesMap[o.method].bg} flex-1 cursor-pointer text-base font-bold select-none aria-disabled:cursor-wait aria-disabled:opacity-50`}
             type="submit"
           >
             {loading ? <Spinner /> : <SendHorizonal />}

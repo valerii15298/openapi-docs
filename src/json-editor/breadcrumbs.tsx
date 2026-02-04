@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@sane-ts/shadcn-ui";
+} from "@sane-ts/base-shadcn";
 import { Fragment } from "react";
 
 import { useEditorContext } from "#json-editor/context";
@@ -48,11 +48,10 @@ export function EditorBreadcrumbs() {
               {typeof value === "object" && value && (
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    asChild
+                    nativeButton={false}
+                    render={<BreadcrumbSeparator />}
                     className="hover:text-foreground data-[state=open]:text-foreground cursor-pointer [&_svg]:transition-all data-[state=open]:[&_svg]:rotate-90"
-                  >
-                    <BreadcrumbSeparator />
-                  </DropdownMenuTrigger>
+                  />
                   <DropdownMenuContent align="start">
                     {Object.keys(value).map((k) => (
                       <DropdownMenuItem

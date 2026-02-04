@@ -1,4 +1,4 @@
-import { Badge, cn } from "@sane-ts/shadcn-ui";
+import { Badge, cn } from "@sane-ts/base-shadcn";
 import type { ReactNode } from "react";
 
 import { Description } from "#description";
@@ -86,9 +86,11 @@ export function RenderJSONSchema({
     <p className="flex flex-wrap items-center gap-1">
       Allowed values:{" "}
       {schema[K.enum]?.map((v, i) => (
-        <Badge variant="secondary" key={i} asChild>
-          <code>{JSON.stringify(v)}</code>
-        </Badge>
+        <Badge
+          variant="secondary"
+          key={i}
+          render={<code>{JSON.stringify(v)}</code>}
+        />
       ))}
     </p>
   );

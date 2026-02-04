@@ -3,8 +3,8 @@ import {
   Toggle,
   ToggleGroup,
   ToggleGroupItem,
-} from "@sane-ts/shadcn-ui";
-import { AlignJustify, Copy, Eye, WrapText } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { AlignJustify, Copy, Eye, WrapText } from "@sane-ts/base-shadcn/lucide";
 import { Fragment, useState } from "react";
 
 import { useOperation } from "#openapi/context";
@@ -75,11 +75,10 @@ export function RequestSample() {
       <h3 className="mb-0.5 flex gap-2 text-2xl">
         Request
         <ToggleGroup
-          value={wrap}
-          onValueChange={(v) => {
+          value={[wrap]}
+          onValueChange={([v]) => {
             setWrap(v as Wrap);
           }}
-          type="single"
           size={"sm"}
         >
           <ToggleGroupItem

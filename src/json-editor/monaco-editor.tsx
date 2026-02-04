@@ -1,8 +1,7 @@
-import { cn, useTheme } from "@sane-ts/shadcn-ui";
+import { cn, useTheme } from "@sane-ts/base-shadcn";
 import { configureMonacoYaml, type SchemasSettings } from "monaco-yaml";
 import { useEffect, useEffectEvent, useRef } from "react";
 
-import { createAsyncSequential } from "#hooks/use-async-sequential";
 import { EditorFormat } from "#json-editor/enums";
 import * as monaco from "#json-editor/monaco";
 
@@ -119,6 +118,11 @@ function setModelSchema(
   };
 }
 
+function asyncLatestQueue<Fn extends () => Promise<void>>(...q: [Fn?]) {
+  let c = q[0]?.() ?? Promise.resolve();
+  return (fn: Fn) => void ((q = [fn]), (c = c.then(() => q.pop()?.())));
+}
+
 interface MonacoEditorProps {
   value?: string;
   defaultValue?: string | (() => string);
@@ -171,17 +175,23 @@ export function MonacoEditor({
     const model = monaco.editor.createModel(getDefault() ?? "");
     modelRef.current = model;
 
-    const trigger = createAsyncSequential(async (data: string) => {
+    const onChange = async (data: string) => {
       try {
         handleValueChange(data);
-        const maxWait = 10_000;
-        const delay = Math.min(Math.max(data.length / maxWait, 1), maxWait);
-        await new Promise((resolve) => void setTimeout(resolve, delay));
       } catch (e) {
         handleError(e);
+      } finally {
+        const maxWait = 5_000;
+        const charsPerMs = 10_000;
+        const delay = Math.min(Math.max(data.length / charsPerMs, 1), maxWait);
+        await new Promise((resolve) => void setTimeout(resolve, delay));
       }
+    };
+    const trigger = asyncLatestQueue();
+    model.onDidChangeContent(() => {
+      const data = model.getValue();
+      trigger(() => onChange(data));
     });
-    model.onDidChangeContent(() => void trigger(model.getValue()));
 
     return () => modelRef.current.dispose();
   }, []);
@@ -208,7 +218,6 @@ export function MonacoEditor({
       model: modelRef.current,
       automaticLayout: true,
       fixedOverflowWidgets: true,
-      // allowOverflow: false,
       minimap: { enabled: false },
       lineNumbers: "off",
       scrollbar: {
@@ -222,7 +231,10 @@ export function MonacoEditor({
     const controller = new AbortController();
     elementRef.current.addEventListener(
       "wheel",
-      (e) => editor.hasTextFocus() && e.preventDefault(),
+      (e) =>
+        editor.hasTextFocus() &&
+        editor.getContentHeight() === editor.getScrollHeight() &&
+        e.preventDefault(),
       { signal: controller.signal },
     );
 

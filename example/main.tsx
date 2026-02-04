@@ -4,7 +4,7 @@ import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { Playground, HttpProxyContext } from "openapi-docs";
 import { MonacoEnvironment } from "openapi-docs/workers/index.js";
-import { ThemeProvider } from "@sane-ts/shadcn-ui";
+import { ThemeProvider } from "@sane-ts/base-shadcn";
 import type { OpenAPIV3_1 } from "openapi-docs/types";
 
 Object.assign(self, { MonacoEnvironment });

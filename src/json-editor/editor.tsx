@@ -7,7 +7,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@sane-ts/shadcn-ui";
+} from "@sane-ts/base-shadcn";
 
 import {
   EditorContext,
@@ -92,7 +92,7 @@ export function Editor<TData = unknown>({
   return (
     // @ts-expect-error TS can't infer generic type for context provider
     <EditorContext key={JSON.stringify([ctx.format, ...ctx.path])} value={ctx}>
-      <ResizablePanelGroup {...props} direction="vertical">
+      <ResizablePanelGroup {...props} orientation="vertical">
         <ResizablePanel className="flex flex-col">
           {children}
           <EditorContent
@@ -104,8 +104,8 @@ export function Editor<TData = unknown>({
         </ResizablePanel>
         <ResizableHandle hidden={!ctx.error} className="mt-1" />
         <ResizablePanel
-          maxSize={ctx.error ? 50 : 0}
-          minSize={ctx.error ? 10 : 0}
+          maxSize={ctx.error ? "50" : "0"}
+          minSize={ctx.error ? "10" : "0"}
           className={cn(ctx.error && "p-1")}
         >
           <Button

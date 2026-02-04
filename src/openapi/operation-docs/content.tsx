@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@sane-ts/shadcn-ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@sane-ts/base-shadcn";
 
 import { Description } from "#description";
 import { RenderJSONSchema } from "#json-schema";

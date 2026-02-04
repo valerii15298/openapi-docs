@@ -13,8 +13,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@sane-ts/shadcn-ui";
-import { Mail } from "@sane-ts/shadcn-ui/lucide";
+} from "@sane-ts/base-shadcn";
+import { Mail } from "@sane-ts/base-shadcn/lucide";
 
 import { K } from "#openapi/const";
 import { useOpenAPI } from "#openapi/context";
@@ -29,11 +29,13 @@ function renderLicense(license?: OpenAPIV3_1.License) {
   // https://spec.openapis.org/oas/latest.html#license-object
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild>
-        <a target={"_blank"} href={license.url}>
-          License <i>{license.name}</i>
-        </a>
-      </SidebarMenuButton>
+      <SidebarMenuButton
+        render={
+          <a target={"_blank"} href={license.url}>
+            License <i>{license.name}</i>
+          </a>
+        }
+      />
       <SidebarMenuBadge>{license.identifier}</SidebarMenuBadge>
     </SidebarMenuItem>
   );
@@ -46,17 +48,21 @@ function renderContact(contact?: OpenAPIV3_1.Contact) {
   const mailto = contact.email && `mailto:${contact.email}`;
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild>
-        <a target={"_blank"} href={contact.url || mailto}>
-          {contact.name || contact.url || contact.email}
-        </a>
-      </SidebarMenuButton>
-      {mailto && (
-        <SidebarMenuAction asChild>
-          <a href={mailto}>
-            <Mail />
+      <SidebarMenuButton
+        render={
+          <a target={"_blank"} href={contact.url || mailto}>
+            {contact.name || contact.url || contact.email}
           </a>
-        </SidebarMenuAction>
+        }
+      />
+      {mailto && (
+        <SidebarMenuAction
+          render={
+            <a href={mailto}>
+              <Mail />
+            </a>
+          }
+        />
       )}
     </SidebarMenuItem>
   );
@@ -67,23 +73,27 @@ export function SideBar() {
   const { info = {} } = spec;
 
   return (
-    <Sidebar className="h-full">
+    <Sidebar className="absolute h-full">
       <SidebarHeader>
-        <SidebarMenuButton isActive={!path.length} className="block" asChild>
-          <h1 className="h-fit text-xl" onClick={() => setPath([])}>
-            {info.title}{" "}
-            <Badge
-              className="text-sm"
-              title="API Version"
-              variant={"secondary"}
-            >
-              {info.version}
-            </Badge>{" "}
-            <Badge title="OpenAPI Specification Version" variant={"outline"}>
-              OAS {spec.openapi}
-            </Badge>
-          </h1>
-        </SidebarMenuButton>
+        <SidebarMenuButton
+          isActive={!path.length}
+          className="block"
+          render={
+            <h1 className="h-fit text-xl" onClick={() => setPath([])}>
+              {info.title}{" "}
+              <Badge
+                className="text-sm"
+                title="API Version"
+                variant={"secondary"}
+              >
+                {info.version}
+              </Badge>{" "}
+              <Badge title="OpenAPI Specification Version" variant={"outline"}>
+                OAS {spec.openapi}
+              </Badge>
+            </h1>
+          }
+        />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -103,19 +113,23 @@ export function SideBar() {
           </SidebarMenuItem>
 
           <SidebarMenuItem hidden={!info.termsOfService}>
-            <SidebarMenuButton asChild>
-              <a target="_blank" href={info.termsOfService}>
-                Terms of Service
-              </a>
-            </SidebarMenuButton>
+            <SidebarMenuButton
+              render={
+                <a target="_blank" href={info.termsOfService}>
+                  Terms of Service
+                </a>
+              }
+            />
           </SidebarMenuItem>
 
           <SidebarMenuItem hidden={!spec.jsonSchemaDialect}>
-            <SidebarMenuButton asChild>
-              <a target="_blank" href={spec.jsonSchemaDialect}>
-                JSON Schema Dialect
-              </a>
-            </SidebarMenuButton>
+            <SidebarMenuButton
+              render={
+                <a target="_blank" href={spec.jsonSchemaDialect}>
+                  JSON Schema Dialect
+                </a>
+              }
+            />
           </SidebarMenuItem>
 
           {renderContact(info.contact)}

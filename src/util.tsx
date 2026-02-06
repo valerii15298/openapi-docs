@@ -13,8 +13,8 @@ type Props = React.ComponentProps<typeof Collapsible> & {
 export function Collapse({ header, children, ...props }: Props) {
   return (
     <Collapsible {...props}>
-      <CollapsibleTrigger className="flex w-full cursor-pointer items-center gap-1 data-[state=open]:[&>svg]:rotate-180">
-        <Triangle className="fill-foreground w-3 rotate-90 transition-transform" />
+      <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-1">
+        <Triangle className="fill-foreground w-3 rotate-90 transition-transform group-data-panel-open:rotate-180" />
         {header}
       </CollapsibleTrigger>
       <CollapsibleContent className="border-accent ml-1.5 border-l pl-3">

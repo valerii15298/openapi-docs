@@ -72,36 +72,38 @@ export function RequestSample() {
   const curlText = `curl -X ${req.method} '${req.url}' ${headersText} ${bodyText}`;
   return (
     <section>
-      <h3 className="mb-0.5 flex gap-2 text-2xl">
+      <h3 className="mb-0.5 flex flex-wrap gap-2 text-2xl">
         Request
-        <ToggleGroup
-          value={[wrap]}
-          onValueChange={([v]) => {
-            setWrap(v as Wrap);
-          }}
-          size={"sm"}
-        >
-          <ToggleGroupItem
-            title="Toggle wrapping"
-            value={"wrap" satisfies Wrap}
+        <span className="flex gap-2">
+          <ToggleGroup
+            value={[wrap]}
+            onValueChange={([v]) => {
+              setWrap(v as Wrap);
+            }}
+            size={"sm"}
           >
-            <WrapText />
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            title="Toggle separate lines"
-            value={"line-breaks" satisfies Wrap}
+            <ToggleGroupItem
+              title="Toggle wrapping"
+              value={"wrap" satisfies Wrap}
+            >
+              <WrapText />
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              title="Toggle separate lines"
+              value={"line-breaks" satisfies Wrap}
+            >
+              <AlignJustify />
+            </ToggleGroupItem>
+          </ToggleGroup>
+          <Toggle
+            size={"sm"}
+            pressed={preview}
+            onPressedChange={setPreview}
+            title="Toggle URL preview"
           >
-            <AlignJustify />
-          </ToggleGroupItem>
-        </ToggleGroup>
-        <Toggle
-          size={"sm"}
-          pressed={preview}
-          onPressedChange={setPreview}
-          title="Toggle URL preview"
-        >
-          <Eye />
-        </Toggle>
+            <Eye />
+          </Toggle>
+        </span>
       </h3>
       <p
         className={`bg-accent relative w-full rounded-sm ${preview ? "select-none" : ""}`}

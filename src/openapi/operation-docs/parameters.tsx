@@ -13,11 +13,11 @@ export function ParametersDocs() {
   const header = (
     <span className="flex flex-wrap gap-2">
       <Badge
-        className={`text-background text-base font-extrabold ${methodClassNamesMap[o.method].bg}`}
+        className={`text-background h-fit text-base font-extrabold ${methodClassNamesMap[o.method].bg}`}
       >
         {o.method.toUpperCase()}
       </Badge>
-      <Badge className="text-background border-foreground bg-violet-600 font-mono text-base font-extrabold dark:bg-violet-400">
+      <Badge className="text-background h-fit bg-violet-600 font-mono text-base font-extrabold dark:bg-violet-400">
         {o.pathname}
       </Badge>
     </span>

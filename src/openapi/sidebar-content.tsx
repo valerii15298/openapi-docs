@@ -73,10 +73,11 @@ function renderByTag(
           render={
             <SidebarMenuItem>
               <CollapsibleTrigger
+                className={"group"}
                 render={
                   <SidebarMenuButton isActive={activeOp?.tags?.includes(tag)}>
                     {tag}
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-panel-open:rotate-90" />
                   </SidebarMenuButton>
                 }
               />
@@ -85,13 +86,14 @@ function renderByTag(
                   {ops?.map((op) => (
                     <SidebarMenuSubItem key={`${op.method}-${op.path}`}>
                       <SidebarMenuSubButton
+                        render={(props) => <button type="button" {...props} />}
                         isActive={
                           !!activeOp &&
                           method === op.method &&
                           pathname === op.path
                         }
                         onClick={() => setPath(["paths", op.path, op.method])}
-                        className="min-h-fit cursor-pointer py-1"
+                        className="min-h-fit min-w-full cursor-pointer py-1"
                       >
                         {op.summary || `${op.method} ${op.path}`}
                       </SidebarMenuSubButton>

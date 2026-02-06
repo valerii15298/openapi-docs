@@ -88,7 +88,7 @@ export function Response() {
         >
           {status}
         </span>
-        <TabsList className="h-fit flex-wrap">
+        <TabsList variant={"line"} className="h-fit! flex-wrap *:pb-0">
           <TabsTrigger value={ResponseTab.headers} children="Headers" />
           <TabsTrigger value={ResponseTab.body} children="Body" />
           <TabsTrigger

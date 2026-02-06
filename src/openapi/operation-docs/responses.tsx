@@ -22,14 +22,14 @@ export function Responses() {
 
   return (
     <Tabs value={status} onValueChange={setStatus} id={id}>
-      <h2 className="flex flex-wrap items-end gap-x-3">
+      <h2 className="flex flex-wrap gap-x-3">
         <Button
           variant={"link"}
           nativeButton={false}
           render={<a href={`#${id}`}>Response</a>}
           className="p-0 text-3xl font-semibold tracking-tight"
         />
-        <TabsList className="h-fit grow flex-wrap">
+        <TabsList activateOnFocus variant={"line"} className="h-fit! flex-wrap">
           {entries.map(([status]) => (
             <TabsTrigger
               key={status}

@@ -2,6 +2,7 @@ import { useCallback } from "react";
 
 import { K } from "#openapi/const";
 import { useOperation } from "#openapi/context";
+import { queryParam } from "#openapi/operation-playground/serialize-parameters";
 import { useActiveRequestBody } from "#openapi/operation-playground/use-request-body";
 import { useStorage } from "#storage";
 import type { OpenAPIV3_1 } from "#types/index";
@@ -43,9 +44,13 @@ export function useParam(p: { in: ParamIn; name: string }) {
   if (!param) return [undefined, setParam] as const;
 
   const setInclude = (include: boolean) => setParam({ ...param, include });
-  const setValue = (value: string) => setParam({ ...param, value });
   const setSerialized = (serialized: string | undefined) =>
     setParam({ ...param, serialized });
+  const setValue = (value: string) => {
+    // TODO handle other param.in types
+    const serialized = p.in === "query" ? queryParam(p, value) : undefined;
+    setParam({ ...param, value, serialized });
+  };
 
   return [{ ...param, setInclude, setValue, setSerialized }, setParam] as const;
 }

@@ -1,5 +1,4 @@
 import { Tabs, TabsList, TabsTrigger } from "@sane-ts/base-shadcn";
-import { SquarePen } from "@sane-ts/base-shadcn/lucide";
 import { Activity, useMemo } from "react";
 
 import { MonacoEditor } from "#json-editor/monaco-editor";
@@ -38,12 +37,9 @@ export function RequestBodyInput() {
     >
       <h4 className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xl font-semibold">
         Body
-        <TabsList className="h-fit flex-wrap">
-          <TabsTrigger className="py-0.5" value={RequestBodyTab.edit}>
-            <SquarePen /> Edit
-          </TabsTrigger>
+        <TabsList variant={"line"} className="h-fit! flex-wrap *:pb-0">
+          <TabsTrigger value={RequestBodyTab.edit}>Edit</TabsTrigger>
           <TabsTrigger
-            className="py-0.5"
             hidden={!example.tabs}
             value={RequestBodyTab.examples}
             children={`Examples`}

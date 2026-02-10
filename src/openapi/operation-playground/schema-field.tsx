@@ -1,14 +1,16 @@
 import {
   Button,
   cn,
+  Field,
+  FieldLabel,
   Input,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  ToggleGroup,
-  ToggleGroupItem,
 } from "@sane-ts/base-shadcn";
 
 import type { OpenAPIV3_1 } from "#types/index";
@@ -88,22 +90,21 @@ export function primitiveInput({
   if (type === "boolean") {
     const options = [true, false];
     return (
-      <ToggleGroup
-        className={cn("w-full", className)}
-        variant={"outline"}
-        value={[field.value]}
-        onValueChange={([v]) => typeof v === "string" && field.setValue(v)}
+      <RadioGroup
+        name={name}
+        className={cn("flex h-8", className)}
+        value={field.value}
+        onValueChange={(v) => typeof v === "string" && field.setValue(v)}
       >
         {options.map((option) => (
-          <ToggleGroupItem
-            className="flex-1"
-            key={option.toString()}
-            value={option.toString()}
-          >
-            {option.toString()}
-          </ToggleGroupItem>
+          <FieldLabel className="text-base" key={option.toString()}>
+            <Field orientation={"horizontal"} className="h-full">
+              <RadioGroupItem value={option.toString()} />
+              {option.toString()}
+            </Field>
+          </FieldLabel>
         ))}
-      </ToggleGroup>
+      </RadioGroup>
     );
   }
   if (type === "string" && schema.format === "date-time") {

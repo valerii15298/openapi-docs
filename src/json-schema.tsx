@@ -70,7 +70,9 @@ export function RenderJSONSchema({
   depth ??= path.length;
 
   const header = (
-    <div className={`inline-flex flex-wrap gap-2 ${depth ? "my-1" : ""}`}>
+    <div
+      className={`inline-flex flex-wrap items-center gap-2 ${depth ? "my-1" : ""}`}
+    >
       {renderHeader({
         ...p,
         name,

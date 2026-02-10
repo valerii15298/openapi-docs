@@ -91,6 +91,7 @@ export function primitiveInput({
     const options = [true, false];
     return (
       <RadioGroup
+        name={name}
         className={cn("flex h-8", className)}
         value={field.value}
         onValueChange={(v) => typeof v === "string" && field.setValue(v)}

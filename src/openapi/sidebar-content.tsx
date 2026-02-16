@@ -93,7 +93,7 @@ function renderByTag(
                           pathname === op.path
                         }
                         onClick={() => setPath(["paths", op.path, op.method])}
-                        className="min-h-fit min-w-full cursor-pointer py-1"
+                        className="min-h-fit min-w-full cursor-pointer py-1 text-start"
                       >
                         {op.summary || `${op.method} ${op.path}`}
                       </SidebarMenuSubButton>

@@ -26,10 +26,12 @@ export function resolveSchema(schema: OpenAPIV3_1.Schema, source: object) {
     {
       source,
       // TODO add callback onError function to propagate errors back
-      // eslint-disable-next-line no-console
-      onMergeError: (...args) => console.log(...args),
-      // eslint-disable-next-line no-console
-      onRefResolveError: (...args) => console.log(...args),
+      onMergeError: (message, path, values) =>
+        // eslint-disable-next-line no-console
+        console.error("merge error", { message, path, values }),
+      onRefResolveError: (message, path, ref) =>
+        // eslint-disable-next-line no-console
+        console.error("ref resolve error", { message, path, ref }),
     },
   ) as typeof schema;
 }

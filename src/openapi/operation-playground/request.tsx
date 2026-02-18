@@ -70,13 +70,15 @@ export function RequestSample() {
   const headersText = req.headers.map(([k, v]) => `-H '${k}: ${v}'`).join(" ");
   const bodyText = req.body ? `-d '${req.body}'` : "";
   const curlText = `curl -X ${req.method} '${req.url}' ${headersText} ${bodyText}`;
+
+  const toggleValue = wrap ? [wrap] : [];
   return (
     <section>
       <h3 className="mb-0.5 flex flex-wrap gap-2 text-2xl">
         Request
         <span className="flex gap-2">
           <ToggleGroup
-            value={[wrap]}
+            value={toggleValue}
             onValueChange={([v]) => {
               setWrap(v as Wrap);
             }}

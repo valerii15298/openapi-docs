@@ -24,7 +24,9 @@ import { useActionState } from "react";
 
 import { Description } from "#description";
 import { useSecurityScheme } from "#openapi/operation-playground/create-request";
+import { Err, Ok } from "#result";
 import type { OpenAPIV3_1 } from "#types/index";
+import type { Json } from "#types/types";
 
 function Form<T>({
   initialState,
@@ -91,7 +93,7 @@ function OAuthFlow(flow: {
           {name}: {value}
         </Label>
       ))}
-      <Button disabled={pending}>
+      <Button type="submit" disabled={pending}>
         {pending ? <Spinner /> : <KeyRound />} Fetch Token
       </Button>
 
@@ -134,6 +136,13 @@ function OAuthFlow(flow: {
     </fieldset>
   );
 
+  // TODO add proper error handling and display errors in the UI instead of using alert
+  function handleError(err: { name: string; message: string }) {
+    const { name, message } = err;
+    // eslint-disable-next-line no-alert
+    alert(`${name}\n\n${message}`);
+  }
+
   const formAction = async (_: string, formData: FormData) => {
     if (!flow.tokenUrl) return "";
     const minDelay = new Promise((r) => void setTimeout(r, 300));
@@ -143,14 +152,38 @@ function OAuthFlow(flow: {
 
     // @ts-expect-error all entries values are strings
     const body = new URLSearchParams(formData);
-    const resp = await fetch(flow.tokenUrl, { method: "POST", body });
-    if (!resp.ok) {
+    const resp = await fetch(flow.tokenUrl, { method: "POST", body }).then(
+      Ok,
+      Err<Error>,
+    );
+    if (!resp.isOk) {
+      handleError(resp.err);
       return "";
     }
-    const json = (await resp.json()) as { access_token: string };
-    flow.setToken(json.access_token);
+    const jsonResult = await resp.ok.json().then(Ok<Json>, Err<Error>);
+    if (!jsonResult.isOk) {
+      handleError(jsonResult.err);
+      return "";
+    }
     await minDelay;
-    return json.access_token;
+
+    const value = jsonResult.ok;
+    if (
+      typeof value === "object" &&
+      value &&
+      "access_token" in value &&
+      typeof value["access_token"] === "string"
+    ) {
+      const token = value["access_token"];
+      flow.setToken(token);
+      return token;
+    }
+
+    handleError({
+      name: "access_token not found in response:",
+      message: JSON.stringify(value),
+    });
+    return "";
   };
 
   return (

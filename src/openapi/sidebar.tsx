@@ -99,12 +99,6 @@ export function SideBar() {
         />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Operations</SidebarGroupLabel>
-          <SidebarGroupContent>
-            {renderSidebarContent("by-tag", spec, path, setPath)}
-          </SidebarGroupContent>
-        </SidebarGroup>
         <SidebarGroup hidden={!pages}>
           <SidebarGroupLabel>Pages</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -114,6 +108,12 @@ export function SideBar() {
               path={path}
               setPath={setPath}
             />
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Operations</SidebarGroupLabel>
+          <SidebarGroupContent>
+            {renderSidebarContent("by-tag", spec, path, setPath)}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

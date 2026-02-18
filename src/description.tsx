@@ -22,7 +22,7 @@ export function Description(d: { description?: string; path: string[] }) {
   return (
     <div
       onClick={() => setEditPath?.([...d.path, key])}
-      className={`prose dark:prose-invert ${
+      className={`prose dark:prose-invert max-w-none ${
         setEditPath ? "hover:bg-accent cursor-pointer" : ""
       }`}
       // eslint-disable-next-line @eslint-react/dom/no-dangerously-set-innerhtml

@@ -19,6 +19,7 @@ import { Mail } from "@sane-ts/base-shadcn/lucide";
 import { K } from "#openapi/const";
 import { useOpenAPI } from "#openapi/context";
 import { renderSidebarContent } from "#openapi/sidebar-content";
+import { SidebarPages } from "#openapi/sidebar-pages";
 import type { OpenAPIV3_1 } from "#types/index";
 
 function renderLicense(license?: OpenAPIV3_1.License) {
@@ -72,6 +73,8 @@ export function SideBar() {
   const { path, setPath, doc: spec } = useOpenAPI();
   const { info = {} } = spec;
 
+  const pages = spec[K["x-pages"]];
+
   return (
     <Sidebar className="absolute h-full">
       <SidebarHeader>
@@ -100,6 +103,17 @@ export function SideBar() {
           <SidebarGroupLabel>Operations</SidebarGroupLabel>
           <SidebarGroupContent>
             {renderSidebarContent("by-tag", spec, path, setPath)}
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup hidden={!pages}>
+          <SidebarGroupLabel>Pages</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarPages
+              currPath={[K["x-pages"]]}
+              pages={pages ?? {}}
+              path={path}
+              setPath={setPath}
+            />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

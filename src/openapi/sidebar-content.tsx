@@ -66,7 +66,7 @@ function renderByTag(
       ? doc.paths?.[pathname]?.[method as OpenAPIV3_1.HttpMethod]
       : null;
   return (
-    <SidebarMenu>
+    <SidebarMenu className="space-y-1">
       {Object.entries(byTag).map(([tag, ops]) => (
         <Collapsible
           key={tag}

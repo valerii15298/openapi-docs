@@ -25,4 +25,6 @@ export const K = Enum(
   "schema",
   "properties",
   "items",
+
+  "x-pages",
 );

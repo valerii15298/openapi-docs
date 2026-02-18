@@ -28,6 +28,9 @@ export type Json =
   | Json[]
   | { [key: string]: Json };
 
+export interface Pages {
+  [key: string]: string | Pages;
+}
 export type Document = {
   /** Required */
   openapi?: "3.2" | `3.2.${number}`;
@@ -42,6 +45,7 @@ export type Document = {
   security?: SecurityRequirement[];
   tags?: Tag[];
   externalDocs?: ExternalDocumentation;
+  "x-pages"?: Pages;
 };
 
 export type Info = {

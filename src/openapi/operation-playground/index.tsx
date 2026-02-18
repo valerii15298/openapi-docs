@@ -105,7 +105,7 @@ export function OperationPlayground() {
           <Button
             aria-disabled={loading}
             aria-busy={loading}
-            className={`${methodClassNamesMap[o.method].bg} flex-1 cursor-pointer text-base font-bold select-none aria-disabled:cursor-wait aria-disabled:opacity-50`}
+            className={`${methodClassNamesMap[o.method].bg} flex-1 cursor-pointer text-base font-bold will-change-[opacity] select-none aria-disabled:cursor-wait aria-disabled:opacity-50`}
             type="submit"
           >
             {loading ? <Spinner /> : <SendHorizonal />}

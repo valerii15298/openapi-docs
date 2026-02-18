@@ -29,7 +29,7 @@
     "release:netlify": "rm -rf dist && vite build && ntl deploy -p -d dist --no-build -s openapi-ui --open"
   },
   "dependencies": {
-    "@sane-ts/base-shadcn": "^0.0.3",
+    "@sane-ts/base-shadcn": "^0.0.4",
     "@types/content-type": "^1.1.9",
     "allof-merge": "^0.6.8",
     "content-type": "^1.0.5",
